@@ -12,5 +12,5 @@ cipher = { path = "../cipher" }
 lfg = { path = "../lfg" }
 masc = { path = "../masc" }
 transposition = { path = "../transposition" }
-derive_builder = "0.10.2"
+derive_builder = "0.10"
 num = "0.3"

@@ -24,7 +24,7 @@ members = [
 alphabet = {path = "alphabet"}
 cipher = {path = "cipher"}
 clap = {version = "3.1", features = ["derive"]}
-derive_builder = "0.10.2"
+derive_builder = "0.10"
 dsc = {path = "dsc"}
 itertools = "0.10.3"
 lcg = {path = "lcg"}

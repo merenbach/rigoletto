@@ -9,4 +9,4 @@ version = "0.1.0"
 [dependencies]
 cipher = {path = "../cipher"}
 std_ext = {path = "../std_ext"}
-derive_builder = "0.10.2"
+derive_builder = "0.10"
