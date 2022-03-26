@@ -50,7 +50,6 @@ mod tests {
     }
 }
 
-
 // TODO: can use rotate, permute, and bringToZenith like in http://www.chaocipher.com/ActualChaocipher/Chaocipher-Revealed-Algorithm.pdf
 /*
 
@@ -61,7 +60,6 @@ for deriving the starting alphabets."
 --- this means we might have an alternative encryption mode available.
 
 */
-
 
 fn my_shift<T>(
     xs: &[T],
@@ -134,11 +132,11 @@ where
 
         for x in xs {
             let idx = right.iter().position(|y| y == x);
-            if let Some(idx_of_c_in_right) = idx {
-                let new_x = left[idx_of_c_in_right];
-                left.rotate_left(idx_of_c_in_right);
+            if let Some(idx_unwrapped) = idx {
+                let new_x = left[idx_unwrapped];
+                left.rotate_left(idx_unwrapped);
 
-                right.rotate_left(idx_of_c_in_right);
+                right.rotate_left(idx_unwrapped);
 
                 left = permute(&left, 1, self.zenith, self.nadir);
                 right.rotate_left(1);
@@ -160,11 +158,11 @@ where
 
         for x in xs {
             let idx = left.iter().position(|y| y == x);
-            if let Some(idx_of_c_in_left) = idx {
-                let new_x = right[idx_of_c_in_left];
-                right.rotate_left(idx_of_c_in_left);
+            if let Some(idx_unwrapped) = idx {
+                let new_x = right[idx_unwrapped];
+                right.rotate_left(idx_unwrapped);
 
-                left.rotate_left(idx_of_c_in_left);
+                left.rotate_left(idx_unwrapped);
 
                 left = permute(&left, 1, self.zenith, self.nadir);
                 right.rotate_left(1);
