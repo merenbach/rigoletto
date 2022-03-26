@@ -1,0 +1,30 @@
+[
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HFNOS, BUYTM!",
+        "output": "HELLO, WORLD!",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Hfnos, Buytm!",
+        "output": "Hello, World!",
+        "caseless": true,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HFNOS, BUYTM!",
+        "output": "HELLOWORLD",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Hfnos, Buytm!",
+        "output": "HelloWorld",
+        "caseless": true,
+        "strict": true
+    }
+]

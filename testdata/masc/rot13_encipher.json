@@ -1,0 +1,26 @@
+[
+    {
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "URYYB JBEYQ hello world",
+        "strict": false
+    },
+    {
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "URYYBJBEYQ",
+        "strict": true
+    },
+    {
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "URYYB JBEYQ uryyb jbeyq",
+        "strict": false
+    },
+    {
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "URYYBJBEYQuryybjbeyq",
+        "strict": true
+    }
+]

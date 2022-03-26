@@ -1,0 +1,371 @@
+[
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "BS RKM IQUCHDSEJR. WEMJ IV OGKS! LTI NBTQ SPOP US JMSE RWZ AGE FM.",
+        "output": "WE ARE DISCOVERED. FLEE AT ONCE! YOU WILL KNOW ME WHEN YOU SEE ME.",
+        "key": "FORTIFICATION",
+        "autokey": 0,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "BS RKM IQUCHDSEJR. WEMJ IV OGKS! LTI NBTQ SPOP US JMSE RWZ AGE FM.",
+        "output": "WEAREDISCOVEREDFLEEATONCEYOUWILLKNOWMEWHENYOUSEEME",
+        "key": "FORTIFICATION",
+        "autokey": 0,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Bs rkm iquchdsejr. Wemj IV OGKS! Lti nbtq spop us jmse rwz age fm.",
+        "output": "We are discovered. Flee AT ONCE! You will know me when you see me.",
+        "key": "Fortification",
+        "autokey": 0,
+        "caseless": true,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Bs rkm iquchdsejr. Wemj IV OGKS! Lti nbtq spop us jmse rwz age fm.",
+        "output": "WearediscoveredFleeATONCEYouwillknowmewhenyouseeme",
+        "key": "Fortification",
+        "autokey": 0,
+        "caseless": true,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "BS RKM IQUCHDSEAH. FCIH IL QBXI! PSX BTPP KGCJ OI UVYJ GZF CRS IQ.",
+        "output": "WE ARE DISCOVERED. FLEE AT ONCE! YOU WILL KNOW ME WHEN YOU SEE ME.",
+        "key": "FORTIFICATION",
+        "autokey": 1,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "BS RKM IQUCHDSEAH. FCIH IL QBXI! PSX BTPP KGCJ OI UVYJ GZF CRS IQ.",
+        "output": "WEAREDISCOVEREDFLEEATONCEYOUWILLKNOWMEWHENYOUSEEME",
+        "key": "FORTIFICATION",
+        "autokey": 1,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Bs rkm iquchdseah. Fcih IL QBXI! Psx btpp kgcj oi uvyj gzf crs iq.",
+        "output": "We are discovered. Flee AT ONCE! You will know me when you see me.",
+        "key": "Fortification",
+        "autokey": 1,
+        "caseless": true,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Bs rkm iquchdseah. Fcih IL QBXI! Psx btpp kgcj oi uvyj gzf crs iq.",
+        "output": "WearediscoveredFleeATONCEYouwillknowmewhenyouseeme",
+        "key": "Fortification",
+        "autokey": 1,
+        "caseless": true,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "BS RKM IQUCHDSEFV. WVQM QN QUFW! CTP SDBX AAEQ RA YATF BPR SEI CV.",
+        "output": "WE ARE DISCOVERED. FLEE AT ONCE! YOU WILL KNOW ME WHEN YOU SEE ME.",
+        "key": "FORTIFICATION",
+        "autokey": 2,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "BS RKM IQUCHDSEFV. WVQM QN QUFW! CTP SDBX AAEQ RA YATF BPR SEI CV.",
+        "output": "WEAREDISCOVEREDFLEEATONCEYOUWILLKNOWMEWHENYOUSEEME",
+        "key": "FORTIFICATION",
+        "autokey": 2,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Bs rkm iquchdsefv. Wvqm QN QUFW! Ctp sdbx aaeq ra yatf bpr sei cv.",
+        "output": "We are discovered. Flee AT ONCE! You will know me when you see me.",
+        "key": "Fortification",
+        "autokey": 2,
+        "caseless": true,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Bs rkm iquchdsefv. Wvqm QN QUFW! Ctp sdbx aaeq ra yatf bpr sei cv.",
+        "output": "WearediscoveredFleeATONCEYouwillknowmewhenyouseeme",
+        "key": "Fortification",
+        "autokey": 2,
+        "caseless": true,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "",
+        "output": "",
+        "key": "",
+        "autokey": 0,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "",
+        "output": "",
+        "key": "OCEANOGRAPHYWHAT",
+        "autokey": 0,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "",
+        "output": "",
+        "key": "OCEANOGRAPHYWHAT",
+        "autokey": 0,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "HELLO, WORLD!",
+        "key": "A",
+        "autokey": 0,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "HELLOWORLD",
+        "key": "A",
+        "autokey": 0,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "VGPLB, KUILS!",
+        "output": "HELLO, WORLD!",
+        "key": "OCEANOGRAPHYWHAT",
+        "autokey": 0,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Vgplb, Kuils!",
+        "output": "Hello, World!",
+        "key": "OCEANOGRAPHYWHAT",
+        "autokey": 0,
+        "caseless": true,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "VGPLB, KUILS!",
+        "output": "HELLOWORLD",
+        "key": "OCEANOGRAPHYWHAT",
+        "autokey": 0,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Vgplb, Kuils!",
+        "output": "HelloWorld",
+        "key": "OCEANOGRAPHYWHAT",
+        "autokey": 0,
+        "caseless": true,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "XUBBE, MEHBT!",
+        "output": "HELLO, WORLD!",
+        "key": "Q",
+        "autokey": 0,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "XUBBE, MEHBT!",
+        "output": "HELLOWORLD",
+        "key": "Q",
+        "autokey": 0,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "REYRO, NCFVD!",
+        "output": "HELLO, WORLD!",
+        "key": "KANGAROO",
+        "autokey": 0,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "REYRO, NCFVD!",
+        "output": "HELLOWORLD",
+        "key": "KANGAROO",
+        "autokey": 0,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "VGPLB, KUILS!",
+        "output": "HELLO, WORLD!",
+        "key": "OCEANOGRAPHYWHAT",
+        "autokey": 1,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "VGPLB, KUILS!",
+        "output": "HELLOWORLD",
+        "key": "OCEANOGRAPHYWHAT",
+        "autokey": 1,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HLPWZ, KKFCO!",
+        "output": "HELLO, WORLD!",
+        "key": "A",
+        "autokey": 1,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HLPWZ, KKFCO!",
+        "output": "HELLOWORLD",
+        "key": "A",
+        "autokey": 1,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "XLPWZ, KKFCO!",
+        "output": "HELLO, WORLD!",
+        "key": "Q",
+        "autokey": 1,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "XLPWZ, KKFCO!",
+        "output": "HELLOWORLD",
+        "key": "Q",
+        "autokey": 1,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "REYRO, NCFSH!",
+        "output": "HELLO, WORLD!",
+        "key": "KANGAROO",
+        "autokey": 1,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "REYRO, NCFSH!",
+        "output": "HELLOWORLD",
+        "key": "KANGAROO",
+        "autokey": 1,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "VGPLB, KUILS!",
+        "output": "HELLO, WORLD!",
+        "key": "OCEANOGRAPHYWHAT",
+        "autokey": 2,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "VGPLB, KUILS!",
+        "output": "HELLOWORLD",
+        "key": "OCEANOGRAPHYWHAT",
+        "autokey": 2,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HLWHV, RFWHK!",
+        "output": "HELLO, WORLD!",
+        "key": "A",
+        "autokey": 2,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HLWHV, RFWHK!",
+        "output": "HELLOWORLD",
+        "key": "A",
+        "autokey": 2,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "XBMXL, HVMXA!",
+        "output": "HELLO, WORLD!",
+        "key": "Q",
+        "autokey": 2,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "XBMXL, HVMXA!",
+        "output": "HELLOWORLD",
+        "key": "Q",
+        "autokey": 2,
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "REYRO, NCFCH!",
+        "output": "HELLO, WORLD!",
+        "key": "KANGAROO",
+        "autokey": 2,
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "REYRO, NCFCH!",
+        "output": "HELLOWORLD",
+        "key": "KANGAROO",
+        "autokey": 2,
+        "caseless": false,
+        "strict": true
+    }
+]

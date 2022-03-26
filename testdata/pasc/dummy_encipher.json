@@ -1,0 +1,34 @@
+[
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLO WORLD hello world",
+        "key": "HELLOWORLD",
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLOWORLD",
+        "key": "HELLOWORLD",
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLO WORLD hello world",
+        "key": "HELLOWORLD",
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLOWORLDhelloworld",
+        "key": "HELLOWORLD",
+        "strict": true
+    }
+]

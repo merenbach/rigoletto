@@ -1,0 +1,17 @@
+[
+    {
+        "input": "Iamhurtverybadlyhelp",
+        "output": "Iryyatbhmvaehedlurlp",
+        "turns": 5
+    },
+    {
+        "input": "WEAREDISCOVEREDFLEEATONCE",
+        "output": "WDVFTEIELOASRENRCEECEODAE",
+        "turns": 5
+    },
+    {
+        "input": "HELLO, WORLD!",
+        "output": "HELLO, WORLD!",
+        "turns": 1
+    }
+]

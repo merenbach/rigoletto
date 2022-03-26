@@ -1,0 +1,39 @@
+[package]
+authors = ["Andrew Merenbach <andrew@merenbach.com>"]
+edition = "2021"
+name = "rigoletto"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[workspace]
+members = [
+  "alphabet",
+  "cipher",
+  "dsc",
+  "lcg",
+  "lfg",
+  "masc",
+  "message",
+  "pasc",
+  "std_ext",
+  "transposition",
+]
+
+[dependencies]
+alphabet = {path = "alphabet"}
+cipher = {path = "cipher"}
+clap = {version = "3.1", features = ["derive"]}
+derive_builder = "0.10.2"
+dsc = {path = "dsc"}
+itertools = "0.10.3"
+lcg = {path = "lcg"}
+lfg = {path = "lfg"}
+masc = {path = "masc"}
+message = {path = "message"}
+nalgebra = "0.30.1"
+ndarray = "0.15"
+pasc = {path = "pasc"}
+serde = "1.0"
+std_ext = {path = "std_ext"}
+transposition = {path = "transposition"}

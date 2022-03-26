@@ -1,0 +1,66 @@
+[
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "HELLO, WORLD!",
+        "key": "0",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "HELLOWORLD",
+        "key": "0",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "JHMOQ, YRSOF!",
+        "key": "23132",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Hello, World!",
+        "output": "Jhmoq, Yrsof!",
+        "key": "23132",
+        "caseless": true,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "JHMOQYRSOF",
+        "key": "23132",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "KMUNX, WPRNG!",
+        "key": "389290102394957",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "KMUNXWPRNG",
+        "key": "389290102394957",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Hello, World!",
+        "output": "KmunxWprng",
+        "key": "389290102394957",
+        "caseless": true,
+        "strict": true
+    }
+]

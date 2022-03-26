@@ -1,0 +1,86 @@
+[
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "SVOOL DLIOW hello world",
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "SVOOLDLIOW",
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "SVOOL DLIOW svool dliow",
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "SVOOLDLIOWsvooldliow",
+        "strict": true
+    },
+    {
+        "alphabet": "0123456789",
+        "caseless": false,
+        "input": "A12345A",
+        "output": "A87654A",
+        "strict": false
+    },
+    {
+        "alphabet": "0123456789",
+        "caseless": false,
+        "input": "A12345A",
+        "output": "87654",
+        "strict": true
+    },
+    {
+        "alphabet": "0123456789",
+        "caseless": true,
+        "input": "A12345A",
+        "output": "A87654A",
+        "strict": false
+    },
+    {
+        "alphabet": "0123456789",
+        "caseless": true,
+        "input": "A12345A",
+        "output": "87654",
+        "strict": true
+    },
+    {
+        "alphabet": "12345",
+        "caseless": false,
+        "input": "A12345A",
+        "output": "A54321A",
+        "strict": false
+    },
+    {
+        "alphabet": "12345",
+        "caseless": false,
+        "input": "A12345A",
+        "output": "54321",
+        "strict": true
+    },
+    {
+        "alphabet": "12345",
+        "caseless": true,
+        "input": "A12345A",
+        "output": "A54321A",
+        "strict": false
+    },
+    {
+        "alphabet": "12345",
+        "caseless": true,
+        "input": "A12345A",
+        "output": "54321",
+        "strict": true
+    }
+]

@@ -1,0 +1,82 @@
+[
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "TCHLB, IIALO!",
+        "output": "HELLO, WORLD!",
+        "key": "OCEANOGRAPHYWHAT",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Tchlb, Iialo!",
+        "output": "Hello, World!",
+        "key": "OCEANOGRAPHYWHAT",
+        "caseless": true,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "TCHLB, IIALO!",
+        "output": "HELLOWORLD",
+        "key": "OCEANOGRAPHYWHAT",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "HELLO, WORLD!",
+        "key": "A",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "HELLOWORLD",
+        "key": "A",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "ROVVY, GYBVN!",
+        "output": "HELLO, WORLD!",
+        "key": "Q",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "ROVVY, GYBVN!",
+        "output": "HELLOWORLD",
+        "key": "Q",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "XEYFO, FADBD!",
+        "output": "HELLO, WORLD!",
+        "key": "KANGAROO",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "XEYFO, FADBD!",
+        "output": "HELLOWORLD",
+        "key": "KANGAROO",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Xeyfo, Fadbd!",
+        "output": "HelloWorld",
+        "key": "KANGAROO",
+        "caseless": true,
+        "strict": true
+    }
+]

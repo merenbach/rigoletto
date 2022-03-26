@@ -1,0 +1,98 @@
+[
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLO WORLD hello world",
+        "keyword": "",
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLOWORLD",
+        "keyword": "",
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLO WORLD hello world",
+        "keyword": "",
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLOWORLDhelloworld",
+        "keyword": "",
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLO WORLD hello world",
+        "keyword": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLOWORLD",
+        "keyword": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLO WORLD hello world",
+        "keyword": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLOWORLDhelloworld",
+        "keyword": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "AOGGJ UJNGW aoggj ujngw",
+        "output": "HELLO WORLD aoggj ujngw",
+        "keyword": "KEYWORD",
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "AOGGJ UJNGW aoggj ujngw",
+        "output": "HELLOWORLD",
+        "keyword": "KEYWORD",
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "AOGGJ UJNGW aoggj ujngw",
+        "output": "HELLO WORLD hello world",
+        "keyword": "KEYWORD",
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "AOGGJ UJNGW aoggj ujngw",
+        "output": "HELLOWORLDhelloworld",
+        "keyword": "KEYWORD",
+        "strict": true
+    }
+]

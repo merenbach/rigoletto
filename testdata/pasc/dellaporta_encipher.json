@@ -1,0 +1,66 @@
+[
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "OSNYI, CLJYX!",
+        "key": "OCEANOGRAPHYWHAT",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Hello, World!",
+        "output": "Osnyi, Cljyx!",
+        "key": "OCEANOGRAPHYWHAT",
+        "caseless": true,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "OSNYICLJYX",
+        "key": "OCEANOGRAPHYWHAT",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "PZTTG, BGJTY!",
+        "key": "Q",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "PZTTGBGJTY",
+        "key": "Q",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "ZRROB, BHKQQ!",
+        "key": "KANGAROO",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HELLO, WORLD!",
+        "output": "ZRROBBHKQQ",
+        "key": "KANGAROO",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Hello, World!",
+        "output": "ZrrobBhkqq",
+        "key": "KANGAROO",
+        "caseless": true,
+        "strict": true
+    }
+]

@@ -1,0 +1,51 @@
+[
+    {
+        "input": "EVLNACDTESEAROFODEECWIREE",
+        "output": "WEAREDISCOVEREDFLEEATONCE",
+        "myszkowski": false,
+        "nulls": "",
+        "key": "632415"
+    },
+    {
+        "input": "EVLNACDTESEAROFODEECWIREE",
+        "output": "WEAREDISCOVEREDFLEEATONCE",
+        "myszkowski": false,
+        "nulls": "",
+        "key": "ZEBRAS"
+    },
+    {
+        "input": "ROFOACDTESEADEECWIREEEVLN",
+        "output": "WEAREDISCOVEREDFLEEATONCE",
+        "myszkowski": false,
+        "nulls": "",
+        "key": "532164"
+    },
+    {
+        "input": "ROFOACDTEDSEEEACWEIVRLENE",
+        "output": "WEAREDISCOVEREDFLEEATONCE",
+        "myszkowski": true,
+        "nulls": "",
+        "key": "432143"
+    },
+    {
+        "input": "ROFOACDTESEADEECWIREEEVLN",
+        "output": "WEAREDISCOVEREDFLEEATONCE",
+        "myszkowski": false,
+        "nulls": "",
+        "key": "TOMATO"
+    },
+    {
+        "input": "ROFOACDTEDSEEEACWEIVRLENE",
+        "output": "WEAREDISCOVEREDFLEEATONCE",
+        "myszkowski": true,
+        "nulls": "",
+        "key": "TOMATO"
+    },
+    {
+        "input": "EVLNEACDTKESEAQROFOJDEECUWIREE",
+        "output": "WEAREDISCOVEREDFLEEATONCE",
+        "myszkowski": false,
+        "nulls": "QKJEU",
+        "key": "ZEBRAS"
+    }
+]

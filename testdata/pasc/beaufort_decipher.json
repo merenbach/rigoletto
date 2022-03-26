@@ -1,0 +1,66 @@
+[
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HYTPZ, SSAPM!",
+        "output": "HELLO, WORLD!",
+        "key": "OCEANOGRAPHYWHAT",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Hytpz, Ssapm!",
+        "output": "Hello, World!",
+        "key": "OCEANOGRAPHYWHAT",
+        "caseless": true,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "HYTPZ, SSAPM!",
+        "output": "HELLOWORLD",
+        "key": "OCEANOGRAPHYWHAT",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "JMFFC, UCZFN!",
+        "output": "HELLO, WORLD!",
+        "key": "Q",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "JMFFC, UCZFN!",
+        "output": "HELLOWORLD",
+        "key": "Q",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "DWCVM, VAXZX!",
+        "output": "HELLO, WORLD!",
+        "key": "KANGAROO",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "DWCVM, VAXZX!",
+        "output": "HELLOWORLD",
+        "key": "KANGAROO",
+        "caseless": false,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "Dwcvm, Vaxzx!",
+        "output": "HelloWorld",
+        "key": "KANGAROO",
+        "caseless": true,
+        "strict": true
+    }
+]

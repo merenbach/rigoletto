@@ -1,0 +1,16 @@
+[package]
+name = "pasc"
+version = "0.1.0"
+authors = ["Andrew Merenbach <andrew@merenbach.com>"]
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+alphabet = { path = "../alphabet" }
+cipher = { path = "../cipher" }
+lfg = { path = "../lfg" }
+masc = { path = "../masc" }
+transposition = { path = "../transposition" }
+derive_builder = "0.10.2"
+num = "0.3"

@@ -1,0 +1,32 @@
+[
+    {
+        "input": "WECRLTEERDSOEEFEAOCAIVDEN",
+        "output": "WEAREDISCOVEREDFLEEATONCE",
+        "rows": 3
+    },
+    {
+        "input": "IA_EZS_ELYLK_UZERLIPL",
+        "output": "I_REALLY_LIKE_PUZZLES",
+        "rows": 3
+    },
+    {
+        "input": "MEMTNGTXETEOIHQZ",
+        "output": "MEETMETONIGHTQXZ",
+        "rows": 2
+    },
+    {
+        "input": "MMNTETEOIHQZETGX",
+        "output": "MEETMETONIGHTQXZ",
+        "rows": 3
+    },
+    {
+        "input": "AALUHNHSEDFYMNAGIGIHAOFZ",
+        "output": "AMANLAUGHINGHISHEADOFFYZ",
+        "rows": 2
+    },
+    {
+        "input": "HELLO, WORLD!",
+        "output": "HELLO, WORLD!",
+        "rows": 1
+    }
+]

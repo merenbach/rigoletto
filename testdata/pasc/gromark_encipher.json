@@ -1,0 +1,29 @@
+[
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "THEREAREUPTOTENSUBSTITUTESPERLETTER",
+        "output": "NFYCKBTIJCNWZYCACJNAYNLQPWWSTWPJQFL",
+        "keyword": "ENIGMA",
+        "primer": "23452",
+        "caseless": false,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "ThereAreUpToTenSubstitutesPerLetter",
+        "output": "NfyckBtiJcNwZycAcjnaynlqpwWstWpjqfl",
+        "keyword": "ENIGMA",
+        "primer": "23452",
+        "caseless": true,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "input": "ONLYTWOTHINGSAREINFINITETHEUNIVERSEANDHUMANSTUPIDITYANDIMNOTSUREABOUTTHEFORMER",
+        "output": "OHRERPHTMNUQDPUYQTGQHABASQXPTHPYSIXJUFVKNGNDRRIOMAEJGZKHCBNDBIWLDGVWDDVLXCSCZS",
+        "keyword": "GRONSFELD",
+        "primer": "32941",
+        "caseless": false,
+        "strict": false
+    }
+]

@@ -1,0 +1,130 @@
+[
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLO WORLD hello world",
+        "shift": 0,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLOWORLD",
+        "shift": 0,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLO WORLD hello world",
+        "shift": 0,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLOWORLDhelloworld",
+        "shift": 0,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLO WORLD hello world",
+        "shift": 26,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLOWORLD",
+        "shift": 26,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLO WORLD hello world",
+        "shift": 26,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "HELLO WORLD hello world",
+        "output": "HELLOWORLDhelloworld",
+        "shift": 26,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "KHOOR ZRUOG khoor zruog",
+        "output": "HELLO WORLD khoor zruog",
+        "shift": 3,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": false,
+        "input": "KHOOR ZRUOG khoor zruog",
+        "output": "HELLOWORLD",
+        "shift": 3,
+        "strict": true
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "KHOOR ZRUOG khoor zruog",
+        "output": "HELLO WORLD hello world",
+        "shift": 3,
+        "strict": false
+    },
+    {
+        "alphabet": "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "caseless": true,
+        "input": "KHOOR ZRUOG khoor zruog",
+        "output": "HELLOWORLDhelloworld",
+        "shift": 3,
+        "strict": true
+    },
+    {
+        "alphabet": "0123456789",
+        "caseless": false,
+        "input": "A45678A",
+        "output": "A12345A",
+        "shift": 3,
+        "strict": false
+    },
+    {
+        "alphabet": "0123456789",
+        "caseless": false,
+        "input": "A45678A",
+        "output": "12345",
+        "shift": 3,
+        "strict": true
+    },
+    {
+        "alphabet": "0123456789",
+        "caseless": true,
+        "input": "A45678A",
+        "output": "A12345A",
+        "shift": 3,
+        "strict": false
+    },
+    {
+        "alphabet": "0123456789",
+        "caseless": true,
+        "input": "A45678A",
+        "output": "12345",
+        "shift": 3,
+        "strict": true
+    }
+]
