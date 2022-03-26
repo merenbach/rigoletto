@@ -261,7 +261,7 @@ impl<T: Atom> SubstitutionCipher<T> {
 }
 
 impl<T: Atom> Cipher<T> for SubstitutionCipher<T> {
-    /// Encipher a string.
+    /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         xs.iter()
             .filter_map(|&c| {
@@ -276,7 +276,7 @@ impl<T: Atom> Cipher<T> for SubstitutionCipher<T> {
             .collect()
     }
 
-    /// Decipher a string.
+    /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         xs.iter()
             .filter_map(|&c| {

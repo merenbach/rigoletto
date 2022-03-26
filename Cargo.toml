@@ -10,6 +10,7 @@ version = "0.1.0"
 members = [
   "alphabet",
   "cipher",
+  "cipher2",
   "dsc",
   "lcg",
   "lfg",
@@ -23,6 +24,7 @@ members = [
 [dependencies]
 alphabet = {path = "alphabet"}
 cipher = {path = "cipher"}
+cipher2 = {path = "cipher2"}
 clap = {version = "3.1", features = ["derive"]}
 derive_builder = "0.10"
 dsc = {path = "dsc"}

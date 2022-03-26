@@ -123,7 +123,7 @@ impl<T: Atom> ColumnarTranspositionCipher<T> {
     }
 }
 
-impl<T: Atom + std::fmt::Debug> Cipher<T> for ColumnarTranspositionCipher<T> {
+impl<T: Atom> Cipher<T> for ColumnarTranspositionCipher<T> {
     /// Encipher a message.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let ys: Vec<_> = xs.iter().chain(self.nulls.iter()).copied().collect();
