@@ -1,4 +1,5 @@
-use cipher::Cipher;
+use crate::Cipher;
+use cipher::Cipher as _;
 use derive_builder::Builder;
 use masc::tableau::Atom;
 use masc::SubstitutionCipherBuilder;
@@ -83,7 +84,7 @@ pub struct Decimation<T: Atom> {
     strict: bool,
 }
 
-impl<T: Atom> Cipher<T> for Decimation<T> {
+impl<T: Atom> Cipher<T, T> for Decimation<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let c = SubstitutionCipherBuilder::default()

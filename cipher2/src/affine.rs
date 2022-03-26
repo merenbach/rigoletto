@@ -1,4 +1,5 @@
-use cipher::Cipher;
+use super::Cipher;
+use cipher::Cipher as _;
 use derive_builder::Builder;
 use masc::tableau::Atom;
 use masc::SubstitutionCipherBuilder;
@@ -91,7 +92,7 @@ pub struct Affine<T: Atom> {
     strict: bool,
 }
 
-impl<T: Atom> Cipher<T> for Affine<T> {
+impl<T: Atom> Cipher<T, T> for Affine<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let c = SubstitutionCipherBuilder::default()

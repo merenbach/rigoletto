@@ -1,4 +1,5 @@
-use cipher::Cipher;
+use crate::Cipher;
+use cipher::Cipher as _;
 use derive_builder::Builder;
 use masc::tableau::Atom;
 use masc::SubstitutionCipherBuilder;
@@ -73,7 +74,7 @@ pub struct Atbash<T: Atom> {
     strict: bool,
 }
 
-impl<T: Atom> Cipher<T> for Atbash<T> {
+impl<T: Atom> Cipher<T, T> for Atbash<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let c = SubstitutionCipherBuilder::default()

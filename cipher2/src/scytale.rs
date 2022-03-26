@@ -1,4 +1,5 @@
-use cipher::Cipher;
+use crate::Cipher;
+use cipher::Cipher as _;
 use derive_builder::Builder;
 use transposition::Atom;
 use transposition::ColumnarTranspositionCipherBuilder;
@@ -70,7 +71,7 @@ pub struct Scytale {
     turns: usize,
 }
 
-impl<T: Atom> Cipher<T> for Scytale {
+impl<T: Atom> Cipher<T, T> for Scytale {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let c = ColumnarTranspositionCipherBuilder::with_scytale(self.turns)

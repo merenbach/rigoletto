@@ -1,4 +1,5 @@
-use cipher::Cipher;
+use crate::Cipher;
+use cipher::Cipher as _;
 use derive_builder::Builder;
 use masc::tableau::Atom;
 use masc::SubstitutionCipherBuilder;
@@ -83,7 +84,7 @@ pub struct Keyword<T: Atom> {
     strict: bool,
 }
 
-impl<T: Atom> Cipher<T> for Keyword<T> {
+impl<T: Atom> Cipher<T, T> for Keyword<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let c = SubstitutionCipherBuilder::default()

@@ -23,15 +23,16 @@ pub mod scytale;
 // }
 
 // A Cipher implements a generic cipher.
-pub trait Cipher<T>
+pub trait Cipher<T, U>
 where
     T: Copy,
+    U: Copy,
 {
-    /// Encipher a string.
-    fn encipher(&self, xs: &[T]) -> Vec<T>;
+    /// Encipher a sequence.
+    fn encipher(&self, xs: &[T]) -> Vec<U>;
 
-    /// Decipher a string.
-    fn decipher(&self, xs: &[T]) -> Vec<T>;
+    /// Decipher a sequence.
+    fn decipher(&self, xs: &[U]) -> Vec<T>;
 }
 
 // TODO: strict mode/caseless mode can be during encipherment, but we can also use sentinels
