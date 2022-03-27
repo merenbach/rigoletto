@@ -45,41 +45,41 @@ impl<T: Atom> KeyQueue<T> {
 // TODO: validation that the key contains only characters from the key alphabet?
 // TODO: allow custom key alphabets for PASCs, but don't allow Gronsfeld without key alphabet being digits?
 
-pub fn caseless_keycheck(c: &char, keychars: &[char]) -> bool {
-    keychars.contains(&c.to_ascii_uppercase()) || keychars.contains(&c.to_ascii_lowercase())
-}
+// pub fn caseless_keycheck(c: &char, keychars: &[char]) -> bool {
+//     keychars.contains(&c.to_ascii_uppercase()) || keychars.contains(&c.to_ascii_lowercase())
+// }
 
-pub fn caseless_encipher(
-    c: &char,
-    k: &char,
-    m: &ReciprocalTable<char, char, char>,
-) -> Option<char> {
-    if let Some(o) = m.encode(&c, &k) {
-        Some(o)
-    } else if let Some(o) = m.encode(&c.to_ascii_uppercase(), k) {
-        Some(o.to_ascii_lowercase())
-    } else if let Some(o) = m.encode(&c.to_ascii_lowercase(), k) {
-        Some(o.to_ascii_uppercase())
-    } else {
-        None
-    }
-}
+// pub fn caseless_encipher(
+//     c: &char,
+//     k: &char,
+//     m: &ReciprocalTable<char, char, char>,
+// ) -> Option<char> {
+//     if let Some(o) = m.encode(&c, &k) {
+//         Some(o)
+//     } else if let Some(o) = m.encode(&c.to_ascii_uppercase(), k) {
+//         Some(o.to_ascii_lowercase())
+//     } else if let Some(o) = m.encode(&c.to_ascii_lowercase(), k) {
+//         Some(o.to_ascii_uppercase())
+//     } else {
+//         None
+//     }
+// }
 
-pub fn caseless_decipher(
-    c: &char,
-    k: &char,
-    m: &ReciprocalTable<char, char, char>,
-) -> Option<char> {
-    if let Some(o) = m.decode(&c, &k) {
-        Some(o)
-    } else if let Some(o) = m.decode(&c.to_ascii_uppercase(), k) {
-        Some(o.to_ascii_lowercase())
-    } else if let Some(o) = m.decode(&c.to_ascii_lowercase(), k) {
-        Some(o.to_ascii_uppercase())
-    } else {
-        None
-    }
-}
+// pub fn caseless_decipher(
+//     c: &char,
+//     k: &char,
+//     m: &ReciprocalTable<char, char, char>,
+// ) -> Option<char> {
+//     if let Some(o) = m.decode(&c, &k) {
+//         Some(o)
+//     } else if let Some(o) = m.decode(&c.to_ascii_uppercase(), k) {
+//         Some(o.to_ascii_lowercase())
+//     } else if let Some(o) = m.decode(&c.to_ascii_lowercase(), k) {
+//         Some(o.to_ascii_uppercase())
+//     } else {
+//         None
+//     }
+// }
 
 /// An Autoclave configuration.
 #[derive(Copy, Clone)]
@@ -391,18 +391,18 @@ impl SubstitutionCipherBuilder<char> {
         self.key(v.chars().collect())
     }
 
-    pub fn caseless(&mut self, v: bool) -> &mut Self {
-        if v {
-            self.key_lookup = Some(Some(caseless_keycheck));
-            self.enc_lookup = Some(Some(caseless_encipher));
-            self.dec_lookup = Some(Some(caseless_decipher));
-        } else {
-            self.key_lookup = Some(None);
-            self.enc_lookup = Some(None);
-            self.dec_lookup = Some(None);
-        }
-        self
-    }
+    // pub fn caseless(&mut self, v: bool) -> &mut Self {
+    //     if v {
+    //         self.key_lookup = Some(Some(caseless_keycheck));
+    //         self.enc_lookup = Some(Some(caseless_encipher));
+    //         self.dec_lookup = Some(Some(caseless_decipher));
+    //     } else {
+    //         self.key_lookup = Some(None);
+    //         self.enc_lookup = Some(None);
+    //         self.dec_lookup = Some(None);
+    //     }
+    //     self
+    // }
 }
 
 /// A Cipher implements a polyalphabetic substitution cipher.
@@ -436,7 +436,23 @@ pub struct SubstitutionCipher<T: Atom> {
     // ct2pt: HashMap<char, translation::Table>,
 }
 
-impl SubstitutionCipher<char> {
+impl<T: Atom> SubstitutionCipher<T> {
+    /// Encipher a single message atom.
+    fn encipher_one(&self, c: &T, k: &T, t: &ReciprocalTable<T, T, T>) -> Option<T> {
+        match self.enc_lookup {
+            Some(f) => (f)(c, k, t),
+            None => t.encode(&c, &k),
+        }
+    }
+
+    /// Decipher a single message atom.
+    fn decipher_one(&self, c: &T, k: &T, t: &ReciprocalTable<T, T, T>) -> Option<T> {
+        match self.dec_lookup {
+            Some(f) => (f)(c, k, t),
+            None => t.decode(&c, &k),
+        }
+    }
+
     // /// Printable version of this cipher.
     // pub fn printable(&self) -> String {
     //     format!("PT: {}\nCT: {}", self.config.alphabet, self.config.alphabet)
@@ -456,24 +472,24 @@ impl SubstitutionCipher<char> {
             .to_vec();
 
         let ct_alphabet: Vec<_> = match &self.cipher {
-            CipherKind::Gromark { keyword, .. } => {
-                // TODO: msglen doesn't _need_ to go here; can just take() here in future version
-                // NOTE: this is the key to pass to the Gromark cipher now
-                // NOTE: this is the RK in Gromark (running key)
+            // CipherKind::Gromark { keyword, .. } => {
+            //     // TODO: msglen doesn't _need_ to go here; can just take() here in future version
+            //     // NOTE: this is the key to pass to the Gromark cipher now
+            //     // NOTE: this is the RK in Gromark (running key)
 
-                // NOTE: this is the MA in Gromark (mixed alphabet)
-                let xs = masc::transform::keyword(&ct_alphabet_orig, &keyword);
-                ColumnarTranspositionCipherBuilder::with_generic_key(&keyword)
-                    .build()
-                    .unwrap()
-                    .encipher(&xs)
-            }
+            //     // NOTE: this is the MA in Gromark (mixed alphabet)
+            //     let xs = masc::transform::keyword(&ct_alphabet_orig, &keyword);
+            //     ColumnarTranspositionCipherBuilder::with_generic_key(&keyword)
+            //         .build()
+            //         .unwrap()
+            //         .encipher(&xs)
+            // } // TODO: reenable
             _ => ct_alphabet_orig,
         };
 
         let key_alphabet: Vec<_> = match &self.cipher {
-            CipherKind::Gromark { .. } => Alphabet::Digits.to_vec(),
-            CipherKind::Gronsfeld => Alphabet::Digits.to_vec(),
+            // CipherKind::Gromark { .. } => Alphabet::Digits.to_vec(), // TODO: reenable
+            // CipherKind::Gronsfeld => Alphabet::Digits.to_vec(), // TODO: reenable
             _ => self
                 .key_alphabet
                 .as_ref()
@@ -490,10 +506,10 @@ impl SubstitutionCipher<char> {
     }
 
     // TODO: msglen is currently ignored for non-Gromark. This is a kludge.
-    fn make_key(&self, msglen: usize) -> Vec<char> {
+    fn make_key(&self, msglen: usize) -> Vec<T> {
         let keychars = self.tableau.borrow().keyset();
         match &self.cipher {
-            CipherKind::Gromark { primer, .. } => makegromarkkey(&primer, msglen),
+            // CipherKind::Gromark { primer, .. } => makegromarkkey(&primer, msglen), // TODO: reenable
             CipherKind::Trithemius => self.pt_alphabet.to_vec(),
             _ => self
                 .key
@@ -508,7 +524,7 @@ impl SubstitutionCipher<char> {
     }
 
     /// Encipher a string.
-    pub fn encipher(&self, xs: &[char]) -> Vec<char> {
+    pub fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         let mut kq = KeyQueue::from(self.make_key(xs.len()));
 
@@ -518,9 +534,7 @@ impl SubstitutionCipher<char> {
             // can use .scan(0, |cursor, &c| if we're not going to return None
             .filter_map(|&c| {
                 let k = kq.get();
-                let raw_out = self.encipher_one(&c, &k, &tr).or(self
-                    .encipher_one(&c, &k.to_ascii_uppercase(), &tr)
-                    .or(self.encipher_one(&c, &k.to_ascii_lowercase(), &tr)));
+                let raw_out = self.encipher_one(&c, &k, &tr);
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
@@ -544,7 +558,7 @@ impl SubstitutionCipher<char> {
     }
 
     /// Decipher a string.
-    pub fn decipher(&self, xs: &[char]) -> Vec<char> {
+    pub fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         let mut kq = KeyQueue::from(self.make_key(xs.len()));
 
@@ -554,9 +568,7 @@ impl SubstitutionCipher<char> {
             // can use .scan(0, |cursor, &c| if we're not going to return None
             .filter_map(|&c| {
                 let k = kq.get();
-                let raw_out = self.decipher_one(&c, &k, &tr).or(self
-                    .decipher_one(&c, &k.to_ascii_uppercase(), &tr)
-                    .or(self.decipher_one(&c, &k.to_ascii_lowercase(), &tr)));
+                let raw_out = self.decipher_one(&c, &k, &tr);
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
@@ -577,23 +589,5 @@ impl SubstitutionCipher<char> {
                 }
             })
             .collect()
-    }
-}
-
-impl<T: Atom> SubstitutionCipher<T> {
-    /// Encipher a single message atom.
-    fn encipher_one(&self, c: &T, k: &T, t: &ReciprocalTable<T, T, T>) -> Option<T> {
-        match self.enc_lookup {
-            Some(f) => (f)(c, k, t),
-            None => t.encode(&c, &k),
-        }
-    }
-
-    /// Decipher a single message atom.
-    fn decipher_one(&self, c: &T, k: &T, t: &ReciprocalTable<T, T, T>) -> Option<T> {
-        match self.dec_lookup {
-            Some(f) => (f)(c, k, t),
-            None => t.decode(&c, &k),
-        }
     }
 }
