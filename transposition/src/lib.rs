@@ -1,6 +1,5 @@
 pub mod transform;
 
-use cipher::Cipher;
 use derive_builder::Builder;
 use std::cmp;
 use std::hash::Hash;
@@ -121,18 +120,16 @@ impl<T: Atom> ColumnarTranspositionCipher<T> {
             u.iter().cycle().take(count).copied().collect()
         }
     }
-}
 
-impl<T: Atom> Cipher<T> for ColumnarTranspositionCipher<T> {
     /// Encipher a message.
-    fn encipher(&self, xs: &[T]) -> Vec<T> {
+    pub fn encipher(&self, xs: &[T]) -> Vec<T> {
         let ys: Vec<_> = xs.iter().chain(self.nulls.iter()).copied().collect();
         let indices = self.process(ys.len());
         transform::transpose(&ys, &indices)
     }
 
     /// Decipher a message.
-    fn decipher(&self, xs: &[T]) -> Vec<T> {
+    pub fn decipher(&self, xs: &[T]) -> Vec<T> {
         let indices = self.process(xs.len());
         // TODO: this doesn't verify that the nulls are again present at the end
         transform::transpose(&xs, &argsort(&indices))

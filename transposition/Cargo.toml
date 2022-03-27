@@ -7,6 +7,5 @@ version = "0.1.0"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-cipher = {path = "../cipher"}
 std_ext = {path = "../std_ext"}
 derive_builder = "0.10"

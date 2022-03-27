@@ -10,8 +10,6 @@ edition = "2021"
 itertools = "0.10"
 num = "0.3"
 alphabet = { path = "../alphabet" }
-cipher = { path = "../cipher" }
 lcg = { path = "../lcg" }
-message = { path = "../message" }
 std_ext = { path = "../std_ext" }
 derive_builder = "0.10"

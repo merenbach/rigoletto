@@ -22,13 +22,13 @@ where
     T: Copy,
 {
     /// Encipher a message.
-    pub fn encipher(&mut self, c: &dyn Cipher<T>) -> &mut Self {
+    pub fn encipher(&mut self, c: &dyn Cipher<T, T>) -> &mut Self {
         self.0 = c.encipher(&self.0);
         self
     }
 
     /// Decipher a message.
-    pub fn decipher(&mut self, c: &dyn Cipher<T>) -> &mut Self {
+    pub fn decipher(&mut self, c: &dyn Cipher<T, T>) -> &mut Self {
         self.0 = c.decipher(&self.0);
         self
     }

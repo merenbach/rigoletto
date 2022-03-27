@@ -2,7 +2,6 @@ pub mod tableau;
 pub mod transform;
 
 use alphabet::Alphabet;
-use cipher::Cipher;
 use derive_builder::Builder;
 use std::cell::RefCell;
 use std::fmt;
@@ -258,11 +257,9 @@ impl<T: Atom> SubstitutionCipher<T> {
             None => self.tableau.borrow().decode(&c),
         }
     }
-}
 
-impl<T: Atom> Cipher<T> for SubstitutionCipher<T> {
     /// Encipher a sequence.
-    fn encipher(&self, xs: &[T]) -> Vec<T> {
+    pub fn encipher(&self, xs: &[T]) -> Vec<T> {
         xs.iter()
             .filter_map(|&c| {
                 self.encipher_one(&c).or({
@@ -277,7 +274,7 @@ impl<T: Atom> Cipher<T> for SubstitutionCipher<T> {
     }
 
     /// Decipher a sequence.
-    fn decipher(&self, xs: &[T]) -> Vec<T> {
+    pub fn decipher(&self, xs: &[T]) -> Vec<T> {
         xs.iter()
             .filter_map(|&c| {
                 self.decipher_one(&c).or({

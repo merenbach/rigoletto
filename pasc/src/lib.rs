@@ -527,7 +527,7 @@ impl<T: Atom> SubstitutionCipher<T> {
     }
 }
 
-impl Cipher<char> for SubstitutionCipher<char> {
+impl Cipher<char, char> for SubstitutionCipher<char> {
     /// Encipher a string.
     fn encipher(&self, xs: &[char]) -> Vec<char> {
         self.initialize();

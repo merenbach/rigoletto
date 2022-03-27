@@ -1,5 +1,4 @@
 use crate::Cipher;
-use cipher::Cipher as _;
 use derive_builder::Builder;
 use masc::tableau::Atom;
 use masc::SubstitutionCipherBuilder;
