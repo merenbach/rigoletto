@@ -1,5 +1,9 @@
-use cipher::Cipher;
+use crate::Cipher;
+use cipher::Cipher as _;
 use derive_builder::Builder;
+
+pub trait Atom: PartialEq + Copy + Default {}
+impl<T> Atom for T where T: PartialEq + Copy + Default {}
 
 #[cfg(test)]
 mod tests {
@@ -106,10 +110,7 @@ where
 
 #[derive(Builder, Default)]
 #[builder(default)]
-struct Chaocipher<T>
-where
-    T: Copy + Default,
-{
+struct Chaocipher<T: Atom, U: Atom> {
     #[builder(default = "0")]
     zenith: usize,
     #[builder(default = "13")]
@@ -118,13 +119,10 @@ where
     strict: bool,
 
     right: Vec<T>, // for finding plaintext letters on encipherment
-    left: Vec<T>,  // for finding ciphertext letters on decipherment
+    left: Vec<U>,  // for finding ciphertext letters on decipherment
 }
 
-impl<T> Cipher<T> for Chaocipher<T>
-where
-    T: Copy + Default + Eq,
-{
+impl<T: Atom> Cipher<T, T> for Chaocipher<T, T> {
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let mut left = self.left.to_vec();
         let mut right = self.right.to_vec();

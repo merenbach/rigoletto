@@ -2,6 +2,7 @@ pub mod affine;
 pub mod atbash;
 // pub mod beaufort;
 pub mod caesar;
+pub mod chaocipher;
 pub mod decimation;
 // pub mod della_porta;
 // pub mod gromark;
