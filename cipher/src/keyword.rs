@@ -21,17 +21,17 @@ mod tests {
     fn encipher_works() {
         let xs = &[
             TestCase {
-                keyword: [5, 3, 3].to_vec(),
-                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
-                input: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
-                output: [0, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 0].to_vec(),
+                keyword: vec![5, 3, 3],
+                pt_alphabet: vec![1, 2, 3, 4, 5],
+                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+                output: vec![0, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 0],
                 strict: false,
             },
             TestCase {
-                keyword: [5, 3, 3].to_vec(),
-                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
-                input: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
-                output: [5, 3, 1, 2, 4, 4, 2, 1, 3, 5].to_vec(),
+                keyword: vec![5, 3, 3],
+                pt_alphabet: vec![1, 2, 3, 4, 5],
+                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+                output: vec![5, 3, 1, 2, 4, 4, 2, 1, 3, 5],
                 strict: true,
             },
         ];
@@ -50,17 +50,17 @@ mod tests {
     fn decipher_works() {
         let xs = &[
             TestCase {
-                keyword: [5, 3, 3].to_vec(),
-                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
-                input: [0, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 0].to_vec(),
-                output: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
+                keyword: vec![5, 3, 3],
+                pt_alphabet: vec![1, 2, 3, 4, 5],
+                input: vec![0, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 0],
+                output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
                 strict: false,
             },
             TestCase {
-                keyword: [5, 3, 3].to_vec(),
-                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
-                input: [0, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 0].to_vec(),
-                output: [1, 2, 3, 4, 5, 5, 4, 3, 2, 1].to_vec(),
+                keyword: vec![5, 3, 3],
+                pt_alphabet: vec![1, 2, 3, 4, 5],
+                input: vec![0, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 0],
+                output: vec![1, 2, 3, 4, 5, 5, 4, 3, 2, 1],
                 strict: true,
             },
         ];

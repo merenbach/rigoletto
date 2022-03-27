@@ -20,17 +20,17 @@ mod tests {
     fn encipher_works() {
         let xs = &[
             TestCase {
-                ct_alphabet: [4, 5, 6, 7, 8].to_vec(),
-                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
-                input: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
-                output: [0, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 0].to_vec(),
+                ct_alphabet: vec![4, 5, 6, 7, 8],
+                pt_alphabet: vec![1, 2, 3, 4, 5],
+                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+                output: vec![0, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 0],
                 strict: false,
             },
             TestCase {
-                ct_alphabet: [4, 5, 6, 7, 8].to_vec(),
-                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
-                input: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
-                output: [4, 5, 6, 7, 8, 8, 7, 6, 5, 4].to_vec(),
+                ct_alphabet: vec![4, 5, 6, 7, 8],
+                pt_alphabet: vec![1, 2, 3, 4, 5],
+                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+                output: vec![4, 5, 6, 7, 8, 8, 7, 6, 5, 4],
                 strict: true,
             },
         ];
@@ -49,17 +49,17 @@ mod tests {
     fn decipher_works() {
         let xs = &[
             TestCase {
-                ct_alphabet: [4, 5, 6, 7, 8].to_vec(),
-                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
-                input: [0, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 0].to_vec(),
-                output: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
+                ct_alphabet: vec![4, 5, 6, 7, 8],
+                pt_alphabet: vec![1, 2, 3, 4, 5],
+                input: vec![0, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 0],
+                output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
                 strict: false,
             },
             TestCase {
-                ct_alphabet: [4, 5, 6, 7, 8].to_vec(),
-                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
-                input: [0, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 0].to_vec(),
-                output: [1, 2, 3, 4, 5, 5, 4, 3, 2, 1].to_vec(),
+                ct_alphabet: vec![4, 5, 6, 7, 8],
+                pt_alphabet: vec![1, 2, 3, 4, 5],
+                input: vec![0, 4, 5, 6, 7, 8, 8, 7, 6, 5, 4, 0],
+                output: vec![1, 2, 3, 4, 5, 5, 4, 3, 2, 1],
                 strict: true,
             },
         ];
