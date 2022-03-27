@@ -1,18 +1,17 @@
 use crate::Cipher;
 use derive_builder::Builder;
-use masc::tableau::Atom;
 use pasc::SubstitutionCipherBuilder;
 
 #[cfg(test)]
 mod tests {
     use super::*;
 
-    struct TestCase<T: Atom> {
-        key: Vec<T>,
+    struct TestCase {
+        key: Vec<char>,
 
-        pt_alphabet: Vec<T>,
-        input: Vec<T>,
-        output: Vec<T>,
+        pt_alphabet: Vec<char>,
+        input: Vec<char>,
+        output: Vec<char>,
         strict: bool,
     }
 
@@ -76,16 +75,16 @@ mod tests {
 }
 
 #[derive(Default, Builder)]
-pub struct VariantBeaufort<T: Atom> {
-    key: Vec<T>,
+pub struct VariantBeaufort {
+    key: Vec<char>,
 
-    pt_alphabet: Vec<T>,
+    pt_alphabet: Vec<char>,
     strict: bool,
 }
 
-impl<T: Atom> Cipher<T, T> for VariantBeaufort<T> {
+impl Cipher<char, char> for VariantBeaufort {
     /// Encipher a sequence.
-    fn encipher(&self, xs: &[T]) -> Vec<T> {
+    fn encipher(&self, xs: &[char]) -> Vec<char> {
         let c = SubstitutionCipherBuilder::default()
             .with_variant_beaufort()
             .key(self.key.to_vec())
@@ -97,7 +96,7 @@ impl<T: Atom> Cipher<T, T> for VariantBeaufort<T> {
     }
 
     /// Decipher a sequence.
-    fn decipher(&self, xs: &[T]) -> Vec<T> {
+    fn decipher(&self, xs: &[char]) -> Vec<char> {
         let c = SubstitutionCipherBuilder::default()
             .with_variant_beaufort()
             .key(self.key.to_vec())
