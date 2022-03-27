@@ -23,19 +23,19 @@ mod tests {
                 key: "SECRET".chars().collect(),
                 pt_alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect(),
                 input: "HELLO WORLD hello world".chars().collect(),
-                output: "LARGQ XENRO hello world".chars().collect(),
+                output: "ZINCS PGVNU hello world".chars().collect(),
                 strict: false,
             },
             TestCase {
                 key: "SECRET".chars().collect(),
                 pt_alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect(),
                 input: "HELLO WORLD hello world".chars().collect(),
-                output: "LARGQXENRO".chars().collect(),
+                output: "ZINCSPGVNU".chars().collect(),
                 strict: true,
             },
         ];
         for x in xs {
-            let c = BeaufortBuilder::default()
+            let c = VigenereBuilder::default()
                 .key(x.key.to_vec())
                 .pt_alphabet(x.pt_alphabet.to_vec())
                 .strict(x.strict)
@@ -51,20 +51,20 @@ mod tests {
             TestCase {
                 key: "SECRET".chars().collect(),
                 pt_alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect(),
-                input: "LARGQ XENRO largq xenro".chars().collect(),
-                output: "HELLO WORLD largq xenro".chars().collect(),
+                input: "ZINCS PGVNU zincs pgvnu".chars().collect(),
+                output: "HELLO WORLD zincs pgvnu".chars().collect(),
                 strict: false,
             },
             TestCase {
                 key: "SECRET".chars().collect(),
                 pt_alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect(),
-                input: "LARGQ XENRO largq xenro".chars().collect(),
+                input: "ZINCS PGVNU zincs pgvnu".chars().collect(),
                 output: "HELLOWORLD".chars().collect(),
                 strict: true,
             },
         ];
         for x in xs {
-            let c = BeaufortBuilder::default()
+            let c = VigenereBuilder::default()
                 .key(x.key.to_vec())
                 .pt_alphabet(x.pt_alphabet.to_vec())
                 .strict(x.strict)
@@ -76,18 +76,18 @@ mod tests {
 }
 
 #[derive(Default, Builder)]
-pub struct Beaufort<T: Atom> {
+pub struct Vigenere<T: Atom> {
     key: Vec<T>,
 
     pt_alphabet: Vec<T>,
     strict: bool,
 }
 
-impl<T: Atom> Cipher<T, T> for Beaufort<T> {
+impl<T: Atom> Cipher<T, T> for Vigenere<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let c = SubstitutionCipherBuilder::default()
-            .with_beaufort()
+            .with_vigenere()
             .key(self.key.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
             .strict(self.strict)
@@ -99,7 +99,7 @@ impl<T: Atom> Cipher<T, T> for Beaufort<T> {
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         let c = SubstitutionCipherBuilder::default()
-            .with_beaufort()
+            .with_vigenere()
             .key(self.key.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
             .strict(self.strict)

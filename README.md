@@ -4,6 +4,9 @@ Rust-based classical cryptography framework
 
 ## TODO
 
+- Major cipher refactor:
+  1. Get everything into Cipher package.
+  2. Improve algorithms. Maybe allow only chars for now, but provide underlying ciphers that accept more (e.g., simple substitution cipher, tabula recta, etc.).
 - Improve transposition nulls and allow cycling of nulls (i.e., provide only "X")
 - LCG tests ought to be expanded
 - Figure out ergonomics of None vs Dummy cipherkind and default encipherment modes to return (dummy? use specified CT? vigenere?)
