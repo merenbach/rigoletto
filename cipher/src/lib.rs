@@ -2,18 +2,21 @@ pub mod affine;
 pub mod atbash;
 // pub mod beaufort;
 pub mod caesar;
+// pub mod columnar;
 pub mod dummy;
 pub mod chaocipher;
 pub mod decimation;
 // pub mod della_porta;
 // pub mod gromark;
 // pub mod gronsfeld;
+// pub mod hill;
 pub mod keyword;
 // pub mod variant_beaufort;
 // pub mod vigenere;
 pub mod rail_fence;
 pub mod scytale;
 pub mod simple;
+// pub mod vic;
 
 // use std::fmt;
 

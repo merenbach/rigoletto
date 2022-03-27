@@ -250,16 +250,16 @@ impl<T: Atom> ColumnarTranspositionCipher<T> {
 //     }
 // }
 
-pub fn rail_fence<T: Atom>(rows: usize) -> ColumnarTranspositionCipher<T> {
-    ColumnarTranspositionCipherBuilder::with_rail_fence(rows)
-        .myszkowski(true)
-        .build()
-        .unwrap()
-}
+// pub fn rail_fence<T: Atom>(rows: usize) -> ColumnarTranspositionCipher<T> {
+//     ColumnarTranspositionCipherBuilder::with_rail_fence(rows)
+//         .myszkowski(true)
+//         .build()
+//         .unwrap()
+// }
 
-pub fn scytale<T: Atom>(turns: usize) -> ColumnarTranspositionCipher<T> {
-    ColumnarTranspositionCipherBuilder::with_scytale(turns)
-        .myszkowski(false)
-        .build()
-        .unwrap()
-}
+// pub fn scytale<T: Atom>(turns: usize) -> ColumnarTranspositionCipher<T> {
+//     ColumnarTranspositionCipherBuilder::with_scytale(turns)
+//         .myszkowski(false)
+//         .build()
+//         .unwrap()
+// }
