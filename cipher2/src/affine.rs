@@ -1,8 +1,8 @@
 use super::Cipher;
-use cipher::Cipher as _;
+use crate::simple;
 use derive_builder::Builder;
 use masc::tableau::Atom;
-use masc::SubstitutionCipherBuilder;
+use masc::transform;
 
 #[cfg(test)]
 mod tests {
@@ -12,7 +12,7 @@ mod tests {
         slope: usize,
         intercept: usize,
 
-        charset: Vec<T>,
+        pt_alphabet: Vec<T>,
         input: Vec<T>,
         output: Vec<T>,
         strict: bool,
@@ -24,7 +24,7 @@ mod tests {
             TestCase {
                 slope: 7,
                 intercept: 3,
-                charset: [1, 2, 3, 4, 5].to_vec(),
+                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
                 input: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
                 output: [0, 4, 1, 3, 5, 2, 2, 5, 3, 1, 4, 0].to_vec(),
                 strict: false,
@@ -32,7 +32,7 @@ mod tests {
             TestCase {
                 slope: 7,
                 intercept: 3,
-                charset: [1, 2, 3, 4, 5].to_vec(),
+                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
                 input: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
                 output: [4, 1, 3, 5, 2, 2, 5, 3, 1, 4].to_vec(),
                 strict: true,
@@ -40,10 +40,10 @@ mod tests {
         ];
         for x in xs {
             let c = AffineBuilder::default()
-                .charset(x.charset.to_vec())
-                .strict(x.strict)
+                .pt_alphabet(x.pt_alphabet.to_vec())
                 .slope(x.slope)
                 .intercept(x.intercept)
+                .strict(x.strict)
                 .build()
                 .unwrap();
             assert_eq!(x.output, c.encipher(&x.input));
@@ -56,7 +56,7 @@ mod tests {
             TestCase {
                 slope: 7,
                 intercept: 3,
-                charset: [1, 2, 3, 4, 5].to_vec(),
+                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
                 input: [0, 4, 1, 3, 5, 2, 2, 5, 3, 1, 4, 0].to_vec(),
                 output: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
                 strict: false,
@@ -64,7 +64,7 @@ mod tests {
             TestCase {
                 slope: 7,
                 intercept: 3,
-                charset: [1, 2, 3, 4, 5].to_vec(),
+                pt_alphabet: [1, 2, 3, 4, 5].to_vec(),
                 input: [0, 4, 1, 3, 5, 2, 2, 5, 3, 1, 4, 0].to_vec(),
                 output: [1, 2, 3, 4, 5, 5, 4, 3, 2, 1].to_vec(),
                 strict: true,
@@ -72,10 +72,10 @@ mod tests {
         ];
         for x in xs {
             let c = AffineBuilder::default()
-                .charset(x.charset.to_vec())
-                .strict(x.strict)
+                .pt_alphabet(x.pt_alphabet.to_vec())
                 .slope(x.slope)
                 .intercept(x.intercept)
+                .strict(x.strict)
                 .build()
                 .unwrap();
             assert_eq!(x.output, c.decipher(&x.input));
@@ -88,16 +88,17 @@ pub struct Affine<T: Atom> {
     slope: usize,
     intercept: usize,
 
-    charset: Vec<T>,
+    pt_alphabet: Vec<T>,
     strict: bool,
 }
 
 impl<T: Atom> Cipher<T, T> for Affine<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let c = SubstitutionCipherBuilder::default()
-            .with_affine(self.slope, self.intercept)
-            .pt_alphabet(self.charset.to_vec())
+        let ct_alphabet = transform::affine(&self.pt_alphabet, self.slope, self.intercept);
+        let c = simple::SimpleBuilder::default()
+            .pt_alphabet(self.pt_alphabet.to_vec())
+            .ct_alphabet(ct_alphabet)
             .strict(self.strict)
             .build()
             .unwrap();
@@ -106,9 +107,10 @@ impl<T: Atom> Cipher<T, T> for Affine<T> {
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let c = SubstitutionCipherBuilder::default()
-            .with_affine(self.slope, self.intercept)
-            .pt_alphabet(self.charset.to_vec())
+        let ct_alphabet = transform::affine(&self.pt_alphabet, self.slope, self.intercept);
+        let c = simple::SimpleBuilder::default()
+            .pt_alphabet(self.pt_alphabet.to_vec())
+            .ct_alphabet(ct_alphabet)
             .strict(self.strict)
             .build()
             .unwrap();

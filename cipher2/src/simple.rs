@@ -38,8 +38,8 @@ mod tests {
         for x in xs {
             let c = SimpleBuilder::default()
                 .pt_alphabet(x.pt_alphabet.to_vec())
-                .strict(x.strict)
                 .ct_alphabet(x.ct_alphabet.to_vec())
+                .strict(x.strict)
                 .build()
                 .unwrap();
             assert_eq!(x.output, c.encipher(&x.input));
@@ -67,8 +67,8 @@ mod tests {
         for x in xs {
             let c = SimpleBuilder::default()
                 .pt_alphabet(x.pt_alphabet.to_vec())
-                .strict(x.strict)
                 .ct_alphabet(x.ct_alphabet.to_vec())
+                .strict(x.strict)
                 .build()
                 .unwrap();
             assert_eq!(x.output, c.decipher(&x.input));
