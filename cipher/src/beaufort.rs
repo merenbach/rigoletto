@@ -20,17 +20,17 @@ mod tests {
     fn encipher_works() {
         let xs = &[
             TestCase {
-                key: vec![3, 4, 5, 5, 4],
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
-                output: vec![0, 4, 5, 1, 2, 3, 3, 2, 1, 5, 4, 0],
+                key: vec![9, 3, 4, 1, 1, 0, 9],
+                pt_alphabet: vec![0, 1, 2, 3, 4],
+                input: vec![9, 2, 1, 0, 2, 2, 2, 2, 1, 1, 1, 2, 4, 4, 9],
+                output: vec![9, 1, 3, 1, 4, 3, 1, 2, 0, 0, 4, 1, 0, 2, 9],
                 strict: false,
             },
             TestCase {
-                key: vec![3, 4, 5, 5, 4],
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
-                output: vec![4, 5, 1, 2, 3, 3, 2, 1, 5, 4],
+                key: vec![9, 3, 4, 1, 1, 0, 9],
+                pt_alphabet: vec![0, 1, 2, 3, 4],
+                input: vec![9, 2, 1, 0, 2, 2, 2, 2, 1, 1, 1, 2, 4, 4, 9],
+                output: vec![1, 3, 1, 4, 3, 1, 2, 0, 0, 4, 1, 0, 2],
                 strict: true,
             },
         ];
@@ -49,17 +49,17 @@ mod tests {
     fn decipher_works() {
         let xs = &[
             TestCase {
-                key: vec![3, 4, 5, 5, 4],
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 4, 5, 1, 2, 3, 3, 2, 1, 5, 4, 0],
-                output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+                key: vec![9, 3, 4, 1, 1, 0, 9],
+                pt_alphabet: vec![0, 1, 2, 3, 4],
+                input: vec![9, 1, 3, 1, 4, 3, 1, 2, 0, 0, 4, 1, 0, 2, 9],
+                output: vec![9, 2, 1, 0, 2, 2, 2, 2, 1, 1, 1, 2, 4, 4, 9],
                 strict: false,
             },
             TestCase {
-                key: vec![3, 4, 5, 5, 4],
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 4, 5, 1, 2, 3, 3, 2, 1, 5, 4, 0],
-                output: vec![1, 2, 3, 4, 5, 5, 4, 3, 2, 1],
+                key: vec![9, 3, 4, 1, 1, 0, 9],
+                pt_alphabet: vec![0, 1, 2, 3, 4],
+                input: vec![9, 1, 3, 1, 4, 3, 1, 2, 0, 0, 4, 1, 0, 2, 9],
+                output: vec![2, 1, 0, 2, 2, 2, 2, 1, 1, 1, 2, 4, 4],
                 strict: true,
             },
         ];
