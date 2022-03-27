@@ -8,7 +8,7 @@ pub mod decimation;
 pub mod dummy;
 // pub mod della_porta;
 // pub mod gromark;
-// pub mod gronsfeld;
+pub mod gronsfeld;
 // pub mod hill;
 pub mod keyword;
 pub mod rail_fence;
