@@ -406,21 +406,21 @@ fn run_app() {
     //     msg.decipher(&c);
     //     println!("dec = {}", msg);
     // }
-    {
-        let mut msg = Message::from("Hello world".to_string());
+    // {
+    //     let mut msg = Message::from("Hello world".to_string());
 
-        let c = pasc::SubstitutionCipherBuilder::standard()
-            .with_vigenere()
-            .str_key("OCEANOGRAPHY")
-            // .strict(true)
-            // .caseless(true)
-            .build()
-            .unwrap();
-        // let c = transposition::Columnar::new(&['T','T','T','T','O','O','O','O','M','M','M','M','A','A','A','A','T','T','T','T','O','O','O','O'], false);
-        // let c = transposition::Columnar::new(&['T','O','M','A','T','O','T','O','M','A','T','O','T','O','M','A','T','O','T','O','M','A','T','O','T'], false);
-        msg.encipher(&c);
-        println!("enc = {}", msg);
-        msg.decipher(&c);
-        println!("dec = {}", msg);
-    }
+    //     let c = pasc::SubstitutionCipherBuilder::standard()
+    //         .with_vigenere()
+    //         .str_key("OCEANOGRAPHY")
+    //         // .strict(true)
+    //         // .caseless(true)
+    //         .build()
+    //         .unwrap();
+    //     // let c = transposition::Columnar::new(&['T','T','T','T','O','O','O','O','M','M','M','M','A','A','A','A','T','T','T','T','O','O','O','O'], false);
+    //     // let c = transposition::Columnar::new(&['T','O','M','A','T','O','T','O','M','A','T','O','T','O','M','A','T','O','T','O','M','A','T','O','T'], false);
+    //     msg.encipher(&c);
+    //     println!("enc = {}", msg);
+    //     msg.decipher(&c);
+    //     println!("dec = {}", msg);
+    // }
 }

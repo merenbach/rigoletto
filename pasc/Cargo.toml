@@ -8,7 +8,6 @@ edition = "2021"
 
 [dependencies]
 alphabet = { path = "../alphabet" }
-cipher = { path = "../cipher" }
 lfg = { path = "../lfg" }
 masc = { path = "../masc" }
 transposition = { path = "../transposition" }

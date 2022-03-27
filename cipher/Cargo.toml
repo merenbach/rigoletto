@@ -9,5 +9,5 @@ version = "0.1.0"
 [dependencies]
 derive_builder = "0.10"
 masc = {path = "../masc"}
-# pasc = {path = "../pasc"}
+pasc = {path = "../pasc"}
 transposition = {path = "../transposition"}

@@ -2,7 +2,6 @@ mod tableau;
 mod transform;
 
 use alphabet::Alphabet;
-use cipher::Cipher;
 use derive_builder::Builder;
 use lfg::LFGBuilder;
 use masc;
@@ -507,29 +506,9 @@ impl SubstitutionCipher<char> {
                 .collect(),
         }
     }
-}
 
-impl<T: Atom> SubstitutionCipher<T> {
-    /// Encipher a single message atom.
-    fn encipher_one(&self, c: &T, k: &T, t: &ReciprocalTable<T, T, T>) -> Option<T> {
-        match self.enc_lookup {
-            Some(f) => (f)(c, k, t),
-            None => t.encode(&c, &k),
-        }
-    }
-
-    /// Decipher a single message atom.
-    fn decipher_one(&self, c: &T, k: &T, t: &ReciprocalTable<T, T, T>) -> Option<T> {
-        match self.dec_lookup {
-            Some(f) => (f)(c, k, t),
-            None => t.decode(&c, &k),
-        }
-    }
-}
-
-impl Cipher<char, char> for SubstitutionCipher<char> {
     /// Encipher a string.
-    fn encipher(&self, xs: &[char]) -> Vec<char> {
+    pub fn encipher(&self, xs: &[char]) -> Vec<char> {
         self.initialize();
         let mut kq = KeyQueue::from(self.make_key(xs.len()));
 
@@ -565,7 +544,7 @@ impl Cipher<char, char> for SubstitutionCipher<char> {
     }
 
     /// Decipher a string.
-    fn decipher(&self, xs: &[char]) -> Vec<char> {
+    pub fn decipher(&self, xs: &[char]) -> Vec<char> {
         self.initialize();
         let mut kq = KeyQueue::from(self.make_key(xs.len()));
 
@@ -598,5 +577,23 @@ impl Cipher<char, char> for SubstitutionCipher<char> {
                 }
             })
             .collect()
+    }
+}
+
+impl<T: Atom> SubstitutionCipher<T> {
+    /// Encipher a single message atom.
+    fn encipher_one(&self, c: &T, k: &T, t: &ReciprocalTable<T, T, T>) -> Option<T> {
+        match self.enc_lookup {
+            Some(f) => (f)(c, k, t),
+            None => t.encode(&c, &k),
+        }
+    }
+
+    /// Decipher a single message atom.
+    fn decipher_one(&self, c: &T, k: &T, t: &ReciprocalTable<T, T, T>) -> Option<T> {
+        match self.dec_lookup {
+            Some(f) => (f)(c, k, t),
+            None => t.decode(&c, &k),
+        }
     }
 }
