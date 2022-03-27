@@ -66,7 +66,7 @@ impl<K: Atom, T: Atom, U: Atom> ReciprocalTable<K, T, U> {
             zs.iter()
                 .copied()
                 .enumerate()
-                .map(|(i, z)| (z, Tableau::new(xs, ys, |y| (f)(y, i))))
+                .map(|(i, z)| (z, Tableau::new(xs, &(f)(ys, i))))
                 .collect(),
         )
     }

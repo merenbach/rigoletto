@@ -59,41 +59,6 @@ use tableau::{Atom, Tableau};
 //     SubtractFrom(usize),
 // }
 
-// A CipherKind is any base case or special case of a cipher that has side effects.
-#[derive(Clone)]
-enum CipherKind<T: Atom> {
-    None,
-
-    Affine { slope: usize, intercept: usize },
-    Atbash,
-    Dummy,
-    Caesar(usize),
-    Decimation(usize),
-    Keyword(Vec<T>),
-    ROT13,
-}
-
-impl<T: Atom> Default for CipherKind<T> {
-    fn default() -> Self {
-        Self::None
-    }
-}
-
-impl<T: Atom> CipherKind<T> {
-    pub fn transform(&self, xs: &[T]) -> Vec<T> {
-        match self {
-            CipherKind::Affine { slope, intercept } => transform::affine(xs, *slope, *intercept), // TODO: check for coprimality between xs.len() and slope
-            CipherKind::Atbash => transform::atbash(xs),
-            CipherKind::Caesar(shift) => transform::caesar(xs, *shift),
-            CipherKind::Decimation(multiplier) => transform::decimation(xs, *multiplier),
-            CipherKind::Dummy => transform::dummy(xs),
-            CipherKind::Keyword(keyword) => transform::keyword(xs, &keyword),
-            CipherKind::ROT13 => transform::caesar(xs, 13),
-            CipherKind::None => xs.to_vec(),
-        }
-    }
-}
-
 fn caseless_lookup<F>(c: &char, f: F) -> Option<char>
 where
     F: Fn(char) -> Option<char>,
@@ -121,8 +86,6 @@ fn caseless_decipher(c: &char, m: &Tableau<char, char>) -> Option<char> {
 #[derive(Default, Builder, Clone)]
 #[builder(default)]
 pub struct SubstitutionCipher<T: Atom> {
-    #[builder(private)]
-    cipher: CipherKind<T>,
     strict: bool,
 
     pt_alphabet: Vec<T>,
@@ -140,47 +103,6 @@ pub struct SubstitutionCipher<T: Atom> {
     tableau: RefCell<Tableau<T, T>>,
 }
 
-// TODO: add some notes here regarding why we don't make Caesar/decimation ctors call with_affine.
-//       In short, it's so that we'll have transformation primitives available for reuse in other ciphers.
-//       These primitives can be tested independently of cipher integration testing.
-//       As a design policy here, we'll have one CipherKind per possible initialization type.
-impl<T: Atom> SubstitutionCipherBuilder<T> {
-    // Prepare an affine cipher.
-    pub fn with_affine(&mut self, slope: usize, intercept: usize) -> &mut Self {
-        self.cipher(CipherKind::Affine { slope, intercept })
-    }
-
-    // Prepare an Atbash cipher.
-    pub fn with_atbash(&mut self) -> &mut Self {
-        self.cipher(CipherKind::Atbash)
-    }
-
-    // Prepare a Caesar cipher.
-    pub fn with_caesar(&mut self, shift: usize) -> &mut Self {
-        self.cipher(CipherKind::Caesar(shift))
-    }
-
-    // Prepare a decimation cipher.
-    pub fn with_decimation(&mut self, multiplier: usize) -> &mut Self {
-        self.cipher(CipherKind::Decimation(multiplier))
-    }
-
-    // Prepare a dummy (no-op) cipher.
-    pub fn with_dummy(&mut self) -> &mut Self {
-        self.cipher(CipherKind::Dummy)
-    }
-
-    // Prepare a keyword cipher.
-    pub fn with_keyword(&mut self, keyword: &[T]) -> &mut Self {
-        self.cipher(CipherKind::Keyword(keyword.to_vec()))
-    }
-
-    // Prepare a Rot13 cipher.
-    pub fn with_rot13(&mut self) -> &mut Self {
-        self.cipher(CipherKind::ROT13)
-    }
-}
-
 impl SubstitutionCipherBuilder<char> {
     pub fn standard() -> Self {
         Self {
@@ -196,12 +118,6 @@ impl SubstitutionCipherBuilder<char> {
     // pub fn with_ct_alphabet_str(&mut self, v: &str) -> &mut Self {
     //     self.ct_alphabet(v.chars().collect())
     // }
-
-    // Prepare a keyword cipher.
-    pub fn with_keyword_str(&mut self, keyword: &str) -> &mut Self {
-        let kw: Vec<_> = keyword.chars().collect();
-        self.with_keyword(&kw)
-    }
 
     pub fn caseless(&mut self, v: bool) -> &mut Self {
         if v {
@@ -230,7 +146,6 @@ impl<T: Atom> SubstitutionCipher<T> {
         *self.tableau.borrow_mut() = Tableau::new(
             &self.pt_alphabet,
             &self.ct_alphabet.as_ref().unwrap_or(&self.pt_alphabet),
-            |xs| self.cipher.transform(xs),
         );
     }
 

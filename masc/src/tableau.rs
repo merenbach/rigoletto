@@ -26,14 +26,10 @@ impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 pub struct Tableau<T: Atom, U: Atom>(HashMap<T, U>, HashMap<U, T>);
 
 impl<T: Atom, U: Atom> Tableau<T, U> {
-    pub fn new<F>(xs: &[T], ys: &[U], f: F) -> Self
-    where
-        F: Fn(&[U]) -> Vec<U>,
-    {
-        let zs = (f)(ys);
+    pub fn new(xs: &[T], ys: &[U]) -> Self {
         Self(
-            xs.iter().copied().zip(zs.iter().copied()).collect(),
-            zs.iter().copied().zip(xs.iter().copied()).collect(),
+            xs.iter().copied().zip(ys.iter().copied()).collect(),
+            ys.iter().copied().zip(xs.iter().copied()).collect(),
         )
     }
 
