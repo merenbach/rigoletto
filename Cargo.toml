@@ -11,7 +11,6 @@ members = [
   "alphabet",
   "cipher",
   "cipher2",
-  "dsc",
   "lcg",
   "lfg",
   "masc",
@@ -27,8 +26,7 @@ cipher = {path = "cipher"}
 cipher2 = {path = "cipher2"}
 clap = {version = "3.1", features = ["derive"]}
 derive_builder = "0.10"
-dsc = {path = "dsc"}
-itertools = "0.10.3"
+itertools = "0.10"
 lcg = {path = "lcg"}
 lfg = {path = "lfg"}
 masc = {path = "masc"}

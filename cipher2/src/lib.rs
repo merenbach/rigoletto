@@ -12,6 +12,7 @@ pub mod keyword;
 // pub mod vigenere;
 pub mod rail_fence;
 pub mod scytale;
+pub mod simple;
 
 // use std::fmt;
 
