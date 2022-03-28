@@ -77,9 +77,13 @@ mod tests {
 
 #[derive(Default, Builder)]
 pub struct Simple<T: Atom> {
+    #[builder(setter(into))]
+    pt_alphabet: Vec<T>,
+
+    #[builder(setter(into))]
     ct_alphabet: Vec<T>,
 
-    pt_alphabet: Vec<T>,
+    #[builder(default)]
     strict: bool,
 }
 

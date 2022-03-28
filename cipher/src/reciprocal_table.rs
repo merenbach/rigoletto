@@ -86,6 +86,8 @@ pub struct ReciprocalTable {
     key_alphabet: Option<Vec<char>>,
 
     pt_alphabet: Option<Vec<char>>,
+
+    #[builder(default)]
     strict: bool,
 }
 
