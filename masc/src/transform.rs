@@ -155,7 +155,7 @@ pub fn affine<T: Copy>(xs: &[T], slope: usize, intercept: usize) -> Vec<T> {
     match m {
         0..=1 => xs.to_vec(),
         _ => {
-            let lcg: Vec<_> = LCGBuilder::default()
+            let lcg: Vec<_> = LCGBuilder::default() // TODO: just use successors here?
                 .modulus(m)
                 .multiplier(1)
                 .increment(slope % m)

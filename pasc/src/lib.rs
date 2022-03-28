@@ -419,7 +419,7 @@ impl<T: Atom> SubstitutionCipher<T> {
         xs.iter()
             // can use .scan(0, |cursor, &c| if we're not going to return None
             .filter_map(|&c| {
-                let k = kq.get();
+                let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
                 let raw_out = self.encipher_one(&c, &k, &tr);
                 match raw_out {
                     Some(o) => {
@@ -453,7 +453,7 @@ impl<T: Atom> SubstitutionCipher<T> {
         xs.iter()
             // can use .scan(0, |cursor, &c| if we're not going to return None
             .filter_map(|&c| {
-                let k = kq.get();
+                let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
                 let raw_out = self.decipher_one(&c, &k, &tr);
                 match raw_out {
                     Some(o) => {

@@ -1,4 +1,5 @@
 use crate::Cipher;
+use alphabet::Alphabet;
 use derive_builder::Builder;
 use pasc::SubstitutionCipherBuilder;
 
@@ -84,21 +85,22 @@ pub struct ReciprocalTable {
     #[builder(default)]
     key_alphabet: Option<Vec<char>>,
 
-    pt_alphabet: Vec<char>,
+    pt_alphabet: Option<Vec<char>>,
     strict: bool,
 }
 
 impl Cipher<char, char> for ReciprocalTable {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[char]) -> Vec<char> {
-        let key_alphabet = self
-            .key_alphabet
+        let pt_alphabet = self
+            .pt_alphabet
             .as_ref()
-            .unwrap_or(&self.pt_alphabet)
+            .unwrap_or(&Alphabet::Latin.to_vec())
             .to_vec();
+        let key_alphabet = self.key_alphabet.as_ref().unwrap_or(&pt_alphabet).to_vec();
         let c = SubstitutionCipherBuilder::default()
             .key(self.key.to_vec())
-            .pt_alphabet(self.pt_alphabet.to_vec())
+            .pt_alphabet(pt_alphabet)
             .ct_alphabets(self.ct_alphabets.to_vec())
             .key_alphabet(key_alphabet)
             .strict(self.strict)
@@ -109,14 +111,15 @@ impl Cipher<char, char> for ReciprocalTable {
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[char]) -> Vec<char> {
-        let key_alphabet = self
-            .key_alphabet
+        let pt_alphabet = self
+            .pt_alphabet
             .as_ref()
-            .unwrap_or(&self.pt_alphabet)
+            .unwrap_or(&Alphabet::Latin.to_vec())
             .to_vec();
+        let key_alphabet = self.key_alphabet.as_ref().unwrap_or(&pt_alphabet).to_vec();
         let c = SubstitutionCipherBuilder::default()
             .key(self.key.to_vec())
-            .pt_alphabet(self.pt_alphabet.to_vec())
+            .pt_alphabet(pt_alphabet)
             .ct_alphabets(self.ct_alphabets.to_vec())
             .key_alphabet(key_alphabet)
             .strict(self.strict)

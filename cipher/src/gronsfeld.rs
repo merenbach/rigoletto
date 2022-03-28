@@ -94,7 +94,7 @@ impl Cipher<char, char> for Gronsfeld {
             .collect();
         let c = reciprocal_table::ReciprocalTableBuilder::default()
             .key(self.key.to_vec())
-            .pt_alphabet(self.pt_alphabet.to_vec())
+            .pt_alphabet(Some(self.pt_alphabet.to_vec()))
             .ct_alphabets(ct_alphabets)
             .key_alphabet(Some(key_alphabet))
             .strict(self.strict)
@@ -111,7 +111,7 @@ impl Cipher<char, char> for Gronsfeld {
             .collect();
         let c = reciprocal_table::ReciprocalTableBuilder::default()
             .key(self.key.to_vec())
-            .pt_alphabet(self.pt_alphabet.to_vec())
+            .pt_alphabet(Some(self.pt_alphabet.to_vec()))
             .ct_alphabets(ct_alphabets)
             .key_alphabet(Some(key_alphabet))
             .strict(self.strict)
