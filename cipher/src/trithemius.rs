@@ -1,3 +1,4 @@
+use crate::vigenere;
 use crate::Cipher;
 use derive_builder::Builder;
 use pasc::SubstitutionCipherBuilder;
@@ -75,8 +76,7 @@ pub struct Vigenere {
 impl Cipher<char, char> for Vigenere {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[char]) -> Vec<char> {
-        let c = SubstitutionCipherBuilder::default()
-            .with_vigenere()
+        let c = vigenere::VigenereBuilder::default()
             .key(self.pt_alphabet.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
             .strict(self.strict)
@@ -87,8 +87,7 @@ impl Cipher<char, char> for Vigenere {
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[char]) -> Vec<char> {
-        let c = SubstitutionCipherBuilder::default()
-            .with_vigenere()
+        let c = vigenere::VigenereBuilder::default()
             .key(self.pt_alphabet.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
             .strict(self.strict)

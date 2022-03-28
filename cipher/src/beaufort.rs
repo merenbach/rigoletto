@@ -1,5 +1,6 @@
 use crate::Cipher;
 use derive_builder::Builder;
+use pasc::transform;
 use pasc::SubstitutionCipherBuilder;
 
 #[cfg(test)]
@@ -85,10 +86,13 @@ pub struct Beaufort {
 impl Cipher<char, char> for Beaufort {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[char]) -> Vec<char> {
+        let ct_alphabets: Vec<_> = (0..self.pt_alphabet.len())
+            .map(|i| transform::beaufort(&self.pt_alphabet, i))
+            .collect();
         let c = SubstitutionCipherBuilder::default()
-            .with_beaufort()
             .key(self.key.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
+            .ct_alphabets(ct_alphabets)
             .strict(self.strict)
             .build()
             .unwrap();
@@ -97,10 +101,13 @@ impl Cipher<char, char> for Beaufort {
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[char]) -> Vec<char> {
+        let ct_alphabets: Vec<_> = (0..self.pt_alphabet.len())
+            .map(|i| transform::beaufort(&self.pt_alphabet, i))
+            .collect();
         let c = SubstitutionCipherBuilder::default()
-            .with_beaufort()
             .key(self.key.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
+            .ct_alphabets(ct_alphabets)
             .strict(self.strict)
             .build()
             .unwrap();

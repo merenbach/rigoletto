@@ -1,5 +1,5 @@
 mod tableau;
-mod transform;
+pub mod transform;
 
 use alphabet::Alphabet;
 use derive_builder::Builder;
@@ -45,41 +45,41 @@ impl<T: Atom> KeyQueue<T> {
 // TODO: validation that the key contains only characters from the key alphabet?
 // TODO: allow custom key alphabets for PASCs, but don't allow Gronsfeld without key alphabet being digits?
 
-// pub fn caseless_keycheck(c: &char, keychars: &[char]) -> bool {
-//     keychars.contains(&c.to_ascii_uppercase()) || keychars.contains(&c.to_ascii_lowercase())
-// }
+pub fn caseless_keycheck(c: &char, keychars: &[char]) -> bool {
+    keychars.contains(&c.to_ascii_uppercase()) || keychars.contains(&c.to_ascii_lowercase())
+}
 
-// pub fn caseless_encipher(
-//     c: &char,
-//     k: &char,
-//     m: &ReciprocalTable<char, char, char>,
-// ) -> Option<char> {
-//     if let Some(o) = m.encode(&c, &k) {
-//         Some(o)
-//     } else if let Some(o) = m.encode(&c.to_ascii_uppercase(), k) {
-//         Some(o.to_ascii_lowercase())
-//     } else if let Some(o) = m.encode(&c.to_ascii_lowercase(), k) {
-//         Some(o.to_ascii_uppercase())
-//     } else {
-//         None
-//     }
-// }
+pub fn caseless_encipher(
+    c: &char,
+    k: &char,
+    m: &ReciprocalTable<char, char, char>,
+) -> Option<char> {
+    if let Some(o) = m.encode(&c, &k) {
+        Some(o)
+    } else if let Some(o) = m.encode(&c.to_ascii_uppercase(), k) {
+        Some(o.to_ascii_lowercase())
+    } else if let Some(o) = m.encode(&c.to_ascii_lowercase(), k) {
+        Some(o.to_ascii_uppercase())
+    } else {
+        None
+    }
+}
 
-// pub fn caseless_decipher(
-//     c: &char,
-//     k: &char,
-//     m: &ReciprocalTable<char, char, char>,
-// ) -> Option<char> {
-//     if let Some(o) = m.decode(&c, &k) {
-//         Some(o)
-//     } else if let Some(o) = m.decode(&c.to_ascii_uppercase(), k) {
-//         Some(o.to_ascii_lowercase())
-//     } else if let Some(o) = m.decode(&c.to_ascii_lowercase(), k) {
-//         Some(o.to_ascii_uppercase())
-//     } else {
-//         None
-//     }
-// }
+pub fn caseless_decipher(
+    c: &char,
+    k: &char,
+    m: &ReciprocalTable<char, char, char>,
+) -> Option<char> {
+    if let Some(o) = m.decode(&c, &k) {
+        Some(o)
+    } else if let Some(o) = m.decode(&c.to_ascii_uppercase(), k) {
+        Some(o.to_ascii_lowercase())
+    } else if let Some(o) = m.decode(&c.to_ascii_lowercase(), k) {
+        Some(o.to_ascii_uppercase())
+    } else {
+        None
+    }
+}
 
 /// An Autoclave configuration.
 #[derive(Copy, Clone)]
@@ -301,76 +301,6 @@ pub fn makegromarkkey(primer: &[u32], msglen: usize) -> Vec<char> {
 //     // // NOTE: this is the GRO in Gromark (Gronsfeld)
 // }
 
-// A CipherKind is any base case or special case of a cipher that has side effects.
-#[derive(Clone)]
-enum CipherKind<T: Atom> {
-    None,
-
-    Beaufort,
-    DellaPorta,
-    Dummy,
-    Gromark { keyword: Vec<T>, primer: String },
-    Gronsfeld,
-    Trithemius,
-    VariantBeaufort,
-    Vigenere,
-}
-
-impl<T: Atom> Default for CipherKind<T> {
-    fn default() -> Self {
-        Self::None
-    }
-}
-
-impl<T: Atom> CipherKind<T> {
-    pub fn transform(&self) -> fn(&[T], usize) -> Vec<T> {
-        match self {
-            CipherKind::Dummy => transform::dummy,
-            CipherKind::Beaufort => transform::beaufort,
-            CipherKind::VariantBeaufort => transform::variant_beaufort,
-            CipherKind::DellaPorta => transform::della_porta,
-            _ => transform::vigenere,
-        }
-    }
-}
-
-impl<T: Atom> SubstitutionCipherBuilder<T> {
-    // Prepare a Beaufort cipher.
-    pub fn with_beaufort(&mut self) -> &mut Self {
-        self.cipher(CipherKind::Beaufort)
-    }
-
-    // Prepare a Della Porta cipher.
-    pub fn with_della_porta(&mut self) -> &mut Self {
-        self.cipher(CipherKind::DellaPorta)
-    }
-
-    // Prepare a dummy (no-op) cipher.
-    pub fn with_dummy(&mut self) -> &mut Self {
-        self.cipher(CipherKind::Dummy)
-    }
-
-    // Prepare a Gronsfeld cipher.
-    pub fn with_gronsfeld(&mut self) -> &mut Self {
-        self.cipher(CipherKind::Gronsfeld)
-    }
-
-    // Prepare a Trithemius cipher.
-    pub fn with_trithemius(&mut self) -> &mut Self {
-        self.cipher(CipherKind::Trithemius)
-    }
-
-    // Prepare a variant Beaufort cipher.
-    pub fn with_variant_beaufort(&mut self) -> &mut Self {
-        self.cipher(CipherKind::VariantBeaufort)
-    }
-
-    // Prepare a Vigenere cipher.
-    pub fn with_vigenere(&mut self) -> &mut Self {
-        self.cipher(CipherKind::Vigenere)
-    }
-}
-
 impl SubstitutionCipherBuilder<char> {
     pub fn standard() -> Self {
         Self {
@@ -379,42 +309,40 @@ impl SubstitutionCipherBuilder<char> {
         }
     }
 
-    // Prepare a Gromark cipher.
-    pub fn with_gromark(&mut self, keyword: &str, primer: &str) -> &mut Self {
-        self.cipher(CipherKind::Gromark {
-            keyword: keyword.chars().collect(),
-            primer: primer.to_string(),
-        })
-    }
-
-    pub fn str_key(&mut self, v: &str) -> &mut Self {
-        self.key(v.chars().collect())
-    }
-
-    // pub fn caseless(&mut self, v: bool) -> &mut Self {
-    //     if v {
-    //         self.key_lookup = Some(Some(caseless_keycheck));
-    //         self.enc_lookup = Some(Some(caseless_encipher));
-    //         self.dec_lookup = Some(Some(caseless_decipher));
-    //     } else {
-    //         self.key_lookup = Some(None);
-    //         self.enc_lookup = Some(None);
-    //         self.dec_lookup = Some(None);
-    //     }
-    //     self
+    // // Prepare a Gromark cipher.
+    // pub fn with_gromark(&mut self, keyword: &str, primer: &str) -> &mut Self {
+    //     self.cipher(CipherKind::Gromark {
+    //         keyword: keyword.chars().collect(),
+    //         primer: primer.to_string(),
+    //     })
     // }
+
+    // pub fn str_key(&mut self, v: &str) -> &mut Self {
+    //     self.key(v.chars().collect())
+    // }
+
+    pub fn caseless(&mut self, v: bool) -> &mut Self {
+        if v {
+            self.key_lookup = Some(Some(caseless_keycheck));
+            self.enc_lookup = Some(Some(caseless_encipher));
+            self.dec_lookup = Some(Some(caseless_decipher));
+        } else {
+            self.key_lookup = Some(None);
+            self.enc_lookup = Some(None);
+            self.dec_lookup = Some(None);
+        }
+        self
+    }
 }
 
 /// A Cipher implements a polyalphabetic substitution cipher.
 #[derive(Default, Builder, Clone)]
 #[builder(default)]
 pub struct SubstitutionCipher<T: Atom> {
-    #[builder(private)]
-    cipher: CipherKind<T>,
     key: Vec<T>,
 
     pt_alphabet: Vec<T>,
-    ct_alphabet: Option<Vec<T>>,
+    ct_alphabets: Vec<Vec<T>>,
     key_alphabet: Option<Vec<T>>,
 
     autoclave: AutoclaveKind,
@@ -465,62 +393,27 @@ impl<T: Atom> SubstitutionCipher<T> {
         }
         *self.ready.borrow_mut() = true;
 
-        let ct_alphabet_orig = self
-            .ct_alphabet
+        let key_alphabet: Vec<_> = self
+            .key_alphabet
             .as_ref()
             .unwrap_or(&self.pt_alphabet)
             .to_vec();
 
-        let ct_alphabet: Vec<_> = match &self.cipher {
-            // CipherKind::Gromark { keyword, .. } => {
-            //     // TODO: msglen doesn't _need_ to go here; can just take() here in future version
-            //     // NOTE: this is the key to pass to the Gromark cipher now
-            //     // NOTE: this is the RK in Gromark (running key)
-
-            //     // NOTE: this is the MA in Gromark (mixed alphabet)
-            //     let xs = masc::transform::keyword(&ct_alphabet_orig, &keyword);
-            //     ColumnarTranspositionCipherBuilder::with_generic_key(&keyword)
-            //         .build()
-            //         .unwrap()
-            //         .encipher(&xs)
-            // } // TODO: reenable
-            _ => ct_alphabet_orig,
-        };
-
-        let key_alphabet: Vec<_> = match &self.cipher {
-            // CipherKind::Gromark { .. } => Alphabet::Digits.to_vec(), // TODO: reenable
-            // CipherKind::Gronsfeld => Alphabet::Digits.to_vec(), // TODO: reenable
-            _ => self
-                .key_alphabet
-                .as_ref()
-                .unwrap_or(&self.pt_alphabet)
-                .to_vec(),
-        };
-
-        *self.tableau.borrow_mut() = ReciprocalTable::new(
-            &self.pt_alphabet,
-            &ct_alphabet,
-            &key_alphabet,
-            self.cipher.transform(),
-        );
+        *self.tableau.borrow_mut() =
+            ReciprocalTable::new(&self.pt_alphabet, &self.ct_alphabets, &key_alphabet);
     }
 
     // TODO: msglen is currently ignored for non-Gromark. This is a kludge.
     fn make_key(&self, msglen: usize) -> Vec<T> {
         let keychars = self.tableau.borrow().keyset();
-        match &self.cipher {
-            // CipherKind::Gromark { primer, .. } => makegromarkkey(&primer, msglen), // TODO: reenable
-            CipherKind::Trithemius => self.pt_alphabet.to_vec(),
-            _ => self
-                .key
-                .iter()
-                .filter(|c| match self.key_lookup {
-                    Some(f) => (f)(&c, &keychars),
-                    None => keychars.contains(&c),
-                })
-                .copied()
-                .collect(),
-        }
+        self.key
+            .iter()
+            .filter(|c| match self.key_lookup {
+                Some(f) => (f)(&c, &keychars),
+                None => keychars.contains(&c),
+            })
+            .copied()
+            .collect()
     }
 
     /// Encipher a string.

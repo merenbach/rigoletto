@@ -58,15 +58,12 @@ use std::collections::HashMap;
 pub struct ReciprocalTable<K: Atom, T: Atom, U: Atom>(HashMap<K, Tableau<T, U>>);
 
 impl<K: Atom, T: Atom, U: Atom> ReciprocalTable<K, T, U> {
-    pub fn new<F>(xs: &[T], ys: &[U], zs: &[K], f: F) -> Self
-    where
-        F: Fn(&[U], usize) -> Vec<U>,
-    {
+    pub fn new(xs: &[T], ys: &[Vec<U>], zs: &[K]) -> Self {
         Self(
             zs.iter()
                 .copied()
                 .enumerate()
-                .map(|(i, z)| (z, Tableau::new(xs, &(f)(ys, i))))
+                .map(|(i, z)| (z, Tableau::new(xs, &ys[i])))
                 .collect(),
         )
     }

@@ -2,6 +2,7 @@ use crate::gronsfeld;
 use crate::Cipher;
 use derive_builder::Builder;
 use pasc::makegromarkkey;
+use pasc::transform;
 use pasc::SubstitutionCipherBuilder;
 use transposition::ColumnarTranspositionCipherBuilder;
 
@@ -110,17 +111,20 @@ pub struct Gromark {
 impl Cipher<char, char> for Gromark {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[char]) -> Vec<char> {
+        let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
         let ys = masc::transform::keyword(&self.pt_alphabet, &self.keyword);
-        let ct_alphabet = ColumnarTranspositionCipherBuilder::with_generic_key(&self.keyword)
+        let ct_alphabet_base = ColumnarTranspositionCipherBuilder::with_generic_key(&self.keyword)
             .build()
             .unwrap()
             .encipher(&ys);
+        let ct_alphabets: Vec<_> = (0..self.pt_alphabet.len())
+            .map(|i| transform::vigenere(&ct_alphabet_base, i))
+            .collect();
         let key = makegromarkkey(&self.primer, xs.len());
         let c = SubstitutionCipherBuilder::default()
-            .with_vigenere()
             .pt_alphabet(self.pt_alphabet.to_vec())
-            .ct_alphabet(Some(ct_alphabet))
-            .key_alphabet(Some(KEY_ALPHABET.chars().collect()))
+            .ct_alphabets(ct_alphabets)
+            .key_alphabet(Some(key_alphabet))
             .key(key)
             .strict(self.strict)
             .build()
@@ -130,17 +134,20 @@ impl Cipher<char, char> for Gromark {
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[char]) -> Vec<char> {
+        let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
         let ys = masc::transform::keyword(&self.pt_alphabet, &self.keyword);
-        let ct_alphabet = ColumnarTranspositionCipherBuilder::with_generic_key(&self.keyword)
+        let ct_alphabet_base = ColumnarTranspositionCipherBuilder::with_generic_key(&self.keyword)
             .build()
             .unwrap()
             .encipher(&ys);
+        let ct_alphabets: Vec<_> = (0..self.pt_alphabet.len())
+            .map(|i| transform::vigenere(&ct_alphabet_base, i))
+            .collect();
         let key = makegromarkkey(&self.primer, xs.len());
         let c = SubstitutionCipherBuilder::default()
-            .with_vigenere()
             .pt_alphabet(self.pt_alphabet.to_vec())
-            .ct_alphabet(Some(ct_alphabet))
-            .key_alphabet(Some(KEY_ALPHABET.chars().collect()))
+            .ct_alphabets(ct_alphabets)
+            .key_alphabet(Some(key_alphabet))
             .key(key)
             .strict(self.strict)
             .build()

@@ -1,5 +1,6 @@
 use crate::Cipher;
 use derive_builder::Builder;
+use pasc::transform;
 use pasc::SubstitutionCipherBuilder;
 
 #[cfg(test)]
@@ -87,11 +88,15 @@ pub struct Gronsfeld {
 impl Cipher<char, char> for Gronsfeld {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[char]) -> Vec<char> {
+        let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
+        let ct_alphabets: Vec<_> = (0..key_alphabet.len())
+            .map(|i| transform::vigenere(&self.pt_alphabet, i))
+            .collect();
         let c = SubstitutionCipherBuilder::default()
-            .with_vigenere()
             .key(self.key.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
-            .key_alphabet(Some(KEY_ALPHABET.chars().collect()))
+            .ct_alphabets(ct_alphabets)
+            .key_alphabet(Some(key_alphabet))
             .strict(self.strict)
             .build()
             .unwrap();
@@ -100,11 +105,15 @@ impl Cipher<char, char> for Gronsfeld {
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[char]) -> Vec<char> {
+        let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
+        let ct_alphabets: Vec<_> = (0..key_alphabet.len())
+            .map(|i| transform::vigenere(&self.pt_alphabet, i))
+            .collect();
         let c = SubstitutionCipherBuilder::default()
-            .with_vigenere()
             .key(self.key.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
-            .key_alphabet(Some(KEY_ALPHABET.chars().collect()))
+            .ct_alphabets(ct_alphabets)
+            .key_alphabet(Some(key_alphabet))
             .strict(self.strict)
             .build()
             .unwrap();
