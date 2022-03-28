@@ -7,7 +7,7 @@ pub mod chaocipher;
 pub mod decimation;
 pub mod della_porta;
 pub mod dummy;
-// pub mod gromark;
+pub mod gromark;
 pub mod gronsfeld;
 // pub mod hill;
 pub mod homophonic;

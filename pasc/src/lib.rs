@@ -264,8 +264,8 @@ where
     primer.iter().copied().chain(g).take(count).collect()
 }
 
-fn makegromarkkey(k: &str, msglen: usize) -> Vec<char> {
-    let primer: Vec<_> = k.chars().filter_map(|c| c.to_digit(10)).collect();
+pub fn makegromarkkey(primer: &[u32], msglen: usize) -> Vec<char> {
+    // let primer: Vec<_> = k.chars().filter_map(|c| c.to_digit(10)).collect();
     chainadder(10, msglen, &primer)
         .iter()
         .filter_map(|&i| char::from_digit(i, 10))
