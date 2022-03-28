@@ -1,7 +1,7 @@
+use crate::reciprocal_table;
 use crate::Cipher;
 use derive_builder::Builder;
 use pasc::transform;
-use pasc::SubstitutionCipherBuilder;
 
 #[cfg(test)]
 mod tests {
@@ -92,11 +92,11 @@ impl Cipher<char, char> for Gronsfeld {
         let ct_alphabets: Vec<_> = (0..key_alphabet.len())
             .map(|i| transform::vigenere(&self.pt_alphabet, i))
             .collect();
-        let c = SubstitutionCipherBuilder::default()
+        let c = reciprocal_table::ReciprocalTableBuilder::default()
             .key(self.key.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
             .ct_alphabets(ct_alphabets)
-            .key_alphabet(Some(key_alphabet))
+            .key_alphabet(key_alphabet)
             .strict(self.strict)
             .build()
             .unwrap();
@@ -109,11 +109,11 @@ impl Cipher<char, char> for Gronsfeld {
         let ct_alphabets: Vec<_> = (0..key_alphabet.len())
             .map(|i| transform::vigenere(&self.pt_alphabet, i))
             .collect();
-        let c = SubstitutionCipherBuilder::default()
+        let c = reciprocal_table::ReciprocalTableBuilder::default()
             .key(self.key.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
             .ct_alphabets(ct_alphabets)
-            .key_alphabet(Some(key_alphabet))
+            .key_alphabet(key_alphabet)
             .strict(self.strict)
             .build()
             .unwrap();

@@ -1,7 +1,6 @@
 use crate::vigenere;
 use crate::Cipher;
 use derive_builder::Builder;
-use pasc::SubstitutionCipherBuilder;
 
 #[cfg(test)]
 mod tests {

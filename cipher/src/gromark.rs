@@ -1,9 +1,8 @@
-use crate::gronsfeld;
+use crate::reciprocal_table;
 use crate::Cipher;
 use derive_builder::Builder;
 use pasc::makegromarkkey;
 use pasc::transform;
-use pasc::SubstitutionCipherBuilder;
 use transposition::ColumnarTranspositionCipherBuilder;
 
 #[cfg(test)]
@@ -121,11 +120,11 @@ impl Cipher<char, char> for Gromark {
             .map(|i| transform::vigenere(&ct_alphabet_base, i))
             .collect();
         let key = makegromarkkey(&self.primer, xs.len());
-        let c = SubstitutionCipherBuilder::default()
+        let c = reciprocal_table::ReciprocalTableBuilder::default()
+            .key(key)
             .pt_alphabet(self.pt_alphabet.to_vec())
             .ct_alphabets(ct_alphabets)
-            .key_alphabet(Some(key_alphabet))
-            .key(key)
+            .key_alphabet(key_alphabet)
             .strict(self.strict)
             .build()
             .unwrap();
@@ -144,11 +143,11 @@ impl Cipher<char, char> for Gromark {
             .map(|i| transform::vigenere(&ct_alphabet_base, i))
             .collect();
         let key = makegromarkkey(&self.primer, xs.len());
-        let c = SubstitutionCipherBuilder::default()
+        let c = reciprocal_table::ReciprocalTableBuilder::default()
+            .key(key)
             .pt_alphabet(self.pt_alphabet.to_vec())
             .ct_alphabets(ct_alphabets)
-            .key_alphabet(Some(key_alphabet))
-            .key(key)
+            .key_alphabet(key_alphabet)
             .strict(self.strict)
             .build()
             .unwrap();

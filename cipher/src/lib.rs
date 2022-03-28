@@ -14,6 +14,7 @@ pub mod trithemius;
 pub mod homophonic;
 pub mod keyword;
 pub mod rail_fence;
+pub mod reciprocal_table;
 pub mod scytale;
 pub mod simple;
 pub mod variant_beaufort;
