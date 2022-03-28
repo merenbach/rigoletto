@@ -94,7 +94,7 @@ pub fn dummy<T: Copy>(xs: &[T], _: usize) -> Vec<T> {
 
 // Perform a Vigenere transform on an array slice and return as a vector.
 pub fn vigenere<T: Copy>(xs: &[T], i: usize) -> Vec<T> {
-    masc_transform::affine(&xs, 1, i)
+    masc_transform::caesar(&xs, i)
 }
 
 // Perform a Beaufort transform on an array slice and return as a vector.
@@ -102,9 +102,14 @@ pub fn beaufort<T: Copy>(xs: &[T], i: usize) -> Vec<T> {
     masc_transform::affine(&xs, xs.len() - 1, i)
 }
 
+// // Perform an Atbash transform on an array slice and return as a vector.
+// pub fn weird_beaufort<T: Copy>(xs: &[T], i: usize) -> Vec<T> {
+//     masc_transform::affine(&xs, xs.len() - 1, xs.len() - i)
+// }
+
 // Perform a variant Beaufort transform on an array slice and return as a vector.
 pub fn variant_beaufort<T: Copy>(xs: &[T], i: usize) -> Vec<T> {
-    masc_transform::affine(&xs, 1, xs.len() - i)
+    masc_transform::caesar(&xs, xs.len() - i)
 }
 
 // Perform a Della Porta transform on an array slice and return as a vector.
