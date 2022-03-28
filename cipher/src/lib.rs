@@ -10,6 +10,7 @@ pub mod dummy;
 // pub mod gromark;
 pub mod gronsfeld;
 // pub mod hill;
+pub mod homophonic;
 pub mod keyword;
 pub mod rail_fence;
 pub mod scytale;
