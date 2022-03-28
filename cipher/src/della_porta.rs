@@ -93,7 +93,6 @@ impl Cipher<char, char> for DellaPorta {
             .key(self.key.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
             .ct_alphabets(ct_alphabets)
-            .key_alphabet(self.pt_alphabet.to_vec())
             .strict(self.strict)
             .build()
             .unwrap();
@@ -109,7 +108,6 @@ impl Cipher<char, char> for DellaPorta {
             .key(self.key.to_vec())
             .pt_alphabet(self.pt_alphabet.to_vec())
             .ct_alphabets(ct_alphabets)
-            .key_alphabet(self.pt_alphabet.to_vec())
             .strict(self.strict)
             .build()
             .unwrap();

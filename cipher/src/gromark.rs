@@ -124,7 +124,7 @@ impl Cipher<char, char> for Gromark {
             .key(key)
             .pt_alphabet(self.pt_alphabet.to_vec())
             .ct_alphabets(ct_alphabets)
-            .key_alphabet(key_alphabet)
+            .key_alphabet(Some(key_alphabet))
             .strict(self.strict)
             .build()
             .unwrap();
@@ -147,7 +147,7 @@ impl Cipher<char, char> for Gromark {
             .key(key)
             .pt_alphabet(self.pt_alphabet.to_vec())
             .ct_alphabets(ct_alphabets)
-            .key_alphabet(key_alphabet)
+            .key_alphabet(Some(key_alphabet))
             .strict(self.strict)
             .build()
             .unwrap();

@@ -343,7 +343,7 @@ pub struct SubstitutionCipher<T: Atom> {
 
     pt_alphabet: Vec<T>,
     ct_alphabets: Vec<Vec<T>>,
-    key_alphabet: Option<Vec<T>>,
+    key_alphabet: Vec<T>,
 
     autoclave: AutoclaveKind,
     strict: bool,
@@ -392,15 +392,8 @@ impl<T: Atom> SubstitutionCipher<T> {
             return;
         }
         *self.ready.borrow_mut() = true;
-
-        let key_alphabet: Vec<_> = self
-            .key_alphabet
-            .as_ref()
-            .unwrap_or(&self.pt_alphabet)
-            .to_vec();
-
         *self.tableau.borrow_mut() =
-            ReciprocalTable::new(&self.pt_alphabet, &self.ct_alphabets, &key_alphabet);
+            ReciprocalTable::new(&self.pt_alphabet, &self.ct_alphabets, &self.key_alphabet);
     }
 
     // TODO: msglen is currently ignored for non-Gromark. This is a kludge.
