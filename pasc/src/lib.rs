@@ -42,6 +42,15 @@ impl<T: Atom> KeyQueue<T> {
     }
 }
 
+// // Create ciphertext alphabets
+// pub fn transform_alphabets<T: Atom>(
+//     xs: &[T],
+//     count: usize,
+//     f: impl Fn(&[T], usize) -> Vec<T>,
+// ) -> Vec<Vec<T>> {
+//     (0..count).map(|i| (f)(xs, i)).collect()
+// }
+
 // TODO: validation that the key contains only characters from the key alphabet?
 // TODO: allow custom key alphabets for PASCs, but don't allow Gronsfeld without key alphabet being digits?
 
