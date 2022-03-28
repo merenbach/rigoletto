@@ -9,6 +9,7 @@ pub mod della_porta;
 pub mod dummy;
 pub mod gromark;
 pub mod gronsfeld;
+pub mod trithemius;
 // pub mod hill;
 pub mod homophonic;
 pub mod keyword;
