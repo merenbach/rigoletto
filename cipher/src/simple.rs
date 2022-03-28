@@ -1,7 +1,8 @@
 use crate::Cipher;
 use derive_builder::Builder;
 use masc::tableau::Atom;
-use masc::SubstitutionCipherBuilder;
+use masc::{SubstitutionCipher, SubstitutionCipherBuilder};
+use std::cell::RefCell;
 
 #[cfg(test)]
 mod tests {
@@ -85,28 +86,39 @@ pub struct Simple<T: Atom> {
 
     #[builder(default)]
     strict: bool,
+
+    #[builder(setter(skip))]
+    ready: RefCell<bool>,
+    #[builder(setter(skip))]
+    tableau: RefCell<SubstitutionCipher<T>>,
+}
+
+impl<T: Atom> Simple<T> {
+    fn initialize(&self) {
+        if *self.ready.borrow() {
+            return;
+        }
+        *self.ready.borrow_mut() = true;
+
+        *self.tableau.borrow_mut() = SubstitutionCipherBuilder::default()
+            .pt_alphabet(self.pt_alphabet.to_vec())
+            .ct_alphabet(self.ct_alphabet.to_vec())
+            .strict(self.strict)
+            .build()
+            .unwrap();
+    }
 }
 
 impl<T: Atom> Cipher<T, T> for Simple<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let c = SubstitutionCipherBuilder::default()
-            .pt_alphabet(self.pt_alphabet.to_vec())
-            .ct_alphabet(self.ct_alphabet.to_vec())
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.encipher(xs)
+        self.initialize();
+        self.tableau.borrow().encipher(xs)
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let c = SubstitutionCipherBuilder::default()
-            .pt_alphabet(self.pt_alphabet.to_vec())
-            .ct_alphabet(self.ct_alphabet.to_vec())
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.decipher(xs)
+        self.initialize();
+        self.tableau.borrow().decipher(xs)
     }
 }
