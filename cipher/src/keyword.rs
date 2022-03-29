@@ -63,15 +63,17 @@ pub struct Keyword<T: Atom> {
 impl<T: Atom> Cipher<T, T> for Keyword<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let ct_alphabet = transform::keyword(&self.pt_alphabet, &self.keyword);
-        let c = simple::make(&self.pt_alphabet, &ct_alphabet);
+        let c = simple::make(&self.pt_alphabet, |xs| {
+            transform::keyword(xs, &self.keyword)
+        });
         c.encipher(xs)
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let ct_alphabet = transform::keyword(&self.pt_alphabet, &self.keyword);
-        let c = simple::make(&self.pt_alphabet, &ct_alphabet);
+        let c = simple::make(&self.pt_alphabet, |xs| {
+            transform::keyword(xs, &self.keyword)
+        });
         c.decipher(xs)
     }
 }

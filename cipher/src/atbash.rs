@@ -55,15 +55,13 @@ pub struct Atbash<T: Atom> {
 impl<T: Atom> Cipher<T, T> for Atbash<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let ct_alphabet = transform::atbash(&self.pt_alphabet);
-        let c = simple::make(&self.pt_alphabet, &ct_alphabet);
+        let c = simple::make(&self.pt_alphabet, |xs| transform::atbash(xs));
         c.encipher(xs)
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let ct_alphabet = transform::atbash(&self.pt_alphabet);
-        let c = simple::make(&self.pt_alphabet, &ct_alphabet);
+        let c = simple::make(&self.pt_alphabet, |xs| transform::atbash(xs));
         c.decipher(xs)
     }
 }

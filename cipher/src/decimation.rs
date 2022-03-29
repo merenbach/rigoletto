@@ -63,15 +63,17 @@ pub struct Decimation<T: Atom> {
 impl<T: Atom> Cipher<T, T> for Decimation<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let ct_alphabet = transform::decimation(&self.pt_alphabet, self.multiplier);
-        let c = simple::make(&self.pt_alphabet, &ct_alphabet);
+        let c = simple::make(&self.pt_alphabet, |xs| {
+            transform::decimation(xs, self.multiplier)
+        });
         c.encipher(xs)
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let ct_alphabet = transform::decimation(&self.pt_alphabet, self.multiplier);
-        let c = simple::make(&self.pt_alphabet, &ct_alphabet);
+        let c = simple::make(&self.pt_alphabet, |xs| {
+            transform::decimation(xs, self.multiplier)
+        });
         c.decipher(xs)
     }
 }

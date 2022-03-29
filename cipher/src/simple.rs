@@ -64,7 +64,6 @@ pub struct Simple<T: Atom> {
 impl<T: Atom> Cipher<T, T> for Simple<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        // xs.iter().restrict(pt_alphabet).encipher(pt_alphabet, ct_alphabet).collect()
         let c = SubstitutionCipherBuilder::default()
             .pt_alphabet(self.pt_alphabet.to_vec())
             .ct_alphabet(self.ct_alphabet.to_vec())
@@ -84,7 +83,8 @@ impl<T: Atom> Cipher<T, T> for Simple<T> {
     }
 }
 
-pub fn make<T: Atom>(pt_alphabet: &[T], ct_alphabet: &[T]) -> Simple<T> {
+pub fn make<T: Atom>(pt_alphabet: &[T], f: impl Fn(&[T]) -> Vec<T>) -> Simple<T> {
+    let ct_alphabet = f(&pt_alphabet);
     SimpleBuilder::default()
         .pt_alphabet(pt_alphabet)
         .ct_alphabet(ct_alphabet)
