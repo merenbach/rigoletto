@@ -156,7 +156,7 @@ impl<T: Atom> SubstitutionCipher<T> {
     // }
 
     /// Encipher a single message atom.
-    pub fn encipher_one(&self, c: &T) -> Option<T> {
+    fn encipher_one(&self, c: &T) -> Option<T> {
         self.initialize();
         match self.enc_lookup {
             Some(f) => (f)(c, &self.tableau.borrow()),
@@ -165,7 +165,7 @@ impl<T: Atom> SubstitutionCipher<T> {
     }
 
     /// Decipher a single message atom.
-    pub fn decipher_one(&self, c: &T) -> Option<T> {
+    fn decipher_one(&self, c: &T) -> Option<T> {
         self.initialize();
         match self.dec_lookup {
             Some(f) => (f)(c, &self.tableau.borrow()),

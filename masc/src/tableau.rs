@@ -44,6 +44,18 @@ impl<T: Atom, U: Atom> Tableau<T, U> {
     }
 }
 
+// impl<T: Atom> Tableau<T, T> {
+//     /// Encode an element or return the supplied element unchanged.
+//     pub fn encode_lenient(&self, x: &T) -> T {
+//         self.encode(x).unwrap_or(*x)
+//     }
+
+//     /// Decode an element or return the supplied element unchanged.
+//     pub fn decode_lenient(&self, x: &T) -> T {
+//         self.decode(x).unwrap_or(*x)
+//     }
+// }
+
 // // TODO: ensure we have tests for this
 // // TODO: require only displayable for this, not char
 // impl<T, U> fmt::Display for Tableau<T, U>
