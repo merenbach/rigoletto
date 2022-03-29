@@ -1,7 +1,8 @@
 use crate::Cipher;
 use derive_builder::Builder;
-use masc::tableau::Atom;
-use masc::SubstitutionCipherBuilder;
+use masc::tableau::{Atom, Tableau};
+use std::cell::RefCell;
+use std::fmt;
 
 #[cfg(test)]
 mod tests {
@@ -85,29 +86,71 @@ pub struct Simple<T: Atom> {
 
     #[builder(default)]
     strict: bool,
+
+    #[builder(setter(skip))]
+    tableau: RefCell<Tableau<T, T>>,
+}
+
+impl<T: Atom> Simple<T> {
+    fn initialize(&self) {
+        if self.tableau.borrow().is_empty() {
+            *self.tableau.borrow_mut() = Tableau::new(&self.pt_alphabet, &self.ct_alphabet);
+        }
+    }
+
+    /// Encipher an element.
+    fn encipher_one(&self, x: &T) -> Option<T> {
+        self.initialize();
+        self.tableau.borrow().encode(&x)
+    }
+
+    /// Decipher an element.
+    fn decipher_one(&self, x: &T) -> Option<T> {
+        self.initialize();
+        self.tableau.borrow().decode(&x)
+    }
 }
 
 impl<T: Atom> Cipher<T, T> for Simple<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let c = SubstitutionCipherBuilder::default()
-            .pt_alphabet(self.pt_alphabet.to_vec())
-            .ct_alphabet(self.ct_alphabet.to_vec())
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.encipher(xs)
+        self.initialize();
+        xs.iter()
+            .filter_map(|x| {
+                self.encipher_one(x).or({
+                    if !self.strict {
+                        Some(*x)
+                    } else {
+                        None
+                    }
+                })
+            })
+            .collect()
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let c = SubstitutionCipherBuilder::default()
-            .pt_alphabet(self.pt_alphabet.to_vec())
-            .ct_alphabet(self.ct_alphabet.to_vec())
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.decipher(xs)
+        self.initialize();
+        xs.iter()
+            .filter_map(|x| {
+                self.decipher_one(x).or({
+                    if !self.strict {
+                        Some(*x)
+                    } else {
+                        None
+                    }
+                })
+            })
+            .collect()
+    }
+}
+
+// TODO: ensure we have tests for this
+impl fmt::Display for Simple<char> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let pt_alphabet: String = self.pt_alphabet.iter().collect();
+        let ct_alphabet: String = self.ct_alphabet.iter().collect();
+        write!(f, "Simple <PT: {}, CT: {}>", &pt_alphabet, &ct_alphabet)
     }
 }
 
