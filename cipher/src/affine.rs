@@ -63,6 +63,7 @@ pub struct Affine<T: Atom> {
     slope: usize,
     intercept: usize,
 
+    #[builder(setter(into))]
     pt_alphabet: Vec<T>,
 }
 
@@ -70,7 +71,7 @@ impl<T: Atom> Cipher<T, T> for Affine<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let c = simple::make(&self.pt_alphabet, |xs| {
-            transform::affine(&xs, self.slope, self.intercept)
+            transform::affine(xs, self.slope, self.intercept)
         });
         c.encipher(xs)
     }
@@ -78,7 +79,7 @@ impl<T: Atom> Cipher<T, T> for Affine<T> {
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         let c = simple::make(&self.pt_alphabet, |xs| {
-            transform::affine(&xs, self.slope, self.intercept)
+            transform::affine(xs, self.slope, self.intercept)
         });
         c.decipher(xs)
     }

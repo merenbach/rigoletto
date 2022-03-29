@@ -57,6 +57,7 @@ mod tests {
 pub struct Decimation<T: Atom> {
     multiplier: usize,
 
+    #[builder(setter(into))]
     pt_alphabet: Vec<T>,
 }
 

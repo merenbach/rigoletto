@@ -57,6 +57,7 @@ mod tests {
 pub struct Caesar<T: Atom> {
     offset: usize,
 
+    #[builder(setter(into))]
     pt_alphabet: Vec<T>,
 }
 

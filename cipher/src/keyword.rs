@@ -57,6 +57,7 @@ mod tests {
 pub struct Keyword<T: Atom> {
     keyword: Vec<T>,
 
+    #[builder(setter(into))]
     pt_alphabet: Vec<T>,
 }
 

@@ -49,6 +49,7 @@ mod tests {
 
 #[derive(Default, Builder)]
 pub struct Atbash<T: Atom> {
+    #[builder(setter(into))]
     pt_alphabet: Vec<T>,
 }
 
