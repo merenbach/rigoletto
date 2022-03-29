@@ -15,11 +15,11 @@ use std::fmt;
 /// A Message to transcode.
 pub struct Message<T>(Vec<T>)
 where
-    T: Copy + PartialEq;
+    T: Copy;
 
 impl<T> Message<T>
 where
-    T: Copy + PartialEq,
+    T: Copy,
 {
     /// Encipher a message.
     pub fn encipher(&mut self, c: &dyn Cipher<T, T>) -> &mut Self {
@@ -32,14 +32,6 @@ where
         self.0 = c.decipher(&self.0);
         self
     }
-
-    /// Decipher a message.
-    pub fn retain(&mut self, xs: &[T]) -> &mut Self {
-        self.0.retain(|y| xs.contains(y));
-        self
-    }
-
-        // xs.iter().restrict(pt_alphabet).encipher(pt_alphabet, ct_alphabet).collect()
 
     // /// Retain only characters in a given string, effectively a union operation.
     // pub fn retain_str(&mut self, v: &str) -> &mut Self {

@@ -11,6 +11,7 @@ Rust-based classical cryptography framework
   4. Add back autokeys.
   5. Implement Display on all ciphers and allow tableau printing.
   6. Add tests for reciprocal table
+  7. Replace strict with lenient (or maybe "retain") instead?
 - Improve transposition nulls and allow cycling of nulls (i.e., provide only "X")
 - LCG tests ought to be expanded
 - Figure out ergonomics of None vs Dummy cipherkind and default encipherment modes to return (dummy? use specified CT? vigenere?)
