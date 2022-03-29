@@ -14,32 +14,20 @@ mod tests {
         pt_alphabet: Vec<T>,
         input: Vec<T>,
         output: Vec<T>,
-        strict: bool,
     }
 
     #[test]
     fn encipher_works() {
-        let xs = &[
-            TestCase {
-                offset: 3,
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
-                output: vec![0, 4, 5, 1, 2, 3, 3, 2, 1, 5, 4, 0],
-                strict: false,
-            },
-            TestCase {
-                offset: 3,
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
-                output: vec![4, 5, 1, 2, 3, 3, 2, 1, 5, 4],
-                strict: true,
-            },
-        ];
+        let xs = &[TestCase {
+            offset: 3,
+            pt_alphabet: vec![1, 2, 3, 4, 5],
+            input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+            output: vec![0, 4, 5, 1, 2, 3, 3, 2, 1, 5, 4, 0],
+        }];
         for x in xs {
             let c = CaesarBuilder::default()
                 .pt_alphabet(x.pt_alphabet.to_vec())
                 .offset(x.offset)
-                .strict(x.strict)
                 .build()
                 .unwrap();
             assert_eq!(x.output, c.encipher(&x.input));
@@ -48,27 +36,16 @@ mod tests {
 
     #[test]
     fn decipher_works() {
-        let xs = &[
-            TestCase {
-                offset: 3,
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 4, 5, 1, 2, 3, 3, 2, 1, 5, 4, 0],
-                output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
-                strict: false,
-            },
-            TestCase {
-                offset: 3,
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 4, 5, 1, 2, 3, 3, 2, 1, 5, 4, 0],
-                output: vec![1, 2, 3, 4, 5, 5, 4, 3, 2, 1],
-                strict: true,
-            },
-        ];
+        let xs = &[TestCase {
+            offset: 3,
+            pt_alphabet: vec![1, 2, 3, 4, 5],
+            input: vec![0, 4, 5, 1, 2, 3, 3, 2, 1, 5, 4, 0],
+            output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+        }];
         for x in xs {
             let c = CaesarBuilder::default()
                 .pt_alphabet(x.pt_alphabet.to_vec())
                 .offset(x.offset)
-                .strict(x.strict)
                 .build()
                 .unwrap();
             assert_eq!(x.output, c.decipher(&x.input));
@@ -81,31 +58,20 @@ pub struct Caesar<T: Atom> {
     offset: usize,
 
     pt_alphabet: Vec<T>,
-    strict: bool,
 }
 
 impl<T: Atom> Cipher<T, T> for Caesar<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let ct_alphabet = transform::caesar(&self.pt_alphabet, self.offset);
-        let c = simple::SimpleBuilder::default()
-            .pt_alphabet(self.pt_alphabet.to_vec())
-            .ct_alphabet(ct_alphabet)
-            .strict(self.strict)
-            .build()
-            .unwrap();
+        let c = simple::make(&self.pt_alphabet, &ct_alphabet);
         c.encipher(xs)
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         let ct_alphabet = transform::caesar(&self.pt_alphabet, self.offset);
-        let c = simple::SimpleBuilder::default()
-            .pt_alphabet(self.pt_alphabet.to_vec())
-            .ct_alphabet(ct_alphabet)
-            .strict(self.strict)
-            .build()
-            .unwrap();
+        let c = simple::make(&self.pt_alphabet, &ct_alphabet);
         c.decipher(xs)
     }
 }

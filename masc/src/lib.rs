@@ -59,6 +59,9 @@ use tableau::{Atom, Tableau};
 //     SubtractFrom(usize),
 // }
 
+// let c = cipher::caesar::make(3);
+// let x = msg.chars().encipher(c).stripitgood().collect();
+
 fn caseless_lookup<F>(c: &char, f: F) -> Option<char>
 where
     F: Fn(char) -> Option<char>,

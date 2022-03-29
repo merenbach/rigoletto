@@ -14,32 +14,20 @@ mod tests {
         pt_alphabet: Vec<T>,
         input: Vec<T>,
         output: Vec<T>,
-        strict: bool,
     }
 
     #[test]
     fn encipher_works() {
-        let xs = &[
-            TestCase {
-                keyword: vec![5, 3, 3],
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
-                output: vec![0, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 0],
-                strict: false,
-            },
-            TestCase {
-                keyword: vec![5, 3, 3],
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
-                output: vec![5, 3, 1, 2, 4, 4, 2, 1, 3, 5],
-                strict: true,
-            },
-        ];
+        let xs = &[TestCase {
+            keyword: vec![5, 3, 3],
+            pt_alphabet: vec![1, 2, 3, 4, 5],
+            input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+            output: vec![0, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 0],
+        }];
         for x in xs {
             let c = KeywordBuilder::default()
                 .pt_alphabet(x.pt_alphabet.to_vec())
                 .keyword(x.keyword.to_vec())
-                .strict(x.strict)
                 .build()
                 .unwrap();
             assert_eq!(x.output, c.encipher(&x.input));
@@ -48,27 +36,16 @@ mod tests {
 
     #[test]
     fn decipher_works() {
-        let xs = &[
-            TestCase {
-                keyword: vec![5, 3, 3],
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 0],
-                output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
-                strict: false,
-            },
-            TestCase {
-                keyword: vec![5, 3, 3],
-                pt_alphabet: vec![1, 2, 3, 4, 5],
-                input: vec![0, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 0],
-                output: vec![1, 2, 3, 4, 5, 5, 4, 3, 2, 1],
-                strict: true,
-            },
-        ];
+        let xs = &[TestCase {
+            keyword: vec![5, 3, 3],
+            pt_alphabet: vec![1, 2, 3, 4, 5],
+            input: vec![0, 5, 3, 1, 2, 4, 4, 2, 1, 3, 5, 0],
+            output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+        }];
         for x in xs {
             let c = KeywordBuilder::default()
                 .pt_alphabet(x.pt_alphabet.to_vec())
                 .keyword(x.keyword.to_vec())
-                .strict(x.strict)
                 .build()
                 .unwrap();
             assert_eq!(x.output, c.decipher(&x.input));
@@ -81,31 +58,20 @@ pub struct Keyword<T: Atom> {
     keyword: Vec<T>,
 
     pt_alphabet: Vec<T>,
-    strict: bool,
 }
 
 impl<T: Atom> Cipher<T, T> for Keyword<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let ct_alphabet = transform::keyword(&self.pt_alphabet, &self.keyword);
-        let c = simple::SimpleBuilder::default()
-            .pt_alphabet(self.pt_alphabet.to_vec())
-            .ct_alphabet(ct_alphabet)
-            .strict(self.strict)
-            .build()
-            .unwrap();
+        let c = simple::make(&self.pt_alphabet, &ct_alphabet);
         c.encipher(xs)
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         let ct_alphabet = transform::keyword(&self.pt_alphabet, &self.keyword);
-        let c = simple::SimpleBuilder::default()
-            .pt_alphabet(self.pt_alphabet.to_vec())
-            .ct_alphabet(ct_alphabet)
-            .strict(self.strict)
-            .build()
-            .unwrap();
+        let c = simple::make(&self.pt_alphabet, &ct_alphabet);
         c.decipher(xs)
     }
 }
