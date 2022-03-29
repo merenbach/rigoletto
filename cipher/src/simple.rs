@@ -83,7 +83,11 @@ impl<T: Atom> Cipher<T, T> for Simple<T> {
     }
 }
 
-pub fn make<T: Atom>(pt_alphabet: &[T], f: impl Fn(&[T]) -> Vec<T>) -> Simple<T> {
+pub fn make<T, F>(pt_alphabet: &[T], f: F) -> Simple<T>
+where
+    T: Atom,
+    F: Fn(&[T]) -> Vec<T>,
+{
     let ct_alphabet = f(&pt_alphabet);
     SimpleBuilder::default()
         .pt_alphabet(pt_alphabet)
