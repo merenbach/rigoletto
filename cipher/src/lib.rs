@@ -31,7 +31,7 @@ pub mod vigenere;
 //     }
 // }
 
-// A Cipher implements a generic cipher.
+/// A Cipher implements a generic cipher.
 pub trait Cipher<T, U>
 where
     T: Copy,
@@ -42,6 +42,21 @@ where
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[U]) -> Vec<T>;
+}
+
+// pub trait Atom: Hash + Eq + Copy + Default {}
+// impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
+
+/// A SubstitutionCipher implements a substitution cipher.
+pub trait SubstitutionCipher<T>: Cipher<T, T>
+where
+    T: Copy,
+{
+    /// Encipher a sequence and retain elements that cannot be transcoded.
+    fn encipher_retain(&self, xs: &[T]) -> Vec<T>;
+
+    /// Decipher a sequence and retain elements that cannot be transcoded.
+    fn decipher_retain(&self, xs: &[T]) -> Vec<T>;
 }
 
 // TODO: strict mode/caseless mode can be during encipherment, but we can also use sentinels

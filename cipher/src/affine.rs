@@ -1,6 +1,5 @@
-use super::Cipher;
+use super::{Cipher, SubstitutionCipher};
 use crate::simple;
-use derive_builder::Builder;
 use masc::tableau::Atom;
 use masc::transform;
 
@@ -39,14 +38,13 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = AffineBuilder::default()
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .slope(x.slope)
-                .intercept(x.intercept)
-                .strict(x.strict)
-                .build()
-                .unwrap();
-            assert_eq!(x.output, c.encipher(&x.input));
+            let c = make(&x.pt_alphabet, x.slope, x.intercept);
+            let out = if x.strict {
+                c.encipher(&x.input)
+            } else {
+                c.encipher_retain(&x.input)
+            };
+            assert_eq!(x.output, out);
         }
     }
 
@@ -71,43 +69,21 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = AffineBuilder::default()
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .slope(x.slope)
-                .intercept(x.intercept)
-                .strict(x.strict)
-                .build()
-                .unwrap();
-            assert_eq!(x.output, c.decipher(&x.input));
+            let c = make(&x.pt_alphabet, x.slope, x.intercept);
+            let out = if x.strict {
+                c.decipher(&x.input)
+            } else {
+                c.decipher_retain(&x.input)
+            };
+            assert_eq!(x.output, out);
         }
     }
 }
 
-#[derive(Default, Builder)]
-pub struct Affine<T: Atom> {
+pub fn make<T: Atom>(
+    pt_alphabet: &[T],
     slope: usize,
     intercept: usize,
-
-    #[builder(setter(into))]
-    pt_alphabet: Vec<T>,
-    #[builder(default)]
-    strict: bool,
-}
-
-impl<T: Atom> Cipher<T, T> for Affine<T> {
-    /// Encipher a sequence.
-    fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let c = simple::make(&self.pt_alphabet, self.strict, |xs| {
-            transform::affine(xs, self.slope, self.intercept)
-        });
-        c.encipher(xs)
-    }
-
-    /// Decipher a sequence.
-    fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let c = simple::make(&self.pt_alphabet, self.strict, |xs| {
-            transform::affine(xs, self.slope, self.intercept)
-        });
-        c.decipher(xs)
-    }
+) -> impl SubstitutionCipher<T> {
+    simple::make(pt_alphabet, |xs| transform::affine(xs, slope, intercept))
 }

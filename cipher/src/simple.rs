@@ -1,4 +1,4 @@
-use crate::Cipher;
+use crate::{Cipher, SubstitutionCipher};
 use derive_builder::Builder;
 use masc::tableau::{Atom, Tableau};
 use std::cell::RefCell;
@@ -39,10 +39,14 @@ mod tests {
             let c = SimpleBuilder::default()
                 .pt_alphabet(x.pt_alphabet.to_vec())
                 .ct_alphabet(x.ct_alphabet.to_vec())
-                .strict(x.strict)
                 .build()
                 .unwrap();
-            assert_eq!(x.output, c.encipher(&x.input));
+            let out = if x.strict {
+                c.encipher(&x.input)
+            } else {
+                c.encipher_retain(&x.input)
+            };
+            assert_eq!(x.output, out);
         }
     }
 
@@ -68,10 +72,14 @@ mod tests {
             let c = SimpleBuilder::default()
                 .pt_alphabet(x.pt_alphabet.to_vec())
                 .ct_alphabet(x.ct_alphabet.to_vec())
-                .strict(x.strict)
                 .build()
                 .unwrap();
-            assert_eq!(x.output, c.decipher(&x.input));
+            let out = if x.strict {
+                c.decipher(&x.input)
+            } else {
+                c.decipher_retain(&x.input)
+            };
+            assert_eq!(x.output, out);
         }
     }
 }
@@ -83,9 +91,6 @@ pub struct Simple<T: Atom> {
 
     #[builder(setter(into))]
     ct_alphabet: Vec<T>,
-
-    #[builder(default)]
-    strict: bool,
 
     #[builder(setter(skip))]
     tableau: RefCell<Tableau<T, T>>,
@@ -115,32 +120,30 @@ impl<T: Atom> Cipher<T, T> for Simple<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        xs.iter()
-            .filter_map(|x| {
-                self.encipher_one(x).or({
-                    if !self.strict {
-                        Some(*x)
-                    } else {
-                        None
-                    }
-                })
-            })
-            .collect()
+        xs.iter().filter_map(|x| self.encipher_one(x)).collect()
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
+        xs.iter().filter_map(|x| self.decipher_one(x)).collect()
+    }
+}
+
+impl<T: Atom> SubstitutionCipher<T> for Simple<T> {
+    /// Encipher a sequence.
+    fn encipher_retain(&self, xs: &[T]) -> Vec<T> {
+        self.initialize();
         xs.iter()
-            .filter_map(|x| {
-                self.decipher_one(x).or({
-                    if !self.strict {
-                        Some(*x)
-                    } else {
-                        None
-                    }
-                })
-            })
+            .map(|x| self.encipher_one(x).unwrap_or(*x))
+            .collect()
+    }
+
+    /// Decipher a sequence.
+    fn decipher_retain(&self, xs: &[T]) -> Vec<T> {
+        self.initialize();
+        xs.iter()
+            .map(|x| self.decipher_one(x).unwrap_or(*x))
             .collect()
     }
 }
@@ -154,7 +157,7 @@ impl fmt::Display for Simple<char> {
     }
 }
 
-pub fn make<T, F>(pt_alphabet: &[T], strict: bool, f: F) -> Simple<T>
+pub fn make<T, F>(pt_alphabet: &[T], f: F) -> Simple<T>
 where
     T: Atom,
     F: Fn(&[T]) -> Vec<T>,
@@ -163,7 +166,6 @@ where
     SimpleBuilder::default()
         .pt_alphabet(pt_alphabet)
         .ct_alphabet(ct_alphabet)
-        .strict(strict)
         .build()
         .unwrap()
 }

@@ -1,6 +1,5 @@
 use crate::simple;
-use crate::Cipher;
-use derive_builder::Builder;
+use crate::{Cipher, SubstitutionCipher};
 use masc::tableau::Atom;
 use masc::transform;
 
@@ -36,13 +35,13 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = CaesarBuilder::default()
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .offset(x.offset)
-                .strict(x.strict)
-                .build()
-                .unwrap();
-            assert_eq!(x.output, c.encipher(&x.input));
+            let c = make(&x.pt_alphabet, x.offset);
+            let out = if x.strict {
+                c.encipher(&x.input)
+            } else {
+                c.encipher_retain(&x.input)
+            };
+            assert_eq!(x.output, out);
         }
     }
 
@@ -65,41 +64,17 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = CaesarBuilder::default()
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .offset(x.offset)
-                .strict(x.strict)
-                .build()
-                .unwrap();
-            assert_eq!(x.output, c.decipher(&x.input));
+            let c = make(&x.pt_alphabet, x.offset);
+            let out = if x.strict {
+                c.decipher(&x.input)
+            } else {
+                c.decipher_retain(&x.input)
+            };
+            assert_eq!(x.output, out);
         }
     }
 }
 
-#[derive(Default, Builder)]
-pub struct Caesar<T: Atom> {
-    offset: usize,
-
-    #[builder(setter(into))]
-    pt_alphabet: Vec<T>,
-    #[builder(default)]
-    strict: bool,
-}
-
-impl<T: Atom> Cipher<T, T> for Caesar<T> {
-    /// Encipher a sequence.
-    fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let c = simple::make(&self.pt_alphabet, self.strict, |xs| {
-            transform::caesar(xs, self.offset)
-        });
-        c.encipher(xs)
-    }
-
-    /// Decipher a sequence.
-    fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let c = simple::make(&self.pt_alphabet, self.strict, |xs| {
-            transform::caesar(xs, self.offset)
-        });
-        c.decipher(xs)
-    }
+pub fn make<T: Atom>(pt_alphabet: &[T], offset: usize) -> impl SubstitutionCipher<T> {
+    simple::make(pt_alphabet, |xs| transform::caesar(xs, offset))
 }

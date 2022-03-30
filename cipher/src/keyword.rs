@@ -1,5 +1,5 @@
 use crate::simple;
-use crate::Cipher;
+use crate::{Cipher, SubstitutionCipher};
 use derive_builder::Builder;
 use masc::tableau::Atom;
 use masc::transform;
@@ -36,13 +36,13 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = KeywordBuilder::default()
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .keyword(x.keyword.to_vec())
-                .strict(x.strict)
-                .build()
-                .unwrap();
-            assert_eq!(x.output, c.encipher(&x.input));
+            let c = make(&x.pt_alphabet, &x.keyword);
+            let out = if x.strict {
+                c.encipher(&x.input)
+            } else {
+                c.encipher_retain(&x.input)
+            };
+            assert_eq!(x.output, out);
         }
     }
 
@@ -65,41 +65,17 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = KeywordBuilder::default()
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .keyword(x.keyword.to_vec())
-                .strict(x.strict)
-                .build()
-                .unwrap();
-            assert_eq!(x.output, c.decipher(&x.input));
+            let c = make(&x.pt_alphabet, &x.keyword);
+            let out = if x.strict {
+                c.decipher(&x.input)
+            } else {
+                c.decipher_retain(&x.input)
+            };
+            assert_eq!(x.output, out);
         }
     }
 }
 
-#[derive(Default, Builder)]
-pub struct Keyword<T: Atom> {
-    keyword: Vec<T>,
-
-    #[builder(setter(into))]
-    pt_alphabet: Vec<T>,
-    #[builder(default)]
-    strict: bool,
-}
-
-impl<T: Atom> Cipher<T, T> for Keyword<T> {
-    /// Encipher a sequence.
-    fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let c = simple::make(&self.pt_alphabet, self.strict, |xs| {
-            transform::keyword(xs, &self.keyword)
-        });
-        c.encipher(xs)
-    }
-
-    /// Decipher a sequence.
-    fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let c = simple::make(&self.pt_alphabet, self.strict, |xs| {
-            transform::keyword(xs, &self.keyword)
-        });
-        c.decipher(xs)
-    }
+pub fn make<T: Atom>(pt_alphabet: &[T], keyword: &[T]) -> impl SubstitutionCipher<T> {
+    simple::make(pt_alphabet, |xs| transform::keyword(xs, keyword))
 }
