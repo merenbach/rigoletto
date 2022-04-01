@@ -1,5 +1,5 @@
 // use cipher::Atom;
-use cipher::{Cipher, SubstitutionCipher};
+use cipher::Cipher;
 use std::fmt;
 
 // use std::collections::HashSet;
@@ -30,20 +30,6 @@ where
     /// Decipher the current state of the message.
     pub fn decipher(&mut self, c: &dyn Cipher<T, T>) -> &mut Self {
         self.0 = c.decipher(&self.0);
-        self
-    }
-
-    /// Encipher the current state of the message.
-    /// Be lenient with characters that cannot be enciphered.
-    pub fn encipher_retain(&mut self, c: &dyn SubstitutionCipher<T>) -> &mut Self {
-        self.0 = c.encipher_retain(&self.0);
-        self
-    }
-
-    /// Decipher the current state of the message.
-    /// Be lenient with characters that cannot be deciphered.
-    pub fn decipher_retain(&mut self, c: &dyn SubstitutionCipher<T>) -> &mut Self {
-        self.0 = c.decipher_retain(&self.0);
         self
     }
 

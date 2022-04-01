@@ -1,5 +1,5 @@
 use crate::reciprocal_table;
-use crate::{Cipher, SubstitutionCipher};
+use crate::Cipher;
 use pasc::transform;
 
 #[cfg(test)]
@@ -67,14 +67,14 @@ mod tests {
 const KEY_ALPHABET: &str = "0123456789";
 
 /// Make a substitution cipher.
-pub fn make(pt_alphabet: &[char], key: &[char], strict: bool) -> impl SubstitutionCipher<char> {
+pub fn make(pt_alphabet: &[char], key: &[char], strict: bool) -> impl Cipher<char, char> {
     let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
     reciprocal_table::make(
         pt_alphabet,
         pt_alphabet,
         &key_alphabet,
         key,
-        strict,
         |xs, i| transform::vigenere(xs, i),
+        strict,
     )
 }

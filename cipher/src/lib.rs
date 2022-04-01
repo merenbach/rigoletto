@@ -47,18 +47,6 @@ where
 // pub trait Atom: Hash + Eq + Copy + Default {}
 // impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 
-/// A SubstitutionCipher implements a substitution cipher.
-pub trait SubstitutionCipher<T>: Cipher<T, T>
-where
-    T: Copy,
-{
-    /// Encipher a sequence and retain elements that cannot be transcoded.
-    fn encipher_retain(&self, xs: &[T]) -> Vec<T>;
-
-    /// Decipher a sequence and retain elements that cannot be transcoded.
-    fn decipher_retain(&self, xs: &[T]) -> Vec<T>;
-}
-
 // impl<T:Copy> Cipher<T,T> for SubstitutionCipher<T> {}
 
 // TODO: strict mode/caseless mode can be during encipherment, but we can also use sentinels

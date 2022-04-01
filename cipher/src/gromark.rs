@@ -1,5 +1,5 @@
 use crate::reciprocal_table;
-use crate::{Cipher, SubstitutionCipher};
+use crate::Cipher;
 use pasc::makegromarkkey;
 use pasc::transform;
 use transposition::ColumnarTranspositionCipherBuilder;
@@ -91,7 +91,7 @@ pub fn make(
     keyword: &[char],
     primer: &[u32],
     strict: bool,
-) -> impl SubstitutionCipher<char> {
+) -> impl Cipher<char, char> {
     let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
     let ys = masc::transform::keyword(&pt_alphabet, &keyword);
     let ct_alphabet_base = ColumnarTranspositionCipherBuilder::with_generic_key(&keyword)
@@ -106,7 +106,7 @@ pub fn make(
         &ct_alphabet_base,
         &key_alphabet,
         &key,
-        strict,
         |xs, i| transform::vigenere(xs, i),
+        strict,
     )
 }

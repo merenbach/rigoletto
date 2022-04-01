@@ -1,4 +1,4 @@
-use super::{Cipher, SubstitutionCipher};
+use super::Cipher;
 use crate::simple;
 use masc::tableau::Atom;
 use masc::transform;
@@ -38,12 +38,8 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = make(&x.pt_alphabet, x.slope, x.intercept);
-            let out = if x.strict {
-                c.encipher(&x.input)
-            } else {
-                c.encipher_retain(&x.input)
-            };
+            let c = make(&x.pt_alphabet, x.slope, x.intercept, x.strict);
+            let out = c.encipher(&x.input);
             assert_eq!(x.output, out);
         }
     }
@@ -69,12 +65,8 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = make(&x.pt_alphabet, x.slope, x.intercept);
-            let out = if x.strict {
-                c.decipher(&x.input)
-            } else {
-                c.decipher_retain(&x.input)
-            };
+            let c = make(&x.pt_alphabet, x.slope, x.intercept, x.strict);
+            let out = c.decipher(&x.input);
             assert_eq!(x.output, out);
         }
     }
@@ -85,8 +77,11 @@ pub fn make<T: Atom>(
     pt_alphabet: &[T],
     slope: usize,
     intercept: usize,
-) -> impl SubstitutionCipher<T> {
-    simple::make(pt_alphabet, move |xs| {
-        transform::affine(xs, slope, intercept)
-    })
+    strict: bool,
+) -> impl Cipher<T, T> {
+    simple::make(
+        pt_alphabet,
+        move |xs| transform::affine(xs, slope, intercept),
+        strict,
+    )
 }

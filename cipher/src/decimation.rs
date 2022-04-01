@@ -1,5 +1,5 @@
 use crate::simple;
-use crate::{Cipher, SubstitutionCipher};
+use crate::Cipher;
 use masc::tableau::Atom;
 use masc::transform;
 
@@ -35,12 +35,8 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = make(&x.pt_alphabet, x.multiplier);
-            let out = if x.strict {
-                c.encipher(&x.input)
-            } else {
-                c.encipher_retain(&x.input)
-            };
+            let c = make(&x.pt_alphabet, x.multiplier, x.strict);
+            let out = c.encipher(&x.input);
             assert_eq!(x.output, out);
         }
     }
@@ -64,18 +60,18 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = make(&x.pt_alphabet, x.multiplier);
-            let out = if x.strict {
-                c.decipher(&x.input)
-            } else {
-                c.decipher_retain(&x.input)
-            };
+            let c = make(&x.pt_alphabet, x.multiplier, x.strict);
+            let out = c.decipher(&x.input);
             assert_eq!(x.output, out);
         }
     }
 }
 
 /// Make a substitution cipher.
-pub fn make<T: Atom>(pt_alphabet: &[T], multiplier: usize) -> impl SubstitutionCipher<T> {
-    simple::make(pt_alphabet, move |xs| transform::decimation(xs, multiplier))
+pub fn make<T: Atom>(pt_alphabet: &[T], multiplier: usize, strict: bool) -> impl Cipher<T, T> {
+    simple::make(
+        pt_alphabet,
+        move |xs| transform::decimation(xs, multiplier),
+        strict,
+    )
 }

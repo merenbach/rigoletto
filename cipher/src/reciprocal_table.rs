@@ -1,4 +1,4 @@
-use crate::{Cipher, SubstitutionCipher};
+use crate::Cipher;
 use derive_builder::Builder;
 use masc::tableau::Atom;
 use pasc::SubstitutionCipherBuilder;
@@ -124,38 +124,6 @@ impl<T: Atom> Cipher<T, T> for ReciprocalTable<T> {
     }
 }
 
-impl<T: Atom> SubstitutionCipher<T> for ReciprocalTable<T> {
-    /// Encipher a sequence.
-    fn encipher_retain(&self, xs: &[T]) -> Vec<T> {
-        self.initialize();
-        self.tableau.borrow().encipher(xs)
-    }
-
-    /// Decipher a sequence.
-    fn decipher_retain(&self, xs: &[T]) -> Vec<T> {
-        self.initialize();
-        self.tableau.borrow().decipher(xs)
-    }
-}
-
-// impl<T: Atom> SubstitutionCipher<T> for Simple<T> {
-//     /// Encipher a sequence.
-//     fn encipher_retain(&self, xs: &[T]) -> Vec<T> {
-//         self.initialize();
-//         xs.iter()
-//             .map(|x| self.encipher_one(x).unwrap_or(*x))
-//             .collect()
-//     }
-
-//     /// Decipher a sequence.
-//     fn decipher_retain(&self, xs: &[T]) -> Vec<T> {
-//         self.initialize();
-//         xs.iter()
-//             .map(|x| self.decipher_one(x).unwrap_or(*x))
-//             .collect()
-//     }
-// }
-
 // // TODO: ensure we have tests for this
 // impl fmt::Display for ReciprocalTable<char> {
 //     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
@@ -171,9 +139,9 @@ pub fn make<T, F>(
     ct_alphabet: &[T],
     key_alphabet: &[T],
     key: &[T], // TODO: should this be on encipher or decipher instead? kind of torn
-    strict: bool,
     f: F,
-) -> impl SubstitutionCipher<T>
+    strict: bool,
+) -> impl Cipher<T, T>
 where
     T: Atom,
     F: Fn(&[T], usize) -> Vec<T>,
