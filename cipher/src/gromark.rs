@@ -1,5 +1,5 @@
 use crate::reciprocal_table;
-use crate::Cipher;
+use crate::{Cipher, SubstitutionCipher};
 use derive_builder::Builder;
 use pasc::makegromarkkey;
 use pasc::transform;
@@ -46,13 +46,7 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = GromarkBuilder::default()
-                .keyword(x.keyword.to_vec())
-                .primer(x.primer.to_vec())
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .strict(x.strict)
-                .build()
-                .unwrap();
+            let c = make(&x.pt_alphabet, &x.keyword, &x.primer, x.strict);
             assert_eq!(x.output, c.encipher(&x.input));
         }
     }
@@ -84,13 +78,7 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = GromarkBuilder::default()
-                .keyword(x.keyword.to_vec())
-                .primer(x.primer.to_vec())
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .strict(x.strict)
-                .build()
-                .unwrap();
+            let c = make(&x.pt_alphabet, &x.keyword, &x.primer, x.strict);
             assert_eq!(x.output, c.decipher(&x.input));
         }
     }
@@ -98,59 +86,28 @@ mod tests {
 
 const KEY_ALPHABET: &str = "0123456789";
 
-#[derive(Default, Builder)]
-pub struct Gromark {
-    keyword: Vec<char>,
-    primer: Vec<u32>,
-
-    pt_alphabet: Vec<char>,
+/// Make a substitution cipher.
+pub fn make(
+    pt_alphabet: &[char],
+    keyword: &[char],
+    primer: &[u32],
     strict: bool,
-}
+) -> impl SubstitutionCipher<char> {
+    let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
+    let ys = masc::transform::keyword(&pt_alphabet, &keyword);
+    let ct_alphabet_base = ColumnarTranspositionCipherBuilder::with_generic_key(&keyword)
+        .build()
+        .unwrap()
+        .encipher(&ys);
+    let xs_len = 1000; // TODO: this is a kludge till we move to iterator for this
+    let key = makegromarkkey(&primer, xs_len);
 
-impl Cipher<char, char> for Gromark {
-    /// Encipher a sequence.
-    fn encipher(&self, xs: &[char]) -> Vec<char> {
-        let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
-        let ys = masc::transform::keyword(&self.pt_alphabet, &self.keyword);
-        let ct_alphabet_base = ColumnarTranspositionCipherBuilder::with_generic_key(&self.keyword)
-            .build()
-            .unwrap()
-            .encipher(&ys);
-        let ct_alphabets: Vec<_> = (0..self.pt_alphabet.len())
-            .map(|i| transform::vigenere(&ct_alphabet_base, i))
-            .collect();
-        let key = makegromarkkey(&self.primer, xs.len());
-        let c = reciprocal_table::ReciprocalTableBuilder::default()
-            .key(key)
-            .pt_alphabet(Some(self.pt_alphabet.to_vec()))
-            .ct_alphabets(ct_alphabets)
-            .key_alphabet(Some(key_alphabet))
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.encipher(xs)
-    }
-
-    /// Decipher a sequence.
-    fn decipher(&self, xs: &[char]) -> Vec<char> {
-        let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
-        let ys = masc::transform::keyword(&self.pt_alphabet, &self.keyword);
-        let ct_alphabet_base = ColumnarTranspositionCipherBuilder::with_generic_key(&self.keyword)
-            .build()
-            .unwrap()
-            .encipher(&ys);
-        let ct_alphabets: Vec<_> = (0..self.pt_alphabet.len())
-            .map(|i| transform::vigenere(&ct_alphabet_base, i))
-            .collect();
-        let key = makegromarkkey(&self.primer, xs.len());
-        let c = reciprocal_table::ReciprocalTableBuilder::default()
-            .key(key)
-            .pt_alphabet(Some(self.pt_alphabet.to_vec()))
-            .ct_alphabets(ct_alphabets)
-            .key_alphabet(Some(key_alphabet))
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.decipher(xs)
-    }
+    reciprocal_table::make(
+        pt_alphabet,
+        &ct_alphabet_base,
+        &key_alphabet,
+        &key,
+        strict,
+        |xs, i| transform::vigenere(xs, i),
+    )
 }

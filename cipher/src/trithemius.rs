@@ -1,6 +1,5 @@
 use crate::vigenere;
-use crate::Cipher;
-use derive_builder::Builder;
+use crate::{Cipher, SubstitutionCipher};
 
 #[cfg(test)]
 mod tests {
@@ -30,11 +29,7 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = VigenereBuilder::default()
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .strict(x.strict)
-                .build()
-                .unwrap();
+            let c = make(&x.pt_alphabet, x.strict);
             assert_eq!(x.output, c.encipher(&x.input));
         }
     }
@@ -56,42 +51,13 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = VigenereBuilder::default()
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .strict(x.strict)
-                .build()
-                .unwrap();
+            let c = make(&x.pt_alphabet, x.strict);
             assert_eq!(x.output, c.decipher(&x.input));
         }
     }
 }
 
-#[derive(Default, Builder)]
-pub struct Vigenere {
-    pt_alphabet: Vec<char>,
-    strict: bool,
-}
-
-impl Cipher<char, char> for Vigenere {
-    /// Encipher a sequence.
-    fn encipher(&self, xs: &[char]) -> Vec<char> {
-        let c = vigenere::VigenereBuilder::default()
-            .key(self.pt_alphabet.to_vec())
-            .pt_alphabet(self.pt_alphabet.to_vec())
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.encipher(xs)
-    }
-
-    /// Decipher a sequence.
-    fn decipher(&self, xs: &[char]) -> Vec<char> {
-        let c = vigenere::VigenereBuilder::default()
-            .key(self.pt_alphabet.to_vec())
-            .pt_alphabet(self.pt_alphabet.to_vec())
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.decipher(xs)
-    }
+/// Make a substitution cipher.
+pub fn make(pt_alphabet: &[char], strict: bool) -> impl SubstitutionCipher<char> {
+    vigenere::make(pt_alphabet, pt_alphabet, strict)
 }

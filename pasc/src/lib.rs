@@ -350,8 +350,11 @@ impl SubstitutionCipherBuilder<char> {
 pub struct SubstitutionCipher<T: Atom> {
     key: Vec<T>,
 
+    #[builder(setter(into))]
     pt_alphabet: Vec<T>,
+    #[builder(setter(into))]
     ct_alphabets: Vec<Vec<T>>,
+    #[builder(setter(into))]
     key_alphabet: Vec<T>,
 
     autoclave: AutoclaveKind,
@@ -374,6 +377,10 @@ pub struct SubstitutionCipher<T: Atom> {
 }
 
 impl<T: Atom> SubstitutionCipher<T> {
+    pub fn is_ready(&self) -> bool {
+        *self.ready.borrow()
+    }
+
     /// Encipher a single message atom.
     fn encipher_one(&self, c: &T, k: &T, t: &ReciprocalTable<T, T, T>) -> Option<T> {
         match self.enc_lookup {

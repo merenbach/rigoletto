@@ -1,5 +1,5 @@
 use crate::reciprocal_table;
-use crate::Cipher;
+use crate::{Cipher, SubstitutionCipher};
 use derive_builder::Builder;
 use pasc::transform;
 
@@ -35,12 +35,7 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = DellaPortaBuilder::default()
-                .key(x.key.to_vec())
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .strict(x.strict)
-                .build()
-                .unwrap();
+            let c = make(&x.pt_alphabet, &x.key, x.strict);
             assert_eq!(x.output, c.encipher(&x.input));
         }
     }
@@ -64,53 +59,20 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = DellaPortaBuilder::default()
-                .key(x.key.to_vec())
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .strict(x.strict)
-                .build()
-                .unwrap();
+            let c = make(&x.pt_alphabet, &x.key, x.strict);
             assert_eq!(x.output, c.decipher(&x.input));
         }
     }
 }
 
-#[derive(Default, Builder)]
-pub struct DellaPorta {
-    key: Vec<char>,
-
-    pt_alphabet: Vec<char>,
-    strict: bool,
-}
-
-impl Cipher<char, char> for DellaPorta {
-    /// Encipher a sequence.
-    fn encipher(&self, xs: &[char]) -> Vec<char> {
-        let ct_alphabets: Vec<_> = (0..self.pt_alphabet.len())
-            .map(|i| transform::della_porta(&self.pt_alphabet, i))
-            .collect();
-        let c = reciprocal_table::ReciprocalTableBuilder::default()
-            .key(self.key.to_vec())
-            .pt_alphabet(Some(self.pt_alphabet.to_vec()))
-            .ct_alphabets(ct_alphabets)
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.encipher(xs)
-    }
-
-    /// Decipher a sequence.
-    fn decipher(&self, xs: &[char]) -> Vec<char> {
-        let ct_alphabets: Vec<_> = (0..self.pt_alphabet.len())
-            .map(|i| transform::della_porta(&self.pt_alphabet, i))
-            .collect();
-        let c = reciprocal_table::ReciprocalTableBuilder::default()
-            .key(self.key.to_vec())
-            .pt_alphabet(Some(self.pt_alphabet.to_vec()))
-            .ct_alphabets(ct_alphabets)
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.decipher(xs)
-    }
+/// Make a substitution cipher.
+pub fn make(pt_alphabet: &[char], key: &[char], strict: bool) -> impl SubstitutionCipher<char> {
+    reciprocal_table::make(
+        pt_alphabet,
+        pt_alphabet,
+        pt_alphabet,
+        key,
+        strict,
+        |xs, i| transform::della_porta(xs, i),
+    )
 }

@@ -59,6 +59,8 @@ where
     fn decipher_retain(&self, xs: &[T]) -> Vec<T>;
 }
 
+// impl<T:Copy> Cipher<T,T> for SubstitutionCipher<T> {}
+
 // TODO: strict mode/caseless mode can be during encipherment, but we can also use sentinels
 // if this were a Message(Vec<(char, char, bool>) instead--or similar--we could use the second or third slots of each tuple to indicate
 // if a char was in the original but didn't exist in the translated version, or if a case change would resolve this issue

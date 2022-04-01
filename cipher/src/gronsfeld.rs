@@ -1,5 +1,5 @@
 use crate::reciprocal_table;
-use crate::Cipher;
+use crate::{Cipher, SubstitutionCipher};
 use derive_builder::Builder;
 use pasc::transform;
 
@@ -35,12 +35,7 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = GronsfeldBuilder::default()
-                .key(x.key.to_vec())
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .strict(x.strict)
-                .build()
-                .unwrap();
+            let c = make(&x.pt_alphabet, &x.key, x.strict);
             assert_eq!(x.output, c.encipher(&x.input));
         }
     }
@@ -64,12 +59,7 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = GronsfeldBuilder::default()
-                .key(x.key.to_vec())
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .strict(x.strict)
-                .build()
-                .unwrap();
+            let c = make(&x.pt_alphabet, &x.key, x.strict);
             assert_eq!(x.output, c.decipher(&x.input));
         }
     }
@@ -77,46 +67,15 @@ mod tests {
 
 const KEY_ALPHABET: &str = "0123456789";
 
-#[derive(Default, Builder)]
-pub struct Gronsfeld {
-    key: Vec<char>,
-
-    pt_alphabet: Vec<char>,
-    strict: bool,
-}
-
-impl Cipher<char, char> for Gronsfeld {
-    /// Encipher a sequence.
-    fn encipher(&self, xs: &[char]) -> Vec<char> {
-        let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
-        let ct_alphabets: Vec<_> = (0..key_alphabet.len())
-            .map(|i| transform::vigenere(&self.pt_alphabet, i))
-            .collect();
-        let c = reciprocal_table::ReciprocalTableBuilder::default()
-            .key(self.key.to_vec())
-            .pt_alphabet(Some(self.pt_alphabet.to_vec()))
-            .ct_alphabets(ct_alphabets)
-            .key_alphabet(Some(key_alphabet))
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.encipher(xs)
-    }
-
-    /// Decipher a sequence.
-    fn decipher(&self, xs: &[char]) -> Vec<char> {
-        let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
-        let ct_alphabets: Vec<_> = (0..key_alphabet.len())
-            .map(|i| transform::vigenere(&self.pt_alphabet, i))
-            .collect();
-        let c = reciprocal_table::ReciprocalTableBuilder::default()
-            .key(self.key.to_vec())
-            .pt_alphabet(Some(self.pt_alphabet.to_vec()))
-            .ct_alphabets(ct_alphabets)
-            .key_alphabet(Some(key_alphabet))
-            .strict(self.strict)
-            .build()
-            .unwrap();
-        c.decipher(xs)
-    }
+/// Make a substitution cipher.
+pub fn make(pt_alphabet: &[char], key: &[char], strict: bool) -> impl SubstitutionCipher<char> {
+    let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
+    reciprocal_table::make(
+        pt_alphabet,
+        pt_alphabet,
+        &key_alphabet,
+        key,
+        strict,
+        |xs, i| transform::vigenere(xs, i),
+    )
 }
