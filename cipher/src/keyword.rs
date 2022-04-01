@@ -1,6 +1,5 @@
 use crate::simple;
 use crate::{Cipher, SubstitutionCipher};
-use derive_builder::Builder;
 use masc::tableau::Atom;
 use masc::transform;
 

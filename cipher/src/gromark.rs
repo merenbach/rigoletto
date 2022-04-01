@@ -1,6 +1,5 @@
 use crate::reciprocal_table;
 use crate::{Cipher, SubstitutionCipher};
-use derive_builder::Builder;
 use pasc::makegromarkkey;
 use pasc::transform;
 use transposition::ColumnarTranspositionCipherBuilder;
