@@ -1,5 +1,6 @@
 use crate::{Cipher, SubstitutionCipher};
 use derive_builder::Builder;
+use masc::tableau::Atom;
 use pasc::SubstitutionCipherBuilder;
 use std::cell::RefCell;
 
@@ -78,23 +79,23 @@ use std::cell::RefCell;
 // }
 
 #[derive(Default, Builder)]
-pub struct ReciprocalTable {
+pub struct ReciprocalTable<T: Atom> {
     #[builder(setter(into))]
-    key: Vec<char>,
+    key: Vec<T>,
 
     #[builder(setter(into))]
-    pt_alphabet: Vec<char>,
+    pt_alphabet: Vec<T>,
     #[builder(setter(into))]
-    ct_alphabets: Vec<Vec<char>>,
+    ct_alphabets: Vec<Vec<T>>,
     #[builder(setter(into))]
-    key_alphabet: Vec<char>,
+    key_alphabet: Vec<T>,
     strict: bool,
 
     #[builder(setter(skip))]
-    tableau: RefCell<pasc::SubstitutionCipher<char>>,
+    tableau: RefCell<pasc::SubstitutionCipher<T>>,
 }
 
-impl ReciprocalTable {
+impl<T: Atom> ReciprocalTable<T> {
     fn initialize(&self) {
         if !self.tableau.borrow().is_ready() {
             *self.tableau.borrow_mut() = SubstitutionCipherBuilder::default()
@@ -109,29 +110,29 @@ impl ReciprocalTable {
     }
 }
 
-impl Cipher<char, char> for ReciprocalTable {
+impl<T: Atom> Cipher<T, T> for ReciprocalTable<T> {
     /// Encipher a sequence.
-    fn encipher(&self, xs: &[char]) -> Vec<char> {
+    fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         self.tableau.borrow().encipher(xs)
     }
 
     /// Decipher a sequence.
-    fn decipher(&self, xs: &[char]) -> Vec<char> {
+    fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         self.tableau.borrow().decipher(xs)
     }
 }
 
-impl SubstitutionCipher<char> for ReciprocalTable {
+impl<T: Atom> SubstitutionCipher<T> for ReciprocalTable<T> {
     /// Encipher a sequence.
-    fn encipher_retain(&self, xs: &[char]) -> Vec<char> {
+    fn encipher_retain(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         self.tableau.borrow().encipher(xs)
     }
 
     /// Decipher a sequence.
-    fn decipher_retain(&self, xs: &[char]) -> Vec<char> {
+    fn decipher_retain(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         self.tableau.borrow().decipher(xs)
     }
@@ -165,16 +166,17 @@ impl SubstitutionCipher<char> for ReciprocalTable {
 // }
 
 /// Make a substitution cipher.
-pub fn make<F>(
-    pt_alphabet: &[char],
-    ct_alphabet: &[char],
-    key_alphabet: &[char],
-    key: &[char], // TODO: should this be on encipher or decipher instead? kind of torn
+pub fn make<T, F>(
+    pt_alphabet: &[T],
+    ct_alphabet: &[T],
+    key_alphabet: &[T],
+    key: &[T], // TODO: should this be on encipher or decipher instead? kind of torn
     strict: bool,
     f: F,
-) -> impl SubstitutionCipher<char>
+) -> impl SubstitutionCipher<T>
 where
-    F: Fn(&[char], usize) -> Vec<char>,
+    T: Atom,
+    F: Fn(&[T], usize) -> Vec<T>,
 {
     let ct_alphabets: Vec<_> = key_alphabet
         .iter()
