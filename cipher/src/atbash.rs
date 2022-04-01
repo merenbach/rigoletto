@@ -69,6 +69,7 @@ mod tests {
     }
 }
 
+/// Make a substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T]) -> impl SubstitutionCipher<T> {
     simple::make(pt_alphabet, |xs| transform::atbash(xs))
 }

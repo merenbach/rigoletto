@@ -157,7 +157,8 @@ impl fmt::Display for Simple<char> {
     }
 }
 
-pub fn make<T, F>(pt_alphabet: &[T], f: F) -> Simple<T>
+/// Make a substitution cipher.
+pub fn make<T, F>(pt_alphabet: &[T], f: F) -> impl SubstitutionCipher<T>
 where
     T: Atom,
     F: Fn(&[T]) -> Vec<T>,

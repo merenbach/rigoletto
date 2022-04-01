@@ -76,6 +76,8 @@ mod tests {
     }
 }
 
+/// Make a substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], keyword: &[T]) -> impl SubstitutionCipher<T> {
-    simple::make(pt_alphabet, |xs| transform::keyword(xs, keyword))
+    let kw = keyword.to_owned(); // lifetime specifier concerns
+    simple::make(pt_alphabet, move |xs| transform::keyword(xs, &kw))
 }

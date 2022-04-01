@@ -80,10 +80,13 @@ mod tests {
     }
 }
 
+/// Make a substitution cipher.
 pub fn make<T: Atom>(
     pt_alphabet: &[T],
     slope: usize,
     intercept: usize,
 ) -> impl SubstitutionCipher<T> {
-    simple::make(pt_alphabet, |xs| transform::affine(xs, slope, intercept))
+    simple::make(pt_alphabet, move |xs| {
+        transform::affine(xs, slope, intercept)
+    })
 }
