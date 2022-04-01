@@ -1,5 +1,6 @@
 use crate::vigenere;
 use crate::{Cipher, SubstitutionCipher};
+use masc::tableau::Atom;
 
 #[cfg(test)]
 mod tests {
@@ -58,6 +59,6 @@ mod tests {
 }
 
 /// Make a substitution cipher.
-pub fn make(pt_alphabet: &[char], strict: bool) -> impl SubstitutionCipher<char> {
+pub fn make<T: Atom>(pt_alphabet: &[T], strict: bool) -> impl SubstitutionCipher<T> {
     vigenere::make(pt_alphabet, pt_alphabet, strict)
 }

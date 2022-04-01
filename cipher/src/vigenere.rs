@@ -1,5 +1,6 @@
 use crate::reciprocal_table;
 use crate::{Cipher, SubstitutionCipher};
+use masc::tableau::Atom;
 use pasc::transform;
 
 #[cfg(test)]
@@ -65,7 +66,7 @@ mod tests {
 }
 
 /// Make a substitution cipher.
-pub fn make(pt_alphabet: &[char], key: &[char], strict: bool) -> impl SubstitutionCipher<char> {
+pub fn make<T: Atom>(pt_alphabet: &[T], key: &[T], strict: bool) -> impl SubstitutionCipher<T> {
     reciprocal_table::make(
         pt_alphabet,
         pt_alphabet,
