@@ -1,8 +1,10 @@
 use crate::reciprocal_table;
 use crate::Cipher;
+use lfg::LFGBuilder;
 use masc::tableau::Atom;
-use pasc::makegromarkkey;
+use num::{Integer, Unsigned};
 use pasc::transform;
+use std::iter;
 use transposition::ColumnarTranspositionCipherBuilder;
 
 #[cfg(test)]
@@ -85,6 +87,28 @@ mod tests {
 }
 
 const KEY_ALPHABET: &str = "0123456789";
+
+fn chain_adder<T>(m: T, count: usize, primer: &[T]) -> Vec<T>
+where
+    T: Copy + Integer + Unsigned + iter::Product + iter::Sum,
+{
+    let g = LFGBuilder::default()
+        .additive()
+        .modulus(m)
+        .seed(primer.to_vec())
+        .taps(vec![1, 2])
+        .build()
+        .unwrap();
+    primer.iter().copied().chain(g).take(count).collect()
+}
+
+pub fn makegromarkkey(primer: &[u32], msglen: usize) -> Vec<char> {
+    // let primer: Vec<_> = k.chars().filter_map(|c| c.to_digit(10)).collect();
+    chain_adder(10, msglen, &primer)
+        .iter()
+        .filter_map(|&i| char::from_digit(i, 10))
+        .collect()
+}
 
 /// Make a substitution cipher.
 pub fn make<T: Atom + Ord>(

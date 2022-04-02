@@ -3,7 +3,6 @@ pub mod transform;
 
 use alphabet::Alphabet;
 use derive_builder::Builder;
-use lfg::LFGBuilder;
 use masc;
 use masc::tableau::Atom;
 use num::{Integer, Unsigned};
@@ -259,71 +258,12 @@ impl TabulaRecta {
 }
 */
 
-fn chainadder<T>(m: T, count: usize, primer: &[T]) -> Vec<T>
-where
-    T: Copy + Integer + Unsigned + std::iter::Product + std::iter::Sum,
-{
-    let g = LFGBuilder::default()
-        .additive()
-        .modulus(m)
-        .seed(primer.to_vec())
-        .taps(vec![1, 2])
-        .build()
-        .unwrap();
-    primer.iter().copied().chain(g).take(count).collect()
-}
-
-pub fn makegromarkkey(primer: &[u32], msglen: usize) -> Vec<char> {
-    // let primer: Vec<_> = k.chars().filter_map(|c| c.to_digit(10)).collect();
-    chainadder(10, msglen, &primer)
-        .iter()
-        .filter_map(|&i| char::from_digit(i, 10))
-        .collect()
-}
-
-// fn newgromark(primer: &[usize]) {
-//     let key = "ENIGMA";
-//     let primer = "23452";
-//     let msg = "THEREAREUPTOTENSUBSTITUTESPERLETTER";
-
-//     // TODO: msglen doesn't _need_ to go here; can just take() here in future version
-//     // NOTE: this is the key to pass to the Gromark cipher now
-//     // NOTE: this is the RK in Gromark (running key)
-//     let k = makegromarkkey(primer, msg.chars().count());
-//     let gronsfeld_key: String = k.chars().collect();
-
-//     // NOTE: this is the MA in Gromark (mixed alphabet)
-//     let pt_alphabet = alphabet::Alphabet::Latin.to_vec();
-//     let key_vec: Vec<_> = key.chars().collect();
-//     let ct_alphabet_input = masc::keyword_transform(&pt_alphabet, &key_vec);
-
-//     let transposition_key: Vec<_> = key.chars().collect();
-//     // let tc = transposition::ColumnarBuilder::default(&[&transposition_key], false);
-//     // let transposed_ct_alphabet = tc.encipher(&ct_alphabet_input);
-
-//     // let c = pasc::CipherBuilder::with_gronsfeld(&gronsfeld_key)
-//     //     .ct_alphabet(&transposed_ct_alphabet)
-//     //     .build();
-//     // let m = message::Message::new(msg);
-//     // m.encipher(&c);
-//     // println!("enciphered message = {:?}", m);
-//     // // NOTE: this is the GRO in Gromark (Gronsfeld)
-// }
-
 impl SubstitutionCipherBuilder<char, char> {
     // pub fn standard() -> Self {
     //     Self {
     //         pt_alphabet: Some(Alphabet::Latin.to_vec()),
     //         ..Default::default()
     //     }
-    // }
-
-    // // Prepare a Gromark cipher.
-    // pub fn with_gromark(&mut self, keyword: &str, primer: &str) -> &mut Self {
-    //     self.cipher(CipherKind::Gromark {
-    //         keyword: keyword.chars().collect(),
-    //         primer: primer.to_string(),
-    //     })
     // }
 
     // pub fn str_key(&mut self, v: &str) -> &mut Self {
