@@ -310,13 +310,13 @@ pub fn makegromarkkey(primer: &[u32], msglen: usize) -> Vec<char> {
 //     // // NOTE: this is the GRO in Gromark (Gronsfeld)
 // }
 
-impl SubstitutionCipherBuilder<char> {
-    pub fn standard() -> Self {
-        Self {
-            pt_alphabet: Some(Alphabet::Latin.to_vec()),
-            ..Default::default()
-        }
-    }
+impl SubstitutionCipherBuilder<char, char> {
+    // pub fn standard() -> Self {
+    //     Self {
+    //         pt_alphabet: Some(Alphabet::Latin.to_vec()),
+    //         ..Default::default()
+    //     }
+    // }
 
     // // Prepare a Gromark cipher.
     // pub fn with_gromark(&mut self, keyword: &str, primer: &str) -> &mut Self {
@@ -347,15 +347,15 @@ impl SubstitutionCipherBuilder<char> {
 /// A Cipher implements a polyalphabetic substitution cipher.
 #[derive(Default, Builder, Clone)]
 #[builder(default)]
-pub struct SubstitutionCipher<T: Atom> {
-    key: Vec<T>,
+pub struct SubstitutionCipher<T: Atom, K: Atom> {
+    key: Vec<K>,
 
     #[builder(setter(into))]
     pt_alphabet: Vec<T>,
     #[builder(setter(into))]
     ct_alphabets: Vec<Vec<T>>,
     #[builder(setter(into))]
-    key_alphabet: Vec<T>,
+    key_alphabet: Vec<K>,
 
     autoclave: AutoclaveKind,
     strict: bool,
@@ -371,30 +371,33 @@ pub struct SubstitutionCipher<T: Atom> {
     ready: RefCell<bool>,
 
     #[builder(setter(skip))]
-    tableau: RefCell<ReciprocalTable<T, T, T>>,
+    tableau: RefCell<ReciprocalTable<K, T, T>>,
     // pt2ct: HashMap<char, translation::Table>,
     // ct2pt: HashMap<char, translation::Table>,
 }
 
-impl<T: Atom> SubstitutionCipher<T> {
+// 379 | impl<T: Atom, K: Atom> SubstitutionCipher<T, K> where Vec<T>: FromIterator<K> {
+impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     pub fn is_ready(&self) -> bool {
         *self.ready.borrow()
     }
 
     /// Encipher a single message atom.
-    fn encipher_one(&self, c: &T, k: &T, t: &ReciprocalTable<T, T, T>) -> Option<T> {
-        match self.enc_lookup {
-            Some(f) => (f)(c, k, t),
-            None => t.encode(&c, &k),
-        }
+    fn encipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T, T>) -> Option<T> {
+        t.encode(&c, &k)
+        // match self.enc_lookup {
+        //     Some(f) => (f)(c, k, t),
+        //     None => t.encode(&c, &k),
+        // }
     }
 
     /// Decipher a single message atom.
-    fn decipher_one(&self, c: &T, k: &T, t: &ReciprocalTable<T, T, T>) -> Option<T> {
-        match self.dec_lookup {
-            Some(f) => (f)(c, k, t),
-            None => t.decode(&c, &k),
-        }
+    fn decipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T, T>) -> Option<T> {
+        t.decode(&c, &k)
+        // match self.dec_lookup {
+        //     Some(f) => (f)(c, k, t),
+        //     None => t.decode(&c, &k),
+        // }
     }
 
     // /// Printable version of this cipher.
@@ -413,14 +416,15 @@ impl<T: Atom> SubstitutionCipher<T> {
     }
 
     // TODO: msglen is currently ignored for non-Gromark. This is a kludge.
-    fn make_key(&self, msglen: usize) -> Vec<T> {
+    fn make_key(&self, msglen: usize) -> Vec<K> {
         let keychars = self.tableau.borrow().keyset();
         self.key
             .iter()
-            .filter(|c| match self.key_lookup {
-                Some(f) => (f)(&c, &keychars),
-                None => keychars.contains(&c),
-            })
+            .filter(|c| keychars.contains(&c))
+            // .filter(|c| match self.key_lookup {
+            //     Some(f) => (f)(&c, &keychars),
+            //     None => keychars.contains(&c),
+            // })
             .copied()
             .collect()
     }
@@ -436,14 +440,17 @@ impl<T: Atom> SubstitutionCipher<T> {
             // can use .scan(0, |cursor, &c| if we're not going to return None
             .filter_map(|&c| {
                 let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
-                let raw_out = self.encipher_one(&c, &k, &tr);
+                                  // let raw_out = self.encipher_one(&c, &k, &tr);
+                let raw_out = tr.encode(&c, &k);
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
                         match self.autoclave {
                             AutoclaveKind::None => kq.push(elem),
-                            AutoclaveKind::Key => kq.push(o),
-                            AutoclaveKind::Text => kq.push(c),
+                            AutoclaveKind::Key => kq.push(elem),
+                            AutoclaveKind::Text => kq.push(elem),
+                            // AutoclaveKind::Key => kq.push(o),
+                            // AutoclaveKind::Text => kq.push(c),
                         };
                         Some(o)
                     }
@@ -470,14 +477,17 @@ impl<T: Atom> SubstitutionCipher<T> {
             // can use .scan(0, |cursor, &c| if we're not going to return None
             .filter_map(|&c| {
                 let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
-                let raw_out = self.decipher_one(&c, &k, &tr);
+                                  // let raw_out = self.decipher_one(&c, &k, &tr);
+                let raw_out = tr.decode(&c, &k);
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
                         match self.autoclave {
                             AutoclaveKind::None => kq.push(elem),
-                            AutoclaveKind::Key => kq.push(c),
-                            AutoclaveKind::Text => kq.push(o),
+                            AutoclaveKind::Key => kq.push(elem),
+                            AutoclaveKind::Text => kq.push(elem),
+                            // AutoclaveKind::Key => kq.push(c),
+                            // AutoclaveKind::Text => kq.push(o),
                         };
                         Some(o)
                     }

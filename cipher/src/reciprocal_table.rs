@@ -79,23 +79,23 @@ use std::cell::RefCell;
 // }
 
 #[derive(Default, Builder)]
-pub struct ReciprocalTable<T: Atom> {
+pub struct ReciprocalTable<T: Atom, K: Atom> {
     #[builder(setter(into))]
-    key: Vec<T>,
+    key: Vec<K>,
 
     #[builder(setter(into))]
     pt_alphabet: Vec<T>,
     #[builder(setter(into))]
     ct_alphabets: Vec<Vec<T>>,
     #[builder(setter(into))]
-    key_alphabet: Vec<T>,
+    key_alphabet: Vec<K>,
     strict: bool,
 
     #[builder(setter(skip))]
-    tableau: RefCell<pasc::SubstitutionCipher<T>>,
+    tableau: RefCell<pasc::SubstitutionCipher<T, K>>,
 }
 
-impl<T: Atom> ReciprocalTable<T> {
+impl<T: Atom, K: Atom> ReciprocalTable<T, K> {
     fn initialize(&self) {
         if !self.tableau.borrow().is_ready() {
             *self.tableau.borrow_mut() = SubstitutionCipherBuilder::default()
@@ -110,7 +110,7 @@ impl<T: Atom> ReciprocalTable<T> {
     }
 }
 
-impl<T: Atom> Cipher<T, T> for ReciprocalTable<T> {
+impl<T: Atom, K: Atom> Cipher<T, T> for ReciprocalTable<T, K> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
@@ -134,16 +134,17 @@ impl<T: Atom> Cipher<T, T> for ReciprocalTable<T> {
 // }
 
 /// Make a substitution cipher.
-pub fn make<T, F>(
+pub fn make<T, K, F>(
     pt_alphabet: &[T],
     ct_alphabet: &[T],
-    key_alphabet: &[T],
-    key: &[T], // TODO: should this be on encipher or decipher instead? kind of torn
+    key_alphabet: &[K],
+    key: &[K],
     f: F,
     strict: bool,
 ) -> impl Cipher<T, T>
 where
     T: Atom,
+    K: Atom,
     F: Fn(&[T], usize) -> Vec<T>,
 {
     let ct_alphabets: Vec<_> = key_alphabet
