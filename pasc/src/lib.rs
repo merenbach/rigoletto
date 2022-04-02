@@ -356,11 +356,10 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     }
 
     // TODO: msglen is currently ignored for non-Gromark. This is a kludge.
-    fn make_key(&self, msglen: usize) -> Vec<K> {
-        let keychars = self.tableau.borrow().keyset();
+    fn make_key(&self, charset: &[K], msglen: usize) -> Vec<K> {
         self.key
             .iter()
-            .filter(|c| keychars.contains(&c))
+            .filter(|c| charset.contains(&c))
             // .filter(|c| match self.key_lookup {
             //     Some(f) => (f)(&c, &keychars),
             //     None => keychars.contains(&c),
@@ -372,7 +371,7 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     /// Encipher a string.
     pub fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let mut kq = KeyQueue::from(self.make_key(xs.len()));
+        let mut kq = KeyQueue::from(self.make_key(&self.tableau.borrow().keyset(), xs.len()));
 
         let tr = self.tableau.borrow();
 
@@ -409,7 +408,7 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     /// Decipher a string.
     pub fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let mut kq = KeyQueue::from(self.make_key(xs.len()));
+        let mut kq = KeyQueue::from(self.make_key(&self.tableau.borrow().keyset(), xs.len()));
 
         let tr = self.tableau.borrow();
 
