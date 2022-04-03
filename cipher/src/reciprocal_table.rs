@@ -89,6 +89,7 @@ pub struct ReciprocalTable<T: Atom, K: Atom> {
     ct_alphabets: Vec<Vec<T>>,
     #[builder(setter(into))]
     key_alphabet: Vec<K>,
+    #[builder(default)]
     strict: bool,
 
     #[builder(setter(skip))]
@@ -121,6 +122,67 @@ impl<T: Atom, K: Atom> Cipher<T, T> for ReciprocalTable<T, K> {
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         self.tableau.borrow().decipher(xs)
+    }
+}
+
+#[derive(Default, Builder)]
+pub struct ReciprocalTableHomogeneous<T: Atom> {
+    #[builder(setter(into))]
+    key: Vec<T>,
+
+    #[builder(setter(into))]
+    pt_alphabet: Vec<T>,
+    #[builder(setter(into))]
+    ct_alphabets: Vec<Vec<T>>,
+    #[builder(setter(into))]
+    key_alphabet: Vec<T>,
+    #[builder(default)]
+    strict: bool,
+
+    // TODO: replace with enums
+    #[builder(default)]
+    text_autokey: bool,
+    #[builder(default)]
+    key_autokey: bool,
+
+    #[builder(setter(skip))]
+    tableau: RefCell<pasc::SubstitutionCipher<T, T>>,
+}
+
+impl<T: Atom> ReciprocalTableHomogeneous<T> {
+    fn initialize(&self) {
+        if !self.tableau.borrow().is_ready() {
+            let autoclave = if self.text_autokey {
+                pasc::AutoclaveKind::Text
+            } else if self.key_autokey {
+                pasc::AutoclaveKind::Key
+            } else {
+                pasc::AutoclaveKind::None
+            };
+            *self.tableau.borrow_mut() = SubstitutionCipherBuilder::default()
+                .key(self.key.to_vec())
+                .pt_alphabet(self.pt_alphabet.to_vec())
+                .ct_alphabets(self.ct_alphabets.to_vec())
+                .key_alphabet(self.key_alphabet.to_vec())
+                .autoclave(autoclave)
+                .strict(self.strict)
+                .build()
+                .unwrap();
+        }
+    }
+}
+
+impl<T: Atom> Cipher<T, T> for ReciprocalTableHomogeneous<T> {
+    /// Encipher a sequence.
+    fn encipher(&self, xs: &[T]) -> Vec<T> {
+        self.initialize();
+        self.tableau.borrow().encipher_autokey(xs)
+    }
+
+    /// Decipher a sequence.
+    fn decipher(&self, xs: &[T]) -> Vec<T> {
+        self.initialize();
+        self.tableau.borrow().decipher_autokey(xs)
     }
 }
 
@@ -158,6 +220,39 @@ where
         .pt_alphabet(pt_alphabet)
         .ct_alphabets(ct_alphabets)
         .key_alphabet(key_alphabet)
+        .strict(strict)
+        .build()
+        .unwrap()
+}
+
+/// Make a substitution cipher.
+pub fn make_homogeneous<T, F>(
+    pt_alphabet: &[T],
+    ct_alphabet: &[T],
+    key_alphabet: &[T],
+    key: &[T],
+    f: F,
+    strict: bool,
+    text_autokey: bool,
+    key_autokey: bool,
+) -> impl Cipher<T, T>
+where
+    T: Atom,
+    F: Fn(&[T], usize) -> Vec<T>,
+{
+    let ct_alphabets: Vec<_> = key_alphabet
+        .iter()
+        .enumerate()
+        .map(|(i, _)| f(ct_alphabet, i))
+        .collect();
+
+    ReciprocalTableHomogeneousBuilder::default()
+        .key(key)
+        .pt_alphabet(pt_alphabet)
+        .ct_alphabets(ct_alphabets)
+        .key_alphabet(key_alphabet)
+        .text_autokey(text_autokey)
+        .key_autokey(key_autokey)
         .strict(strict)
         .build()
         .unwrap()

@@ -19,6 +19,8 @@ pub mod scytale;
 pub mod simple;
 pub mod variant_beaufort;
 pub mod vigenere;
+pub mod vigenere_key_autokey;
+pub mod vigenere_text_autokey;
 // pub mod vic;
 
 // use std::fmt;
