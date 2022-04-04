@@ -79,7 +79,7 @@ use std::cell::RefCell;
 // }
 
 #[derive(Default, Builder)]
-pub struct ReciprocalTable<T: Atom, K: Atom> {
+struct ReciprocalTable<T: Atom, K: Atom> {
     #[builder(setter(into))]
     key: Vec<K>,
 
@@ -126,7 +126,7 @@ impl<T: Atom, K: Atom> Cipher<T, T> for ReciprocalTable<T, K> {
 }
 
 #[derive(Default, Builder)]
-pub struct ReciprocalTableHomogeneous<T: Atom> {
+struct ReciprocalTableHomogeneous<T: Atom> {
     #[builder(setter(into))]
     key: Vec<T>,
 
