@@ -103,13 +103,13 @@ impl<T: Atom> Simple<T> {
     /// Encipher an element.
     fn encipher_one(&self, x: &T) -> Option<T> {
         self.initialize();
-        self.tableau.borrow().encode(&x)
+        self.tableau.borrow().encode(x)
     }
 
     /// Decipher an element.
     fn decipher_one(&self, x: &T) -> Option<T> {
         self.initialize();
-        self.tableau.borrow().decode(&x)
+        self.tableau.borrow().decode(x)
     }
 }
 

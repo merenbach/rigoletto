@@ -74,12 +74,12 @@ impl<K: Atom, T: Atom, U: Atom> ReciprocalTable<K, T, U> {
 
     // Encode an element.
     pub fn encode(&self, x: &T, k: &K) -> Option<U> {
-        self.0.get(&k)?.encode(x)
+        self.0.get(k)?.encode(x)
     }
 
     // Decode an element.
     pub fn decode(&self, x: &U, k: &K) -> Option<T> {
-        self.0.get(&k)?.decode(x)
+        self.0.get(k)?.decode(x)
     }
 
     // /// Encipher a string.
