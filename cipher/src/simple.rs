@@ -101,13 +101,13 @@ impl<T: Atom> Simple<T> {
     }
 
     /// Encipher an element.
-    fn encipher_one(&self, x: &T) -> Option<T> {
+    fn encipher_one(&self, x: T) -> Option<T> {
         self.initialize();
         self.tableau.borrow().encode(&x)
     }
 
     /// Decipher an element.
-    fn decipher_one(&self, x: &T) -> Option<T> {
+    fn decipher_one(&self, x: T) -> Option<T> {
         self.initialize();
         self.tableau.borrow().decode(&x)
     }
@@ -118,10 +118,10 @@ impl<T: Atom> Cipher<T, T> for Simple<T> {
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         if self.strict {
-            xs.iter().filter_map(|x| self.encipher_one(x)).collect()
+            xs.iter().filter_map(|&x| self.encipher_one(x)).collect()
         } else {
             xs.iter()
-                .map(|x| self.encipher_one(x).unwrap_or(*x))
+                .map(|&x| self.encipher_one(x).unwrap_or(x))
                 .collect()
         }
     }
@@ -130,10 +130,10 @@ impl<T: Atom> Cipher<T, T> for Simple<T> {
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         if self.strict {
-            xs.iter().filter_map(|x| self.decipher_one(x)).collect()
+            xs.iter().filter_map(|&x| self.decipher_one(x)).collect()
         } else {
             xs.iter()
-                .map(|x| self.decipher_one(x).unwrap_or(*x))
+                .map(|&x| self.decipher_one(x).unwrap_or(x))
                 .collect()
         }
     }
