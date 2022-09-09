@@ -94,48 +94,41 @@ pub struct Simple<T: Atom> {
 }
 
 impl<T: Atom> Simple<T> {
-    fn initialize(&self) {
+    fn initialize(&self) -> &RefCell<Tableau<T, T>> {
         if self.tableau.borrow().is_empty() {
             *self.tableau.borrow_mut() = Tableau::new(&self.pt_alphabet, &self.ct_alphabet);
         }
+        &self.tableau
     }
 
     /// Encipher an element.
     fn encipher_one(&self, x: &T) -> Option<T> {
-        self.initialize();
-        self.tableau.borrow().encode(x)
+        self.initialize().borrow().encode(x)
     }
 
     /// Decipher an element.
     fn decipher_one(&self, x: &T) -> Option<T> {
-        self.initialize();
-        self.tableau.borrow().decode(x)
+        self.initialize().borrow().decode(x)
+    }
+
+    fn transcipher(&self, xs: &[T], cb: impl Fn(&T) -> Option<T>) -> Vec<T> {
+        if self.strict {
+            xs.iter().filter_map(|x| cb(x)).collect()
+        } else {
+            xs.iter().map(|x| cb(x).unwrap_or(*x)).collect()
+        }
     }
 }
 
 impl<T: Atom> Cipher<T, T> for Simple<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        self.initialize();
-        if self.strict {
-            xs.iter().filter_map(|x| self.encipher_one(x)).collect()
-        } else {
-            xs.iter()
-                .map(|x| self.encipher_one(x).unwrap_or(*x))
-                .collect()
-        }
+        self.transcipher(xs, |x| self.encipher_one(x))
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        self.initialize();
-        if self.strict {
-            xs.iter().filter_map(|x| self.decipher_one(x)).collect()
-        } else {
-            xs.iter()
-                .map(|x| self.decipher_one(x).unwrap_or(*x))
-                .collect()
-        }
+        self.transcipher(xs, |x| self.decipher_one(x))
     }
 }
 
