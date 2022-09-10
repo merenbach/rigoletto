@@ -17,6 +17,15 @@ use std::hash::Hash;
 //     // }
 // }
 
+/// Create a translation table. This is modeled off of the Python str.maketrans method.
+fn maketrans<T, U>(xs: &[T], ys: &[U]) -> HashMap<T, U>
+where
+    T: Atom,
+    U: Atom,
+{
+    xs.iter().copied().zip(ys.iter().copied()).collect()
+}
+
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 
@@ -64,10 +73,7 @@ pub struct Tableau<T: Atom, U: Atom>(HashMap<T, U>, HashMap<U, T>);
 
 impl<T: Atom, U: Atom> Tableau<T, U> {
     pub fn new(xs: &[T], ys: &[U]) -> Self {
-        Self(
-            xs.iter().copied().zip(ys.iter().copied()).collect(),
-            ys.iter().copied().zip(xs.iter().copied()).collect(),
-        )
+        Self(maketrans(xs, ys), maketrans(ys, xs))
     }
 
     /// Encode an element.
