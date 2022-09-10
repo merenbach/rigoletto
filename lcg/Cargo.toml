@@ -9,4 +9,4 @@ edition = "2021"
 [dependencies]
 num = "0.3"
 std_ext = { path = "../std_ext" }
-derive_builder = "0.10"
+derive_builder = "0.11"

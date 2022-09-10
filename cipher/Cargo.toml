@@ -8,7 +8,7 @@ version = "0.1.0"
 
 [dependencies]
 alphabet = {path = "../alphabet"}
-derive_builder = "0.10"
+derive_builder = "0.11"
 lfg = {path = "../lfg"}
 masc = {path = "../masc"}
 num = "0.3"

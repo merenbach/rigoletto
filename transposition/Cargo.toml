@@ -8,4 +8,4 @@ version = "0.1.0"
 
 [dependencies]
 std_ext = {path = "../std_ext"}
-derive_builder = "0.10"
+derive_builder = "0.11"
