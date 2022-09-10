@@ -19,23 +19,10 @@ use std::hash::Hash;
 
 /// Create a translation table. This is modeled off of the Python str.maketrans method.
 macro_rules! maketrans {
-    ($xs:expr , $ys:expr) => {
-        {
-            $xs.iter().zip($ys.iter()).map(|(&x, &y)| (x, y))
-                .collect()
-        }
-    };
+    ($xs:expr , $ys:expr) => {{
+        $xs.iter().zip($ys.iter()).map(|(&x, &y)| (x, y)).collect()
+    }};
 }
-
-// macro_rules! maketrans {
-//     ($xs:expr , $ys:expr $(,$zs:expr)?) => {
-//         {
-//             $xs.iter().zip($ys.iter()).map(|(&x, &y)| (x, Some(y)))
-//                 $ ( .chain( $zs.iter().map(|&z| (z, None))) )?
-//                 .collect()
-//         }
-//     };
-// }
 
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}

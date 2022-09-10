@@ -16,7 +16,21 @@ mod tests {
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 
+impl<T> TableBuilder<T>
+where
+    T: Atom,
+{
+    fn validate(&self) -> Result<(), String> {
+        if self.src.as_ref().unwrap().len() != self.dst.as_ref().unwrap().len() {
+            Err("source and destination mappings must be the same length".to_string())
+        } else {
+            Ok(())
+        }
+    }
+}
+
 #[derive(Builder, Default)]
+#[builder(build_fn(validate = "Self::validate"))]
 pub struct Table<T>
 where
     T: Atom,
@@ -36,22 +50,9 @@ impl<T> Table<T>
 where
     T: Atom,
 {
-    // TODO: validate lengths
-    // TODO: refcell to save
+    // TODO: consider not using builder so we don't have to have mishigas caching
 
-    // fn translate_one(&self, x: &T) -> Option<T> {
-    //     // todo: initialize
-    //     let xlator: HashMap<T, Option<T>> = self
-    //         .t
-    //         .iter()
-    //         .zip(self.u.iter())
-    //         .map(|(x, y)| (x, Some(y)))
-    //         .chain(self.v.iter().map(|z| (z, None)))
-    //         .collect();
-    //     // maketrans3!(self.t, self.u, self.v);
-    //     xlator.get(x).unwrap_or(Some(*x))
-    // }
-
+    /// Ensure that the mapping is initialized, then return it.
     fn ensure(&self) -> &RefCell<HashMap<T, Option<T>>> {
         if self.map.borrow().is_empty() {
             *self.map.borrow_mut() = self
@@ -65,11 +66,13 @@ where
         &self.map
     }
 
+    /// Translate one element.
     pub fn translate_one(&self, x: &T) -> Option<T> {
         let map = self.ensure();
         *map.borrow().get(x).unwrap_or(&Some(*x))
     }
 
+    /// Translate a sequence of elements.
     pub fn translate(&self, xs: &[T]) -> Vec<T> {
         xs.iter().filter_map(|x| self.translate_one(x)).collect()
     }
