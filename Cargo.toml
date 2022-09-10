@@ -17,13 +17,14 @@ members = [
   "pasc",
   "std_ext",
   "transposition",
+  "translation",
 ]
 
 [dependencies]
 alphabet = {path = "alphabet"}
 cipher = {path = "cipher"}
 clap = {version = "3.1", features = ["derive"]}
-derive_builder = "0.10"
+derive_builder = "0.11"
 itertools = "0.10"
 lcg = {path = "lcg"}
 lfg = {path = "lfg"}
@@ -35,3 +36,4 @@ pasc = {path = "pasc"}
 serde = "1.0"
 std_ext = {path = "std_ext"}
 transposition = {path = "transposition"}
+translation = {path = "translation"}
