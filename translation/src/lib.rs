@@ -1,4 +1,5 @@
 use derive_builder::Builder;
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::hash::Hash;
 // use std::collections::BTreeMap;
@@ -11,7 +12,6 @@ mod tests {
         assert_eq!(result, 4);
     }
 }
-
 
 macro_rules! maketrans2 {
     ($xs:expr , $ys:expr $(,$zs:expr)?) => {
@@ -42,11 +42,14 @@ where
     T: Atom,
 {
     #[builder(setter(into))]
-    t: Vec<T>,
+    src: Vec<T>,
     #[builder(setter(into))]
-    u: Vec<T>,
+    dst: Vec<T>,
     #[builder(setter(into))]
-    v: Vec<T>,
+    del: Vec<T>,
+
+    #[builder(setter(skip))]
+    map: RefCell<HashMap<T, Option<T>>>,
 }
 
 impl<T> Table<T>
@@ -69,11 +72,17 @@ where
     //     xlator.get(x).unwrap_or(Some(*x))
     // }
 
-    pub fn translate(&self, xs: &[T]) -> Vec<T> {
-        let xlator: HashMap<T, Option<T>> = maketrans2!(self.t, self.u, self.v);
+    fn initialize(&self) -> &RefCell<HashMap<T, Option<T>>> {
+        if self.map.borrow().is_empty() {
+            *self.map.borrow_mut() = maketrans2!(self.src, self.dst, self.del);
+        }
+        &self.map
+    }
 
+    pub fn translate(&self, xs: &[T]) -> Vec<T> {
+        let map = self.initialize();
         xs.iter()
-            .filter_map(|&x| *xlator.get(&x).unwrap_or(&Some(x)))
+            .filter_map(|&x| *map.borrow().get(&x).unwrap_or(&Some(x)))
             .collect()
     }
 }
