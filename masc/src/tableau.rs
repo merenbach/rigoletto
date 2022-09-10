@@ -18,25 +18,24 @@ use std::hash::Hash;
 // }
 
 /// Create a translation table. This is modeled off of the Python str.maketrans method.
-fn maketrans<T, U>(xs: &[T], ys: &[U]) -> HashMap<T, U>
-where
-    T: Copy + Hash + Eq,
-    U: Copy + Eq,
-{
-    xs.iter().zip(ys.iter()).map(|(&x, &y)| (x, y)).collect()
-}
-
-// use macro_rules! <name of macro>{<Body>}
-macro_rules! maketrans2 {
-    // macth like arm for macro
-    ($xs:expr,$ys:expr) => {
-        // macro expand to this code
+macro_rules! maketrans {
+    ($xs:expr , $ys:expr) => {
         {
-            // $a and $b will be templated using the value/variable provided to macro
-            $xs.iter().copied().zip($ys.iter().copied()).collect()
+            $xs.iter().zip($ys.iter()).map(|(&x, &y)| (x, y))
+                .collect()
         }
     };
 }
+
+// macro_rules! maketrans {
+//     ($xs:expr , $ys:expr $(,$zs:expr)?) => {
+//         {
+//             $xs.iter().zip($ys.iter()).map(|(&x, &y)| (x, Some(y)))
+//                 $ ( .chain( $zs.iter().map(|&z| (z, None))) )?
+//                 .collect()
+//         }
+//     };
+// }
 
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
@@ -85,7 +84,7 @@ pub struct Tableau<T: Atom, U: Atom>(HashMap<T, U>, HashMap<U, T>);
 
 impl<T: Atom, U: Atom> Tableau<T, U> {
     pub fn new(xs: &[T], ys: &[U]) -> Self {
-        Self(maketrans(xs, ys), maketrans2!(ys, xs))
+        Self(maketrans!(xs, ys), maketrans!(ys, xs))
     }
 
     /// Encode an element.
