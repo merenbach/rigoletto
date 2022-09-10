@@ -13,26 +13,6 @@ mod tests {
     }
 }
 
-macro_rules! maketrans2 {
-    ($xs:expr , $ys:expr $(,$zs:expr)?) => {
-        {
-            $xs.iter().zip($ys.iter()).map(|(&x, &y)| (x, Some(y)))
-                $ ( .chain( $zs.iter().map(|&z| (z, None))) )?
-                .collect()
-        }
-    };
-}
-
-// macro_rules! maketrans3 {
-//     ($xs:expr , $ys:expr $(,$zs:expr)?) => {
-//         {
-//             $xs.iter().zip($ys.iter()).map(|(x, y)| (x, Some(y)))
-//                 $ ( .chain( $zs.iter().map(|z| (z, None))) )?
-//                 .collect()
-//         }
-//     };
-// }
-
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 
@@ -72,17 +52,25 @@ where
     //     xlator.get(x).unwrap_or(Some(*x))
     // }
 
-    fn initialize(&self) -> &RefCell<HashMap<T, Option<T>>> {
+    fn ensure(&self) -> &RefCell<HashMap<T, Option<T>>> {
         if self.map.borrow().is_empty() {
-            *self.map.borrow_mut() = maketrans2!(self.src, self.dst, self.del);
+            *self.map.borrow_mut() = self
+                .src
+                .iter()
+                .zip(self.dst.iter())
+                .map(|(&x, &y)| (x, Some(y)))
+                .chain(self.del.iter().map(|&z| (z, None)))
+                .collect()
         }
         &self.map
     }
 
+    pub fn translate_one(&self, x: &T) -> Option<T> {
+        let map = self.ensure();
+        *map.borrow().get(x).unwrap_or(&Some(*x))
+    }
+
     pub fn translate(&self, xs: &[T]) -> Vec<T> {
-        let map = self.initialize();
-        xs.iter()
-            .filter_map(|&x| *map.borrow().get(&x).unwrap_or(&Some(x)))
-            .collect()
+        xs.iter().filter_map(|x| self.translate_one(x)).collect()
     }
 }
