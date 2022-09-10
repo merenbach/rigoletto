@@ -1,3 +1,4 @@
+use std::cell::RefCell;
 use std::collections::HashMap;
 use std::hash::Hash;
 
@@ -18,6 +19,42 @@ use std::hash::Hash;
 
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
+
+#[derive(Default, Clone)]
+pub struct Tableau2<T, U>
+where
+    T: Atom,
+    U: Atom,
+{
+    pub pt_alphabet: Vec<T>,
+    pub ct_alphabet: Vec<U>,
+
+    tableau: Tableau<T, U>,
+}
+
+impl<T, U> Tableau2<T, U>
+where
+    T: Atom,
+    U: Atom,
+{
+    pub fn new(pt_alphabet: &[T], ct_alphabet: &[U]) -> Self {
+        return Self {
+            pt_alphabet: pt_alphabet.to_owned(),
+            ct_alphabet: ct_alphabet.to_owned(),
+            tableau: Tableau::new(pt_alphabet, ct_alphabet),
+        };
+    }
+
+    /// Encode an element.
+    pub fn encode(&self, x: &T) -> Option<U> {
+        self.tableau.encode(x)
+    }
+
+    /// Decode an element.
+    pub fn decode(&self, x: &U) -> Option<T> {
+        self.tableau.decode(x)
+    }
+}
 
 /// A Tableau implements the mechanism underlying a simple monoalphabetic substitution cipher.
 // #[derive(Default, Builder, Clone)]

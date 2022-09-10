@@ -1,7 +1,6 @@
 use crate::Cipher;
 use derive_builder::Builder;
-use masc::tableau::{Atom, Tableau};
-use std::cell::RefCell;
+use masc::tableau::{Atom, Tableau2};
 use std::fmt;
 
 #[cfg(test)]
@@ -36,9 +35,9 @@ mod tests {
             },
         ];
         for x in xs {
+            let t = Tableau2::new(&x.pt_alphabet, &x.ct_alphabet);
             let c = SimpleBuilder::default()
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .ct_alphabet(x.ct_alphabet.to_vec())
+                .tableau(t)
                 .strict(x.strict)
                 .build()
                 .unwrap();
@@ -66,9 +65,9 @@ mod tests {
             },
         ];
         for x in xs {
+            let t = Tableau2::new(&x.pt_alphabet, &x.ct_alphabet);
             let c = SimpleBuilder::default()
-                .pt_alphabet(x.pt_alphabet.to_vec())
-                .ct_alphabet(x.ct_alphabet.to_vec())
+                .tableau(t)
                 .strict(x.strict)
                 .build()
                 .unwrap();
@@ -80,35 +79,22 @@ mod tests {
 
 #[derive(Default, Builder)]
 pub struct Simple<T: Atom> {
-    #[builder(setter(into))]
-    pt_alphabet: Vec<T>,
-
-    #[builder(setter(into))]
-    ct_alphabet: Vec<T>,
-
     #[builder(default)]
     strict: bool,
 
-    #[builder(setter(skip))]
-    tableau: RefCell<Tableau<T, T>>,
+    #[builder(default)]
+    tableau: Tableau2<T, T>,
 }
 
 impl<T: Atom> Simple<T> {
-    fn initialize(&self) -> &RefCell<Tableau<T, T>> {
-        if self.tableau.borrow().is_empty() {
-            *self.tableau.borrow_mut() = Tableau::new(&self.pt_alphabet, &self.ct_alphabet);
-        }
-        &self.tableau
-    }
-
     /// Encipher an element.
     fn encipher_one(&self, x: &T) -> Option<T> {
-        self.initialize().borrow().encode(x)
+        self.tableau.encode(x)
     }
 
     /// Decipher an element.
     fn decipher_one(&self, x: &T) -> Option<T> {
-        self.initialize().borrow().decode(x)
+        self.tableau.decode(x)
     }
 
     fn transcipher(&self, xs: &[T], cb: impl Fn(&T) -> Option<T>) -> Vec<T> {
@@ -135,8 +121,8 @@ impl<T: Atom> Cipher<T, T> for Simple<T> {
 // TODO: ensure we have tests for this
 impl fmt::Display for Simple<char> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let pt_alphabet: String = self.pt_alphabet.iter().collect();
-        let ct_alphabet: String = self.ct_alphabet.iter().collect();
+        let pt_alphabet: String = self.tableau.pt_alphabet.iter().collect();
+        let ct_alphabet: String = self.tableau.ct_alphabet.iter().collect();
         write!(f, "Simple <PT: {}, CT: {}>", &pt_alphabet, &ct_alphabet)
     }
 }
@@ -148,9 +134,9 @@ where
     F: Fn(&[T]) -> Vec<T>,
 {
     let ct_alphabet = f(&pt_alphabet);
+    let tableau = Tableau2::new(&pt_alphabet, &ct_alphabet);
     SimpleBuilder::default()
-        .pt_alphabet(pt_alphabet)
-        .ct_alphabet(ct_alphabet)
+        .tableau(tableau)
         .strict(strict)
         .build()
         .unwrap()
