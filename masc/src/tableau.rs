@@ -27,16 +27,16 @@ where
 }
 
 // use macro_rules! <name of macro>{<Body>}
-macro_rules! maketrans2{
+macro_rules! maketrans2 {
     // macth like arm for macro
-       ($xs:expr,$ys:expr)=>{
-    // macro expand to this code
-           {
-   // $a and $b will be templated using the value/variable provided to macro
-               $xs.iter().zip($ys.iter()).map(|(&x, &y)| (x, y)).collect()
-           }
-       }
-   }
+    ($xs:expr,$ys:expr) => {
+        // macro expand to this code
+        {
+            // $a and $b will be templated using the value/variable provided to macro
+            $xs.iter().copied().zip($ys.iter().copied()).collect()
+        }
+    };
+}
 
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
