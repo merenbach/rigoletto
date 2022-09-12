@@ -2,15 +2,61 @@ use derive_builder::Builder;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::hash::Hash;
-// use std::collections::BTreeMap;
 
 #[cfg(test)]
 mod tests {
+    use super::make_table;
+    use std::collections::HashMap;
+
     #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
+    fn make_table_works() {
+        let rows = &[
+            // (vec![], vec![], vec![], vec![]),
+            (
+                vec![('A', Some('D')), ('B', Some('E')), ('C', Some('F'))],
+                vec!['A', 'B', 'C'],
+                vec!['D', 'E', 'F'],
+                vec![],
+            ),
+            (
+                vec![
+                    ('A', Some('D')),
+                    ('B', Some('E')),
+                    ('C', Some('F')),
+                    ('G', None),
+                ],
+                vec!['A', 'B', 'C'],
+                vec!['D', 'E', 'F'],
+                vec!['G'],
+            ),
+            (
+                vec![('A', None), ('B', Some('E')), ('C', Some('F')), ('E', None)],
+                vec!['A', 'B', 'C'],
+                vec!['D', 'E', 'F'],
+                vec!['A', 'E'],
+            ),
+        ];
+        for row in rows {
+            println!("{:?}", row);
+            let expect: HashMap<_, Option<_>> = row.0.iter().copied().collect();
+            assert_eq!(expect, make_table(&row.1, &row.2, &row.3));
+        }
     }
+}
+
+// Make a translation table that supports deletion.
+// This is inspired by Python's `str.maketrans()`.
+// Elements passed in `del` will override those in `src` if there is overlap.
+pub fn make_table<T, U>(src: &[T], dst: &[U], del: &[T]) -> HashMap<T, Option<U>>
+where
+    T: Copy + Eq + Hash,
+    U: Copy,
+{
+    src.iter()
+        .zip(dst.iter())
+        .map(|(&x, &y)| (x, Some(y)))
+        .chain(del.iter().map(|&z| (z, None)))
+        .collect()
 }
 
 pub trait Atom: Hash + Eq + Copy + Default {}
@@ -27,6 +73,10 @@ where
             Ok(())
         }
     }
+
+    // fn source_str(s:&str) {
+    //     self.source = s.chars().co
+    // }
 }
 
 #[derive(Builder, Default)]
@@ -52,16 +102,13 @@ where
 {
     // TODO: consider not using builder so we don't have to have mishigas caching
 
+    // translation::Table::new("ABCDE", "defgh", "")
+    // translation::Table::default().src("ABCDE").dst("defgh").del("!*").build().unwrap()
+
     /// Ensure that the mapping is initialized, then return it.
     fn ensure(&self) -> &RefCell<HashMap<T, Option<T>>> {
         if self.map.borrow().is_empty() {
-            *self.map.borrow_mut() = self
-                .src
-                .iter()
-                .zip(self.dst.iter())
-                .map(|(&x, &y)| (x, Some(y)))
-                .chain(self.del.iter().map(|&z| (z, None)))
-                .collect()
+            *self.map.borrow_mut() = make_table(&self.src, &self.dst, &self.del);
         }
         &self.map
     }
