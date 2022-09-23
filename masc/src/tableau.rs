@@ -127,11 +127,6 @@ impl<T: Atom, U: Atom> Tableau<T, U> {
     pub fn decode(&self, x: &U) -> Option<T> {
         self.1.get(x).copied().unwrap_or(None)
     }
-
-    /// Empty
-    pub fn is_empty(&self) -> bool {
-        self.0.is_empty() && self.1.is_empty()
-    }
 }
 
 // impl<T: Atom> Tableau<T, T> {
