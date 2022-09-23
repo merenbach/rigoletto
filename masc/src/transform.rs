@@ -1,6 +1,5 @@
 use itertools::Itertools;
 use lcg::LCGBuilder;
-use std::collections::HashMap;
 use std::hash::Hash;
 
 #[cfg(test)]

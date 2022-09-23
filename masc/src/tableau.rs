@@ -2,26 +2,67 @@ use std::cell::RefCell;
 use std::collections::HashMap;
 use std::hash::Hash;
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
+#[cfg(test)]
+mod tests {
+    use super::make_translation_table;
+    use std::collections::HashMap;
 
-//     // #[test]
-//     // fn test_affine_transform() {
-//     //     assert_eq!(2 + 2, 4);
-//     // }
-
-//     // #[test]
-//     // fn test_keyword_transform() {
-//     //     assert_eq!(2 + 2, 4);
-//     // }
-// }
+    #[test]
+    fn make_translation_table_works() {
+        let rows = &[
+            // (vec![], vec![], vec![], vec![]),
+            (
+                vec![('A', Some('D')), ('B', Some('E')), ('C', Some('F'))],
+                vec!['A', 'B', 'C'],
+                vec!['D', 'E', 'F'],
+                vec![],
+            ),
+            (
+                vec![
+                    ('A', Some('D')),
+                    ('B', Some('E')),
+                    ('C', Some('F')),
+                    ('G', None),
+                ],
+                vec!['A', 'B', 'C'],
+                vec!['D', 'E', 'F'],
+                vec!['G'],
+            ),
+            (
+                vec![('A', None), ('B', Some('E')), ('C', Some('F')), ('E', None)],
+                vec!['A', 'B', 'C'],
+                vec!['D', 'E', 'F'],
+                vec!['A', 'E'],
+            ),
+        ];
+        for row in rows {
+            println!("{:?}", row);
+            let expect: HashMap<_, Option<_>> = row.0.iter().copied().collect();
+            assert_eq!(expect, make_translation_table(&row.1, &row.2, &row.3));
+        }
+    }
+}
 
 /// Create a translation table. This is modeled off of the Python str.maketrans method.
-macro_rules! maketrans {
-    ($xs:expr , $ys:expr) => {{
-        $xs.iter().zip($ys.iter()).map(|(&x, &y)| (x, y)).collect()
-    }};
+// macro_rules! maketrans {
+//     ($xs:expr , $ys:expr) => {{
+//         $xs.iter().zip($ys.iter()).map(|(&x, &y)| (x, y)).collect()
+//     }};
+// }
+
+// Make a translation table that supports deletion.
+// This is inspired by Python's `str.maketrans()`.
+// Elements passed in `del` will override those in `src` if there is overlap.
+fn make_translation_table<T, U>(src: &[T], dst: &[U], del: &[T]) -> HashMap<T, Option<U>>
+where
+    T: Copy + Eq + Hash,
+    U: Copy,
+{
+    src.iter()
+        .zip(dst.iter())
+        .map(|(&x, &y)| (x, Some(y)))
+        .chain(del.iter().map(|&z| (z, None)))
+        .collect()
 }
 
 pub trait Atom: Hash + Eq + Copy + Default {}
@@ -67,21 +108,24 @@ where
 // #[derive(Default, Builder, Clone)]
 // #[builder(default)]
 #[derive(Default, Clone)]
-pub struct Tableau<T: Atom, U: Atom>(HashMap<T, U>, HashMap<U, T>);
+pub struct Tableau<T: Atom, U: Atom>(HashMap<T, Option<U>>, HashMap<U, Option<T>>);
 
 impl<T: Atom, U: Atom> Tableau<T, U> {
     pub fn new(xs: &[T], ys: &[U]) -> Self {
-        Self(maketrans!(xs, ys), maketrans!(ys, xs))
+        Self(
+            make_translation_table(xs, ys, &[]),
+            make_translation_table(ys, xs, &[]),
+        )
     }
 
     /// Encode an element.
     pub fn encode(&self, x: &T) -> Option<U> {
-        self.0.get(x).copied()
+        self.0.get(x).copied().unwrap_or(None)
     }
 
     /// Decode an element.
     pub fn decode(&self, x: &U) -> Option<T> {
-        self.1.get(x).copied()
+        self.1.get(x).copied().unwrap_or(None)
     }
 
     /// Empty

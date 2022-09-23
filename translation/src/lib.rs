@@ -5,11 +5,11 @@ use std::hash::Hash;
 
 #[cfg(test)]
 mod tests {
-    use super::make_table;
+    use super::make_translation_table;
     use std::collections::HashMap;
 
     #[test]
-    fn make_table_works() {
+    fn make_translation_table_works() {
         let rows = &[
             // (vec![], vec![], vec![], vec![]),
             (
@@ -39,7 +39,7 @@ mod tests {
         for row in rows {
             println!("{:?}", row);
             let expect: HashMap<_, Option<_>> = row.0.iter().copied().collect();
-            assert_eq!(expect, make_table(&row.1, &row.2, &row.3));
+            assert_eq!(expect, make_translation_table(&row.1, &row.2, &row.3));
         }
     }
 }
@@ -47,7 +47,7 @@ mod tests {
 // Make a translation table that supports deletion.
 // This is inspired by Python's `str.maketrans()`.
 // Elements passed in `del` will override those in `src` if there is overlap.
-pub fn make_table<T, U>(src: &[T], dst: &[U], del: &[T]) -> HashMap<T, Option<U>>
+fn make_translation_table<T, U>(src: &[T], dst: &[U], del: &[T]) -> HashMap<T, Option<U>>
 where
     T: Copy + Eq + Hash,
     U: Copy,
@@ -58,6 +58,10 @@ where
         .chain(del.iter().map(|&z| (z, None)))
         .collect()
 }
+
+// fn translate<T, U>(xs: &[T], default: impl Fn(T) -> Option<U>) -> Vec<Option<U>> {
+
+// }
 
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
@@ -108,7 +112,7 @@ where
     /// Ensure that the mapping is initialized, then return it.
     fn ensure(&self) -> &RefCell<HashMap<T, Option<T>>> {
         if self.map.borrow().is_empty() {
-            *self.map.borrow_mut() = make_table(&self.src, &self.dst, &self.del);
+            *self.map.borrow_mut() = make_translation_table(&self.src, &self.dst, &self.del);
         }
         &self.map
     }
