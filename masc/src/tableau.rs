@@ -68,64 +68,39 @@ where
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 
+/// A Tableau implements the mechanism underlying a simple monoalphabetic substitution cipher.
+// #[derive(Default, Builder, Clone)]
+// #[builder(default)]
 #[derive(Default, Clone)]
-pub struct Tableau2<T, U>
+pub struct Tableau<T, U>
 where
     T: Atom,
     U: Atom,
 {
     pub pt_alphabet: Vec<T>,
     pub ct_alphabet: Vec<U>,
-
-    tableau: Tableau<T, U>,
+    pt2ct: HashMap<T, Option<U>>,
+    ct2pt: HashMap<U, Option<T>>,
 }
-
-impl<T, U> Tableau2<T, U>
-where
-    T: Atom,
-    U: Atom,
-{
-    pub fn new(pt_alphabet: &[T], ct_alphabet: &[U]) -> Self {
-        return Self {
-            pt_alphabet: pt_alphabet.to_owned(),
-            ct_alphabet: ct_alphabet.to_owned(),
-            tableau: Tableau::new(pt_alphabet, ct_alphabet),
-        };
-    }
-
-    /// Encode an element.
-    pub fn encode(&self, x: &T) -> Option<U> {
-        self.tableau.encode(x)
-    }
-
-    /// Decode an element.
-    pub fn decode(&self, x: &U) -> Option<T> {
-        self.tableau.decode(x)
-    }
-}
-
-/// A Tableau implements the mechanism underlying a simple monoalphabetic substitution cipher.
-// #[derive(Default, Builder, Clone)]
-// #[builder(default)]
-#[derive(Default, Clone)]
-pub struct Tableau<T: Atom, U: Atom>(HashMap<T, Option<U>>, HashMap<U, Option<T>>);
 
 impl<T: Atom, U: Atom> Tableau<T, U> {
     pub fn new(xs: &[T], ys: &[U]) -> Self {
-        Self(
-            make_translation_table(xs, ys, &[]),
-            make_translation_table(ys, xs, &[]),
-        )
+        Self {
+            pt_alphabet: xs.to_owned(),
+            ct_alphabet: ys.to_owned(),
+            pt2ct: make_translation_table(xs, ys, &[]),
+            ct2pt: make_translation_table(ys, xs, &[]),
+        }
     }
 
     /// Encode an element.
     pub fn encode(&self, x: &T) -> Option<U> {
-        self.0.get(x).copied().unwrap_or(None)
+        self.pt2ct.get(x).copied().unwrap_or(None)
     }
 
     /// Decode an element.
     pub fn decode(&self, x: &U) -> Option<T> {
-        self.1.get(x).copied().unwrap_or(None)
+        self.ct2pt.get(x).copied().unwrap_or(None)
     }
 }
 

@@ -1,6 +1,6 @@
 use crate::Cipher;
 use derive_builder::Builder;
-use masc::tableau::{Atom, Tableau2};
+use masc::tableau::{Atom, Tableau};
 use std::fmt;
 
 #[cfg(test)]
@@ -35,7 +35,7 @@ mod tests {
             },
         ];
         for x in xs {
-            let t = Tableau2::new(&x.pt_alphabet, &x.ct_alphabet);
+            let t = Tableau::new(&x.pt_alphabet, &x.ct_alphabet);
             let c = SimpleBuilder::default()
                 .tableau(t)
                 .strict(x.strict)
@@ -65,7 +65,7 @@ mod tests {
             },
         ];
         for x in xs {
-            let t = Tableau2::new(&x.pt_alphabet, &x.ct_alphabet);
+            let t = Tableau::new(&x.pt_alphabet, &x.ct_alphabet);
             let c = SimpleBuilder::default()
                 .tableau(t)
                 .strict(x.strict)
@@ -83,7 +83,7 @@ pub struct Simple<T: Atom> {
     strict: bool,
 
     #[builder(default)]
-    tableau: Tableau2<T, T>,
+    tableau: Tableau<T, T>,
 }
 
 impl<T: Atom> Simple<T> {
@@ -134,7 +134,7 @@ where
     F: Fn(&[T]) -> Vec<T>,
 {
     let ct_alphabet = f(&pt_alphabet);
-    let tableau = Tableau2::new(&pt_alphabet, &ct_alphabet);
+    let tableau = Tableau::new(&pt_alphabet, &ct_alphabet);
     SimpleBuilder::default()
         .tableau(tableau)
         .strict(strict)
