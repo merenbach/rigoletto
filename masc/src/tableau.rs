@@ -50,9 +50,9 @@ mod tests {
 //     }};
 // }
 
-// Make a translation table that supports deletion.
-// This is inspired by Python's `str.maketrans()`.
-// Elements passed in `del` will override those in `src` if there is overlap.
+/// Make a translation table that supports deletion.
+/// This is inspired by Python's `str.maketrans()`.
+/// Elements passed in `del` will override those in `src` if there is overlap.
 fn make_translation_table<T, U>(src: &[T], dst: &[U], del: &[T]) -> HashMap<T, Option<U>>
 where
     T: Copy + Eq + Hash,
@@ -63,6 +63,16 @@ where
         .map(|(&x, &y)| (x, Some(y)))
         .chain(del.iter().map(|&z| (z, None)))
         .collect()
+}
+
+/// Translate an element based on a given translation table.
+/// This is inspired by Python's `str.translate()`.
+fn translate_one<T, U>(m: &HashMap<T, Option<U>>, x: &T, default: Option<U>) -> Option<U>
+where
+    T: Copy + Eq + Hash,
+    U: Copy,
+{
+    m.get(x).copied().unwrap_or(default)
 }
 
 pub trait Atom: Hash + Eq + Copy + Default {}
@@ -95,12 +105,12 @@ impl<T: Atom, U: Atom> Tableau<T, U> {
 
     /// Encode an element.
     pub fn encode(&self, x: &T) -> Option<U> {
-        self.pt2ct.get(x).copied().unwrap_or(None)
+        translate_one(&self.pt2ct, x, None)
     }
 
     /// Decode an element.
     pub fn decode(&self, x: &U) -> Option<T> {
-        self.ct2pt.get(x).copied().unwrap_or(None)
+        translate_one(&self.ct2pt, x, None)
     }
 }
 
