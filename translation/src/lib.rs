@@ -47,6 +47,7 @@ mod tests {
 /// Make a translation table that supports deletion.
 /// This is inspired by Python's `str.maketrans()`.
 /// Elements passed in `del` will override those in `src` if there is overlap.
+/// TODO: consider removing U for symmetry.
 fn make_translation_table<T, U>(src: &[T], dst: &[U], del: &[T]) -> HashMap<T, Option<U>>
 where
     T: Copy + Eq + Hash,
@@ -56,6 +57,18 @@ where
         .zip(dst.iter())
         .map(|(&x, &y)| (x, Some(y)))
         .chain(del.iter().map(|&z| (z, None)))
+        .collect()
+}
+
+/// Translate a sequence using a hashmap, leaving non-translateable elements unchanged .
+/// This is inspired by Python's `str.translate()`.
+/// TODO: use unwrap_or_else instead
+fn translate<T>(xs: &[T], m: &HashMap<T, Option<T>>, fallback: impl Fn(T) -> Option<T>) -> Vec<T>
+where
+    T: Copy + Eq + Hash,
+{
+    xs.iter()
+        .filter_map(|&x| *m.get(&x).unwrap_or(&fallback(x)))
         .collect()
 }
 
@@ -106,7 +119,7 @@ where
     src: Vec<T>,
     #[builder(setter(into))]
     dst: Vec<T>,
-    #[builder(setter(into))]
+    #[builder(setter(into), default)]
     del: Vec<T>,
 
     #[builder(setter(skip))]
@@ -142,7 +155,8 @@ where
     }
 
     /// Translate a sequence of elements.
-    pub fn translate(&self, xs: &[T]) -> Vec<T> {
-        xs.iter().filter_map(|x| self.translate_one(x)).collect()
+    pub fn translate(&self, xs: &[T], fallback: impl Fn(T) -> Option<T>) -> Vec<T> {
+        let map = self.ensure();
+        translate(xs, &(*map.borrow()), fallback)
     }
 }
