@@ -109,7 +109,7 @@ where
     // }
 }
 
-#[derive(Builder, Default)]
+#[derive(Builder, Default, Clone)]
 #[builder(build_fn(validate = "Self::validate"))]
 pub struct Table<T>
 where
@@ -130,6 +130,10 @@ impl<T> Table<T>
 where
     T: Atom,
 {
+    pub fn is_empty(&self) -> bool {
+        self.map.borrow().is_empty()
+    }
+
     // TODO: consider not using builder so we don't have to have mishigas caching
 
     // translation::Table::new("ABCDE", "defgh", "")
@@ -144,14 +148,21 @@ where
     }
 
     /// Translate one element.
-    fn translate_one_default(&self, x: &T, default: Option<T>) -> Option<T> {
-        let map = self.ensure();
-        *map.borrow().get(x).unwrap_or(&default)
-    }
+    // fn translate_one_default(&self, x: &T, default: Option<T>) -> Option<T> {
+    //     let map = self.ensure();
+    //     *map.borrow().get(x).unwrap_or(&default)
+    // }
+
+    // /// Translate one element.
+    // pub fn translate_one(&self, x: &T, fallback: impl Fn(T) -> Option<T>) -> Option<T> {
+    //     self.translate_one_default(x, fallback)
+    // }
 
     /// Translate one element.
-    pub fn translate_one(&self, x: &T) -> Option<T> {
-        self.translate_one_default(x, Some(*x))
+    /// TODO: use unwrap_or_else instead
+    pub fn translate_one(&self, x: &T, fallback: impl Fn(T) -> Option<T>) -> Option<T> {
+        let map = self.ensure();
+        *map.borrow().get(x).unwrap_or(&fallback(*x))
     }
 
     /// Translate a sequence of elements.

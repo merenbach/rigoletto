@@ -1,7 +1,9 @@
 use crate::Cipher;
 use derive_builder::Builder;
 use masc::tableau::{Atom, Tableau};
+use std::cell::RefCell;
 use std::fmt;
+use translation::{Table, TableBuilder};
 
 #[cfg(test)]
 mod tests {
@@ -35,9 +37,9 @@ mod tests {
             },
         ];
         for x in xs {
-            let t = Tableau::new(&x.pt_alphabet, &x.ct_alphabet);
             let c = SimpleBuilder::default()
-                .tableau(t)
+                .pt_alphabet(x.pt_alphabet.to_owned())
+                .ct_alphabet(x.ct_alphabet.to_owned())
                 .strict(x.strict)
                 .build()
                 .unwrap();
@@ -65,9 +67,9 @@ mod tests {
             },
         ];
         for x in xs {
-            let t = Tableau::new(&x.pt_alphabet, &x.ct_alphabet);
             let c = SimpleBuilder::default()
-                .tableau(t)
+                .pt_alphabet(x.pt_alphabet.to_owned())
+                .ct_alphabet(x.ct_alphabet.to_owned())
                 .strict(x.strict)
                 .build()
                 .unwrap();
@@ -79,50 +81,73 @@ mod tests {
 
 #[derive(Default, Builder)]
 pub struct Simple<T: Atom> {
-    #[builder(default)]
-    strict: bool,
+    pt_alphabet: Vec<T>,
+    ct_alphabet: Vec<T>,
+
+    #[builder(setter(skip))]
+    pt2ct: RefCell<Table<T>>,
+    #[builder(setter(skip))]
+    ct2pt: RefCell<Table<T>>,
 
     #[builder(default)]
-    tableau: Tableau<T, T>,
+    strict: bool,
 }
 
 impl<T: Atom> Simple<T> {
+    fn initialize(&self) {
+        if self.pt2ct.borrow().is_empty() {
+            *self.pt2ct.borrow_mut() = TableBuilder::default()
+                .src(self.pt_alphabet.to_owned())
+                .dst(self.ct_alphabet.to_owned())
+                .build()
+                .unwrap();
+        }
+
+        if self.ct2pt.borrow().is_empty() {
+            *self.ct2pt.borrow_mut() = TableBuilder::default()
+                .src(self.ct_alphabet.to_owned())
+                .dst(self.pt_alphabet.to_owned())
+                .build()
+                .unwrap();
+        }
+    }
+
     /// Encipher an element.
     fn encipher_one(&self, x: &T) -> Option<T> {
-        self.tableau.encode(x)
+        self.initialize();
+        self.pt2ct.borrow().translate_one(x, |_| None)
     }
 
     /// Decipher an element.
     fn decipher_one(&self, x: &T) -> Option<T> {
-        self.tableau.decode(x)
-    }
-
-    fn transcipher(&self, xs: &[T], cb: impl Fn(&T) -> Option<T>) -> Vec<T> {
-        if self.strict {
-            xs.iter().filter_map(|x| cb(x)).collect()
-        } else {
-            xs.iter().map(|x| cb(x).unwrap_or(*x)).collect()
-        }
+        self.initialize();
+        self.ct2pt.borrow().translate_one(x, |_| None)
     }
 }
 
 impl<T: Atom> Cipher<T, T> for Simple<T> {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        self.transcipher(xs, |x| self.encipher_one(x))
+        self.initialize();
+        self.pt2ct
+            .borrow()
+            .translate(xs, |x| if self.strict { None } else { Some(x) })
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        self.transcipher(xs, |x| self.decipher_one(x))
+        self.initialize();
+        self.ct2pt
+            .borrow()
+            .translate(xs, |x| if self.strict { None } else { Some(x) })
     }
 }
 
 // TODO: ensure we have tests for this
 impl fmt::Display for Simple<char> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let pt_alphabet: String = self.tableau.pt_alphabet.iter().collect();
-        let ct_alphabet: String = self.tableau.ct_alphabet.iter().collect();
+        let pt_alphabet: String = self.pt_alphabet.iter().collect();
+        let ct_alphabet: String = self.ct_alphabet.iter().collect();
         write!(f, "Simple <PT: {}, CT: {}>", &pt_alphabet, &ct_alphabet)
     }
 }
@@ -134,9 +159,9 @@ where
     F: Fn(&[T]) -> Vec<T>,
 {
     let ct_alphabet = f(&pt_alphabet);
-    let tableau = Tableau::new(&pt_alphabet, &ct_alphabet);
     SimpleBuilder::default()
-        .tableau(tableau)
+        .pt_alphabet(pt_alphabet.to_owned())
+        .ct_alphabet(ct_alphabet.to_owned())
         .strict(strict)
         .build()
         .unwrap()

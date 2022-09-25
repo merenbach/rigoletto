@@ -1,4 +1,6 @@
 // mod scrapbook;
+use cipher::simple::SimpleBuilder;
+use cipher::Cipher;
 use translation::{Table, TableBuilder};
 
 fn main() {
@@ -73,9 +75,16 @@ fn run_app() {
     let pt_alphabet: Vec<_> = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect();
     let ct_alphabet: Vec<_> = "DEFGHIJKLMNOPQRSTUVWXYZABC".chars().collect();
 
-    let x = MyMascCipher::new(&pt_alphabet, &ct_alphabet, true);
+    // let x = MyMascCipher::new(&pt_alphabet, &ct_alphabet, true);
+    let x = SimpleBuilder::default()
+        .pt_alphabet(pt_alphabet.to_owned())
+        .ct_alphabet(ct_alphabet.to_owned())
+        .strict(false)
+        .build()
+        .unwrap();
     let msg: Vec<_> = "HELLO, WORLD!".chars().collect();
     let y = x.encipher(&msg);
     let z = x.decipher(&y);
+    // println!("hello {:?}", x.ct_alphabet);
     println!("{:?} --> {:?}", y, z);
 }

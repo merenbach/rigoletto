@@ -13,4 +13,5 @@ lfg = {path = "../lfg"}
 masc = {path = "../masc"}
 num = "0.3"
 pasc = {path = "../pasc"}
+translation = {path = "../translation"}
 transposition = {path = "../transposition"}
