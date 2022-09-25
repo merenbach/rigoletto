@@ -44,9 +44,9 @@ mod tests {
     }
 }
 
-// Make a translation table that supports deletion.
-// This is inspired by Python's `str.maketrans()`.
-// Elements passed in `del` will override those in `src` if there is overlap.
+/// Make a translation table that supports deletion.
+/// This is inspired by Python's `str.maketrans()`.
+/// Elements passed in `del` will override those in `src` if there is overlap.
 fn make_translation_table<T, U>(src: &[T], dst: &[U], del: &[T]) -> HashMap<T, Option<U>>
 where
     T: Copy + Eq + Hash,
@@ -59,8 +59,21 @@ where
         .collect()
 }
 
-// fn translate<T, U>(xs: &[T], default: impl Fn(T) -> Option<U>) -> Vec<Option<U>> {
-
+// /// A Cipher implements a generic cipher.
+// pub trait Translate<T, U, A = Self>
+// where
+//     T: Copy + Eq + Hash,
+//     U: Copy,
+// {
+//     /// Translate a sequence.
+//     fn translate(&self, xs: HashMap<T, U>, strict: bool) -> Vec<Option<U>>
+//     where
+//         I: Iterator<Item = A>,
+//     {
+//         self.iter()
+//             .map(|x| xs.contains_key(x).unwrap_or(*x))
+//             .collect()
+//     }
 // }
 
 pub trait Atom: Hash + Eq + Copy + Default {}
@@ -118,9 +131,14 @@ where
     }
 
     /// Translate one element.
-    pub fn translate_one(&self, x: &T) -> Option<T> {
+    fn translate_one_default(&self, x: &T, default: Option<T>) -> Option<T> {
         let map = self.ensure();
-        *map.borrow().get(x).unwrap_or(&Some(*x))
+        *map.borrow().get(x).unwrap_or(&default)
+    }
+
+    /// Translate one element.
+    pub fn translate_one(&self, x: &T) -> Option<T> {
+        self.translate_one_default(x, Some(*x))
     }
 
     /// Translate a sequence of elements.
