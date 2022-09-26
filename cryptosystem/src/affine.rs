@@ -81,9 +81,6 @@ pub fn make<T: Atom>(
     intercept: usize,
     strict: bool,
 ) -> impl Cipher<T, T> {
-    SubstitutionCipher::with_function(
-        &pt_alphabet,
-        |xs| transform::affine(xs, slope, intercept),
-        strict,
-    )
+    let ct_alphabet = transform::affine(pt_alphabet, slope, intercept);
+    SubstitutionCipher::new(&pt_alphabet, &ct_alphabet, strict)
 }

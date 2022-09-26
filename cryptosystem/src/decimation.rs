@@ -71,9 +71,6 @@ mod tests {
 
 /// Make a substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], multiplier: usize, strict: bool) -> impl Cipher<T, T> {
-    SubstitutionCipher::with_function(
-        &pt_alphabet,
-        |xs| transform::decimation(xs, multiplier),
-        strict,
-    )
+    let ct_alphabet = transform::decimation(pt_alphabet, multiplier);
+    SubstitutionCipher::new(&pt_alphabet, &ct_alphabet, strict)
 }

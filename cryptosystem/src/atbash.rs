@@ -65,5 +65,6 @@ mod tests {
 
 /// Make a substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], strict: bool) -> impl Cipher<T, T> {
-    SubstitutionCipher::with_function(&pt_alphabet, |xs| transform::atbash(xs), strict)
+    let ct_alphabet = transform::atbash(pt_alphabet);
+    SubstitutionCipher::new(&pt_alphabet, &ct_alphabet, strict)
 }

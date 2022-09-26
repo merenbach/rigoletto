@@ -94,14 +94,6 @@ impl<T: Atom> SubstitutionCipher<T> {
         }
     }
 
-    pub fn with_function<F>(pt_alphabet: &[T], f: F, strict: bool) -> Self
-    where
-        F: Fn(&[T]) -> Vec<T>,
-    {
-        let ct_alphabet = f(&pt_alphabet);
-        Self::new(pt_alphabet, &ct_alphabet, strict)
-    }
-
     /// Encipher an element.
     pub fn encipher_one(&self, x: &T) -> Option<T> {
         self.pt2ct.translate_one(x, |_| None)
