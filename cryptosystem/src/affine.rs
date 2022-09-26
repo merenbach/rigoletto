@@ -1,5 +1,5 @@
 use cipher::Cipher;
-use masc::tableau::Atom;
+use masc::Atom;
 use masc::transform;
 use masc::SubstitutionCipher;
 
@@ -7,7 +7,7 @@ use masc::SubstitutionCipher;
 mod tests {
     use super::make;
     use cipher::Cipher;
-    use masc::tableau::Atom;
+    use masc::Atom;
 
     struct TestCase<T: Atom> {
         slope: usize,

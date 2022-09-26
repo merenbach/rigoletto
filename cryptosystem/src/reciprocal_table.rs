@@ -1,6 +1,6 @@
 use cipher::Cipher;
 use derive_builder::Builder;
-use masc::tableau::Atom;
+use masc::Atom;
 use pasc::SubstitutionCipherBuilder;
 use std::cell::RefCell;
 

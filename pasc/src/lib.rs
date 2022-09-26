@@ -4,7 +4,7 @@ pub mod transform;
 use alphabet::Alphabet;
 use derive_builder::Builder;
 use masc;
-use masc::tableau::Atom;
+use masc::Atom;
 use num::{Integer, Unsigned};
 use std::cell::RefCell;
 use std::collections::VecDeque;

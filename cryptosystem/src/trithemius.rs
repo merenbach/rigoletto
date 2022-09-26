@@ -1,6 +1,6 @@
 use crate::vigenere;
 use cipher::Cipher;
-use masc::tableau::Atom;
+use masc::Atom;
 
 #[cfg(test)]
 mod tests {

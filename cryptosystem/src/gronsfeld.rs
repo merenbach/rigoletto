@@ -1,6 +1,6 @@
 use crate::reciprocal_table;
 use cipher::Cipher;
-use masc::tableau::Atom;
+use masc::Atom;
 use pasc::transform;
 
 #[cfg(test)]

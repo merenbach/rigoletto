@@ -1,12 +1,12 @@
 use cipher::Cipher;
-use masc::tableau::Atom;
+use masc::Atom;
 use masc::SubstitutionCipher;
 
 #[cfg(test)]
 mod tests {
     use super::make;
     use cipher::Cipher;
-    use masc::tableau::Atom;
+    use masc::Atom;
 
     struct TestCase<T: Atom> {
         ct_alphabet: Vec<T>,

@@ -1,4 +1,4 @@
-use masc::tableau::{Atom, Tableau};
+use masc::Atom;
 use masc::SubstitutionCipher;
 use std::collections::HashMap;
 
@@ -64,7 +64,7 @@ impl<K: Atom, T: Atom> ReciprocalTable<K, T> {
             zs.iter()
                 .copied()
                 .enumerate()
-                .map(|(i, z)| (z, masc::SubstitutionCipher::new(xs, &ys[i], true)))
+                .map(|(i, z)| (z, SubstitutionCipher::new(xs, &ys[i], true)))
                 .collect(),
         )
     }

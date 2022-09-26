@@ -1,10 +1,8 @@
-pub mod tableau;
 pub mod transform;
 
 use cipher::Cipher;
-use std::cell::RefCell;
 use std::fmt;
-use tableau::Atom;
+use std::hash::Hash;
 use translation::{Table, TableBuilder};
 
 // #[cfg(test)]
@@ -58,6 +56,9 @@ use translation::{Table, TableBuilder};
 //     Natural(usize),
 //     SubtractFrom(usize),
 // }
+
+pub trait Atom: Hash + Eq + Copy + Default {}
+impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 
 // TODO: reduce locations where we might use clone
 #[derive(Default, Clone)]

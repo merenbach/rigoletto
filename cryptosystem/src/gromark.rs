@@ -1,7 +1,7 @@
 use crate::reciprocal_table;
 use cipher::Cipher;
 use lfg::LFGBuilder;
-use masc::tableau::Atom;
+use masc::Atom;
 use num::{Integer, Unsigned};
 use pasc::transform;
 use std::iter;
