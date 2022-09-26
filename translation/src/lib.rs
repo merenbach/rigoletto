@@ -72,6 +72,17 @@ where
         .collect()
 }
 
+
+// /// Translate an element based on a given translation table.
+// /// This is inspired by Python's `str.translate()`.
+// fn translate_one<T, U>(m: &HashMap<T, Option<U>>, x: &T, default: Option<U>) -> Option<U>
+// where
+//     T: Copy + Eq + Hash,
+//     U: Copy,
+// {
+//     m.get(x).copied().unwrap_or(default)
+// }
+
 // /// A Cipher implements a generic cipher.
 // pub trait Translate<T, U, A = Self>
 // where

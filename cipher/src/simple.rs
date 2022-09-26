@@ -153,16 +153,24 @@ impl fmt::Display for Simple<char> {
 }
 
 /// Make a substitution cipher.
-pub fn make<T, F>(pt_alphabet: &[T], f: F, strict: bool) -> impl Cipher<T, T>
+pub fn make2<T>(pt_alphabet: &[T], ct_alphabet: &[T], strict: bool) -> impl Cipher<T, T>
 where
     T: Atom,
-    F: Fn(&[T]) -> Vec<T>,
 {
-    let ct_alphabet = f(&pt_alphabet);
     SimpleBuilder::default()
         .pt_alphabet(pt_alphabet.to_owned())
         .ct_alphabet(ct_alphabet.to_owned())
         .strict(strict)
         .build()
         .unwrap()
+}
+
+/// Make a substitution cipher.
+pub fn make<T, F>(pt_alphabet: &[T], f: F, strict: bool) -> impl Cipher<T, T>
+where
+    T: Atom,
+    F: Fn(&[T]) -> Vec<T>,
+{
+    let ct_alphabet = f(&pt_alphabet);
+    make2(pt_alphabet, &ct_alphabet, strict)
 }
