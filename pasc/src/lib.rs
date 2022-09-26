@@ -57,11 +57,7 @@ pub fn caseless_keycheck(c: &char, keychars: &[char]) -> bool {
     keychars.contains(&c.to_ascii_uppercase()) || keychars.contains(&c.to_ascii_lowercase())
 }
 
-pub fn caseless_encipher(
-    c: &char,
-    k: &char,
-    m: &ReciprocalTable<char, char, char>,
-) -> Option<char> {
+pub fn caseless_encipher(c: &char, k: &char, m: &ReciprocalTable<char, char>) -> Option<char> {
     if let Some(o) = m.encode(&c, &k) {
         Some(o)
     } else if let Some(o) = m.encode(&c.to_ascii_uppercase(), k) {
@@ -73,11 +69,7 @@ pub fn caseless_encipher(
     }
 }
 
-pub fn caseless_decipher(
-    c: &char,
-    k: &char,
-    m: &ReciprocalTable<char, char, char>,
-) -> Option<char> {
+pub fn caseless_decipher(c: &char, k: &char, m: &ReciprocalTable<char, char>) -> Option<char> {
     if let Some(o) = m.decode(&c, &k) {
         Some(o)
     } else if let Some(o) = m.decode(&c.to_ascii_uppercase(), k) {
@@ -303,15 +295,15 @@ pub struct SubstitutionCipher<T: Atom, K: Atom> {
     #[builder(private)]
     key_lookup: Option<fn(&T, &[T]) -> bool>,
     #[builder(private)]
-    enc_lookup: Option<fn(&T, &T, &ReciprocalTable<T, T, T>) -> Option<T>>,
+    enc_lookup: Option<fn(&T, &T, &ReciprocalTable<T, T>) -> Option<T>>,
     #[builder(private)]
-    dec_lookup: Option<fn(&T, &T, &ReciprocalTable<T, T, T>) -> Option<T>>,
+    dec_lookup: Option<fn(&T, &T, &ReciprocalTable<T, T>) -> Option<T>>,
 
     #[builder(setter(skip))]
     ready: RefCell<bool>,
 
     #[builder(setter(skip))]
-    tableau: RefCell<ReciprocalTable<K, T, T>>,
+    tableau: RefCell<ReciprocalTable<K, T>>,
     // pt2ct: HashMap<char, translation::Table>,
     // ct2pt: HashMap<char, translation::Table>,
 }
@@ -323,7 +315,7 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     }
 
     /// Encipher a single message atom.
-    fn encipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T, T>) -> Option<T> {
+    fn encipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T>) -> Option<T> {
         t.encode(&c, &k)
         // match self.enc_lookup {
         //     Some(f) => (f)(c, k, t),
@@ -332,7 +324,7 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     }
 
     /// Decipher a single message atom.
-    fn decipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T, T>) -> Option<T> {
+    fn decipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T>) -> Option<T> {
         t.decode(&c, &k)
         // match self.dec_lookup {
         //     Some(f) => (f)(c, k, t),

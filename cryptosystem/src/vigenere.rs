@@ -1,5 +1,5 @@
 use crate::reciprocal_table;
-use crate::Cipher;
+use cipher::Cipher;
 use masc::tableau::Atom;
 use pasc::transform;
 

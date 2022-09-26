@@ -1,5 +1,5 @@
 use crate::reciprocal_table;
-use crate::Cipher;
+use cipher::Cipher;
 use masc::tableau::Atom;
 use pasc::transform;
 
@@ -23,14 +23,14 @@ mod tests {
                 key: "SECRET".chars().collect(),
                 pt_alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect(),
                 input: "HELLO WORLD hello world".chars().collect(),
-                output: "ZINCS PNZYF hello world".chars().collect(),
+                output: "QTZTM AFCZY hello world".chars().collect(),
                 strict: false,
             },
             TestCase {
                 key: "SECRET".chars().collect(),
                 pt_alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect(),
                 input: "HELLO WORLD hello world".chars().collect(),
-                output: "ZINCSPNZYF".chars().collect(),
+                output: "QTZTMAFCZY".chars().collect(),
                 strict: true,
             },
         ];
@@ -46,14 +46,14 @@ mod tests {
             TestCase {
                 key: "SECRET".chars().collect(),
                 pt_alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect(),
-                input: "ZINCS PNZYF zincs pnzyf".chars().collect(),
-                output: "HELLO WORLD zincs pnzyf".chars().collect(),
+                input: "QTZTM AFCZY qtztm afczy".chars().collect(),
+                output: "HELLO WORLD qtztm afczy".chars().collect(),
                 strict: false,
             },
             TestCase {
                 key: "SECRET".chars().collect(),
                 pt_alphabet: "ABCDEFGHIJKLMNOPQRSTUVWXYZ".chars().collect(),
-                input: "ZINCS PNZYF zincs pnzyf".chars().collect(),
+                input: "QTZTM AFCZY qtztm afczy".chars().collect(),
                 output: "HELLOWORLD".chars().collect(),
                 strict: true,
             },
@@ -67,14 +67,12 @@ mod tests {
 
 /// Make a substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], key: &[T], strict: bool) -> impl Cipher<T, T> {
-    reciprocal_table::make_homogeneous(
+    reciprocal_table::make(
         pt_alphabet,
         pt_alphabet,
         pt_alphabet,
         key,
-        |xs, i| transform::vigenere(xs, i),
+        |xs, i| transform::della_porta(xs, i),
         strict,
-        false,
-        true,
     )
 }

@@ -1,4 +1,5 @@
 use masc::tableau::{Atom, Tableau};
+use masc::SubstitutionCipher;
 use std::collections::HashMap;
 
 // #[cfg(test)]
@@ -55,15 +56,15 @@ use std::collections::HashMap;
 }*/
 
 #[derive(Default, Clone)]
-pub struct ReciprocalTable<K: Atom, T: Atom, U: Atom>(HashMap<K, Tableau<T, U>>);
+pub struct ReciprocalTable<K: Atom, T: Atom>(HashMap<K, masc::SubstitutionCipher<T>>);
 
-impl<K: Atom, T: Atom, U: Atom> ReciprocalTable<K, T, U> {
-    pub fn new(xs: &[T], ys: &[Vec<U>], zs: &[K]) -> Self {
+impl<K: Atom, T: Atom> ReciprocalTable<K, T> {
+    pub fn new(xs: &[T], ys: &[Vec<T>], zs: &[K]) -> Self {
         Self(
             zs.iter()
                 .copied()
                 .enumerate()
-                .map(|(i, z)| (z, Tableau::new(xs, &ys[i])))
+                .map(|(i, z)| (z, masc::SubstitutionCipher::new(xs, &ys[i], true)))
                 .collect(),
         )
     }
@@ -73,13 +74,13 @@ impl<K: Atom, T: Atom, U: Atom> ReciprocalTable<K, T, U> {
     }
 
     // Encode an element.
-    pub fn encode(&self, x: &T, k: &K) -> Option<U> {
-        self.0.get(k)?.encode(x)
+    pub fn encode(&self, x: &T, k: &K) -> Option<T> {
+        self.0.get(k)?.encipher_one(x)
     }
 
     // Decode an element.
-    pub fn decode(&self, x: &U, k: &K) -> Option<T> {
-        self.0.get(k)?.decode(x)
+    pub fn decode(&self, x: &T, k: &K) -> Option<T> {
+        self.0.get(k)?.decipher_one(x)
     }
 
     // /// Encipher a string.

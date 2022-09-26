@@ -1,11 +1,13 @@
-use crate::simple;
-use crate::Cipher;
+use cipher::Cipher;
 use masc::tableau::Atom;
 use masc::transform;
+use masc::SubstitutionCipher;
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::make;
+    use cipher::Cipher;
+    use masc::tableau::Atom;
 
     struct TestCase<T: Atom> {
         offset: usize,
@@ -69,5 +71,5 @@ mod tests {
 
 /// Make a substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], offset: usize, strict: bool) -> impl Cipher<T, T> {
-    simple::make(pt_alphabet, move |xs| transform::caesar(xs, offset), strict)
+    SubstitutionCipher::with_function(&pt_alphabet, |xs| transform::caesar(xs, offset), strict)
 }

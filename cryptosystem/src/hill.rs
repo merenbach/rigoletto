@@ -1,4 +1,4 @@
-use crate::Cipher;
+use cipher::Cipher;
 use derive_builder::Builder;
 use transposition::Atom;
 use transposition::ColumnarTranspositionCipherBuilder;

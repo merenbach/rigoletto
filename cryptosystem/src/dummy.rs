@@ -1,4 +1,4 @@
-use crate::Cipher;
+use cipher::Cipher;
 use derive_builder::Builder;
 
 #[cfg(test)]

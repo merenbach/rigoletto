@@ -24,6 +24,7 @@ members = [
 alphabet = {path = "alphabet"}
 cipher = {path = "cipher"}
 clap = {version = "3.1", features = ["derive"]}
+cryptosystem = {path = "cryptosystem"}
 derive_builder = "0.11"
 itertools = "0.10"
 lcg = {path = "lcg"}
@@ -35,5 +36,5 @@ ndarray = "0.15"
 pasc = {path = "pasc"}
 serde = "1.0"
 std_ext = {path = "std_ext"}
-transposition = {path = "transposition"}
 translation = {path = "translation"}
+transposition = {path = "transposition"}
