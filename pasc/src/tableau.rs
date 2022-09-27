@@ -55,7 +55,7 @@ use std::collections::HashMap;
     }
 }*/
 
-#[derive(Default, Clone)]
+#[derive(Default)]
 pub struct ReciprocalTable<K: Atom, T: Atom>(HashMap<K, masc::SubstitutionCipher<T>>);
 
 impl<K: Atom, T: Atom> ReciprocalTable<K, T> {

@@ -60,8 +60,7 @@ use translation::{Table, TableBuilder};
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 
-// TODO: reduce locations where we might use clone
-#[derive(Default, Clone)]
+#[derive(Default)]
 pub struct SubstitutionCipher<T: Atom> {
     pt_alphabet: Vec<T>,
     ct_alphabet: Vec<T>,

@@ -72,7 +72,6 @@ where
         .collect()
 }
 
-
 // /// Translate an element based on a given translation table.
 // /// This is inspired by Python's `str.translate()`.
 // fn translate_one<T, U>(m: &HashMap<T, Option<U>>, x: &T, default: Option<U>) -> Option<U>
@@ -120,7 +119,7 @@ where
     // }
 }
 
-#[derive(Builder, Default, Clone)]
+#[derive(Builder, Default)]
 #[builder(build_fn(validate = "Self::validate"))]
 pub struct Table<T>
 where

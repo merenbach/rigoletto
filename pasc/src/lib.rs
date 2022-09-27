@@ -277,7 +277,7 @@ impl SubstitutionCipherBuilder<char, char> {
 }
 
 /// A Cipher implements a polyalphabetic substitution cipher.
-#[derive(Default, Builder, Clone)]
+#[derive(Default, Builder)]
 #[builder(default)]
 pub struct SubstitutionCipher<T: Atom, K: Atom> {
     key: Vec<K>,
