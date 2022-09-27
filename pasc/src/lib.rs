@@ -1,14 +1,13 @@
-mod tableau;
 pub mod transform;
 
 use alphabet::Alphabet;
+use cipher::Cipher;
 use derive_builder::Builder;
 use masc;
 use masc::Atom;
 use num::{Integer, Unsigned};
 use std::cell::RefCell;
-use std::collections::VecDeque;
-use tableau::ReciprocalTable;
+use std::collections::{HashMap, VecDeque};
 use transposition::ColumnarTranspositionCipherBuilder;
 
 // #[cfg(test)]
@@ -52,34 +51,6 @@ impl<T: Atom> KeyQueue<T> {
 
 // TODO: validation that the key contains only characters from the key alphabet?
 // TODO: allow custom key alphabets for PASCs, but don't allow Gronsfeld without key alphabet being digits?
-
-pub fn caseless_keycheck(c: &char, keychars: &[char]) -> bool {
-    keychars.contains(&c.to_ascii_uppercase()) || keychars.contains(&c.to_ascii_lowercase())
-}
-
-pub fn caseless_encipher(c: &char, k: &char, m: &ReciprocalTable<char, char>) -> Option<char> {
-    if let Some(o) = m.encode(&c, &k) {
-        Some(o)
-    } else if let Some(o) = m.encode(&c.to_ascii_uppercase(), k) {
-        Some(o.to_ascii_lowercase())
-    } else if let Some(o) = m.encode(&c.to_ascii_lowercase(), k) {
-        Some(o.to_ascii_uppercase())
-    } else {
-        None
-    }
-}
-
-pub fn caseless_decipher(c: &char, k: &char, m: &ReciprocalTable<char, char>) -> Option<char> {
-    if let Some(o) = m.decode(&c, &k) {
-        Some(o)
-    } else if let Some(o) = m.decode(&c.to_ascii_uppercase(), k) {
-        Some(o.to_ascii_lowercase())
-    } else if let Some(o) = m.decode(&c.to_ascii_lowercase(), k) {
-        Some(o.to_ascii_uppercase())
-    } else {
-        None
-    }
-}
 
 /// An Autoclave configuration.
 #[derive(Copy, Clone)]
@@ -250,32 +221,6 @@ impl TabulaRecta {
 }
 */
 
-impl SubstitutionCipherBuilder<char, char> {
-    // pub fn standard() -> Self {
-    //     Self {
-    //         pt_alphabet: Some(Alphabet::Latin.to_vec()),
-    //         ..Default::default()
-    //     }
-    // }
-
-    // pub fn str_key(&mut self, v: &str) -> &mut Self {
-    //     self.key(v.chars().collect())
-    // }
-
-    pub fn caseless(&mut self, v: bool) -> &mut Self {
-        if v {
-            self.key_lookup = Some(Some(caseless_keycheck));
-            self.enc_lookup = Some(Some(caseless_encipher));
-            self.dec_lookup = Some(Some(caseless_decipher));
-        } else {
-            self.key_lookup = Some(None);
-            self.enc_lookup = Some(None);
-            self.dec_lookup = Some(None);
-        }
-        self
-    }
-}
-
 /// A Cipher implements a polyalphabetic substitution cipher.
 #[derive(Default, Builder)]
 #[builder(default)]
@@ -292,18 +237,11 @@ pub struct SubstitutionCipher<T: Atom, K: Atom> {
     autoclave: AutoclaveKind,
     strict: bool,
 
-    #[builder(private)]
-    key_lookup: Option<fn(&T, &[T]) -> bool>,
-    #[builder(private)]
-    enc_lookup: Option<fn(&T, &T, &ReciprocalTable<T, T>) -> Option<T>>,
-    #[builder(private)]
-    dec_lookup: Option<fn(&T, &T, &ReciprocalTable<T, T>) -> Option<T>>,
-
     #[builder(setter(skip))]
     ready: RefCell<bool>,
 
     #[builder(setter(skip))]
-    tableau: RefCell<ReciprocalTable<K, T>>,
+    tableau: RefCell<HashMap<K, masc::SubstitutionCipher<T>>>,
     // pt2ct: HashMap<char, translation::Table>,
     // ct2pt: HashMap<char, translation::Table>,
 }
@@ -314,23 +252,23 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
         *self.ready.borrow()
     }
 
-    /// Encipher a single message atom.
-    fn encipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T>) -> Option<T> {
-        t.encode(&c, &k)
-        // match self.enc_lookup {
-        //     Some(f) => (f)(c, k, t),
-        //     None => t.encode(&c, &k),
-        // }
-    }
+    // /// Encipher a single message atom.
+    // fn encipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T>) -> Option<T> {
+    //     t.encode(&c, &k)
+    //     // match self.enc_lookup {
+    //     //     Some(f) => (f)(c, k, t),
+    //     //     None => t.encode(&c, &k),
+    //     // }
+    // }
 
-    /// Decipher a single message atom.
-    fn decipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T>) -> Option<T> {
-        t.decode(&c, &k)
-        // match self.dec_lookup {
-        //     Some(f) => (f)(c, k, t),
-        //     None => t.decode(&c, &k),
-        // }
-    }
+    // /// Decipher a single message atom.
+    // fn decipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T>) -> Option<T> {
+    //     t.decode(&c, &k)
+    //     // match self.dec_lookup {
+    //     //     Some(f) => (f)(c, k, t),
+    //     //     None => t.decode(&c, &k),
+    //     // }
+    // }
 
     // /// Printable version of this cipher.
     // pub fn printable(&self) -> String {
@@ -343,8 +281,18 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
             return;
         }
         *self.ready.borrow_mut() = true;
-        *self.tableau.borrow_mut() =
-            ReciprocalTable::new(&self.pt_alphabet, &self.ct_alphabets, &self.key_alphabet);
+        *self.tableau.borrow_mut() = self
+            .key_alphabet
+            .iter()
+            .copied()
+            .enumerate()
+            .map(|(i, z)| {
+                (
+                    z,
+                    masc::SubstitutionCipher::new(&self.pt_alphabet, &self.ct_alphabets[i], true),
+                )
+            })
+            .collect();
     }
 
     // TODO: msglen is currently ignored for non-Gromark. This is a kludge.
@@ -363,7 +311,7 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     /// Encipher a string.
     pub fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let key = self.make_key(&self.tableau.borrow().keyset(), xs.len());
+        let key = self.make_key(&self.key_alphabet, xs.len());
         let mut kq = KeyQueue::from(key);
 
         let tr = self.tableau.borrow();
@@ -373,7 +321,7 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
             .filter_map(|&c| {
                 let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
                                   // let raw_out = self.encipher_one(&c, &k, &tr);
-                let raw_out = tr.encode(&c, &k);
+                let raw_out = { tr.get(k)?.encipher_one(&c) };
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
@@ -401,7 +349,7 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     /// Decipher a string.
     pub fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let key = self.make_key(&self.tableau.borrow().keyset(), xs.len());
+        let key = self.make_key(&self.key_alphabet, xs.len());
         let mut kq = KeyQueue::from(key);
 
         let tr = self.tableau.borrow();
@@ -411,7 +359,7 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
             .filter_map(|&c| {
                 let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
                                   // let raw_out = self.decipher_one(&c, &k, &tr);
-                let raw_out = tr.decode(&c, &k);
+                let raw_out = { tr.get(k)?.decipher_one(&c) };
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
@@ -441,7 +389,7 @@ impl<T: Atom> SubstitutionCipher<T, T> {
     /// Encipher a string.
     pub fn encipher_autokey(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let key = self.make_key(&self.tableau.borrow().keyset(), xs.len());
+        let key = self.make_key(&self.key_alphabet, xs.len());
         let mut kq = KeyQueue::from(key);
 
         let tr = self.tableau.borrow();
@@ -451,7 +399,7 @@ impl<T: Atom> SubstitutionCipher<T, T> {
             .filter_map(|&c| {
                 let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
                                   // let raw_out = self.encipher_one(&c, &k, &tr);
-                let raw_out = tr.encode(&c, &k);
+                let raw_out = { tr.get(k)?.encipher_one(&c) };
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
@@ -477,7 +425,7 @@ impl<T: Atom> SubstitutionCipher<T, T> {
     /// Decipher a string.
     pub fn decipher_autokey(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let key = self.make_key(&self.tableau.borrow().keyset(), xs.len());
+        let key = self.make_key(&self.key_alphabet, xs.len());
         let mut kq = KeyQueue::from(key);
 
         let tr = self.tableau.borrow();
@@ -487,7 +435,7 @@ impl<T: Atom> SubstitutionCipher<T, T> {
             .filter_map(|&c| {
                 let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
                                   // let raw_out = self.decipher_one(&c, &k, &tr);
-                let raw_out = tr.decode(&c, &k);
+                let raw_out = { tr.get(k)?.decipher_one(&c) };
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
