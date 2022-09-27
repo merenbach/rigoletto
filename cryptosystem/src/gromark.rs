@@ -111,12 +111,12 @@ pub fn makegromarkkey(primer: &[u32], msglen: usize) -> Vec<char> {
 }
 
 /// Make a substitution cipher.
-pub fn make(
-    pt_alphabet: &[char],
-    keyword: &[char],
+pub fn make<T: Atom + Ord>(
+    pt_alphabet: &[T],
+    keyword: &[T],
     primer: &[u32],
     strict: bool,
-) -> impl Cipher<char, char> {
+) -> impl Cipher<T, T> {
     let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
     let ys = masc::transform::keyword(&pt_alphabet, &keyword);
     let ct_alphabet_base = ColumnarTranspositionCipherBuilder::with_generic_key(&keyword)

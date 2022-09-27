@@ -224,27 +224,36 @@ impl TabulaRecta {
 /// A Cipher implements a polyalphabetic substitution cipher.
 #[derive(Default, Builder)]
 #[builder(default)]
-pub struct SubstitutionCipher<T: Atom> {
-    key: Vec<T>,
+pub struct SubstitutionCipher<T, K>
+where
+    T: Atom,
+    K: Atom,
+{
+    #[builder(setter(into))]
+    key: Vec<K>,
 
     #[builder(setter(into))]
     pt_alphabet: Vec<T>,
     #[builder(setter(into))]
     ct_alphabets: Vec<Vec<T>>,
     #[builder(setter(into))]
-    key_alphabet: Vec<T>,
+    key_alphabet: Vec<K>,
 
     autoclave: AutoclaveKind,
     strict: bool,
 
     #[builder(setter(skip))]
-    tableau: RefCell<HashMap<T, masc::SubstitutionCipher<T>>>,
+    tableau: RefCell<HashMap<K, masc::SubstitutionCipher<T>>>,
     // pt2ct: HashMap<char, translation::Table>,
     // ct2pt: HashMap<char, translation::Table>,
 }
 
 // 379 | impl<T: Atom, K: Atom> SubstitutionCipher<T, K> where Vec<T>: FromIterator<K> {
-impl<T: Atom> SubstitutionCipher<T> {
+impl<T, K> SubstitutionCipher<T, K>
+where
+    T: Atom,
+    K: Atom,
+{
     // /// Encipher a single message atom.
     // fn encipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T>) -> Option<T> {
     //     t.encode(&c, &k)
@@ -277,6 +286,7 @@ impl<T: Atom> SubstitutionCipher<T> {
         if !self.tableau.borrow().is_empty() {
             return;
         }
+
         *self.tableau.borrow_mut() = self
             .key_alphabet
             .iter()
@@ -297,7 +307,7 @@ impl<T: Atom> SubstitutionCipher<T> {
     }
 
     // TODO: msglen is currently ignored for non-Gromark. This is a kludge.
-    fn make_key(&self, charset: &[T], msglen: usize) -> Vec<T> {
+    fn make_key(&self, charset: &[K], msglen: usize) -> Vec<K> {
         self.key
             .iter()
             .filter(|c| charset.contains(&c))
@@ -310,7 +320,11 @@ impl<T: Atom> SubstitutionCipher<T> {
     }
 }
 
-impl<T: Atom> Cipher<T, T> for SubstitutionCipher<T> {
+impl<T, K> Cipher<T, T> for SubstitutionCipher<T, K>
+where
+    T: Atom,
+    K: Atom,
+{
     /// Encipher a string.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
@@ -330,8 +344,9 @@ impl<T: Atom> Cipher<T, T> for SubstitutionCipher<T> {
                         let elem = kq.pop();
                         match self.autoclave {
                             AutoclaveKind::None => kq.push(elem),
-                            AutoclaveKind::Key => kq.push(o), // type T to K queue?
-                            AutoclaveKind::Text => kq.push(c), // type T to K queue?
+                            _ => (),
+                            // AutoclaveKind::Key => kq.push(o), // type T to K queue?
+                            // AutoclaveKind::Text => kq.push(c), // type T to K queue?
                         };
                         Some(o)
                     }
@@ -366,8 +381,9 @@ impl<T: Atom> Cipher<T, T> for SubstitutionCipher<T> {
                         let elem = kq.pop();
                         match self.autoclave {
                             AutoclaveKind::None => kq.push(elem),
-                            AutoclaveKind::Key => kq.push(c),
-                            AutoclaveKind::Text => kq.push(o),
+                            _ => (),
+                            // AutoclaveKind::Key => kq.push(c),
+                            // AutoclaveKind::Text => kq.push(o),
                         };
                         Some(o)
                     }

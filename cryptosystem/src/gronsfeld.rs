@@ -69,7 +69,7 @@ const KEY_ALPHABET: &str = "0123456789";
 
 /// Make a substitution cipher.
 // TODO: allow integers for the key?
-pub fn make(pt_alphabet: &[char], key: &[char], strict: bool) -> impl Cipher<char, char> {
+pub fn make<T: Atom>(pt_alphabet: &[T], key: &[char], strict: bool) -> impl Cipher<T, T> {
     let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
 
     let ct_alphabets: Vec<_> = pt_alphabet
