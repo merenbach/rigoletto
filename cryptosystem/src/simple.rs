@@ -69,9 +69,6 @@ mod tests {
 }
 
 /// Make a substitution cipher.
-pub fn make<T>(pt_alphabet: &[T], ct_alphabet: &[T], strict: bool) -> impl Cipher<T, T>
-where
-    T: Atom,
-{
+pub fn make<T: Atom>(pt_alphabet: &[T], ct_alphabet: &[T], strict: bool) -> impl Cipher<T, T> {
     SubstitutionCipher::new(&pt_alphabet, &ct_alphabet, strict)
 }
