@@ -303,9 +303,15 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
             .copied()
             .collect()
     }
+}
 
+impl<T, K> Cipher<T, T> for SubstitutionCipher<T, K>
+where
+    T: Atom,
+    K: Atom,
+{
     /// Encipher a string.
-    pub fn encipher(&self, xs: &[T]) -> Vec<T> {
+    fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         let key = self.make_key(&self.key_alphabet, xs.len());
         let mut kq = KeyQueue::from(key);
@@ -343,7 +349,7 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     }
 
     /// Decipher a string.
-    pub fn decipher(&self, xs: &[T]) -> Vec<T> {
+    fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         let key = self.make_key(&self.key_alphabet, xs.len());
         let mut kq = KeyQueue::from(key);

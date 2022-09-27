@@ -1,7 +1,7 @@
-use crate::reciprocal_table;
 use cipher::Cipher;
 use masc::Atom;
 use pasc::transform;
+use pasc::SubstitutionCipherBuilder;
 
 #[cfg(test)]
 mod tests {
@@ -71,12 +71,19 @@ const KEY_ALPHABET: &str = "0123456789";
 // TODO: allow integers for the key?
 pub fn make<T: Atom>(pt_alphabet: &[T], key: &[char], strict: bool) -> impl Cipher<T, T> {
     let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
-    reciprocal_table::make(
-        pt_alphabet,
-        pt_alphabet,
-        &key_alphabet,
-        key,
-        |xs, i| transform::vigenere(xs, i),
-        strict,
-    )
+
+    let ct_alphabets: Vec<_> = pt_alphabet
+        .iter()
+        .enumerate()
+        .map(|(i, _)| transform::vigenere(pt_alphabet, i))
+        .collect();
+
+    SubstitutionCipherBuilder::default()
+        .key(key.to_vec())
+        .pt_alphabet(pt_alphabet.to_vec())
+        .ct_alphabets(ct_alphabets.to_vec())
+        .key_alphabet(key_alphabet.to_vec())
+        .strict(strict)
+        .build()
+        .unwrap()
 }

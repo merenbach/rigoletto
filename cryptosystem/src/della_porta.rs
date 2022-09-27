@@ -1,7 +1,7 @@
-use crate::reciprocal_table;
 use cipher::Cipher;
 use masc::Atom;
 use pasc::transform;
+use pasc::SubstitutionCipherBuilder;
 
 #[cfg(test)]
 mod tests {
@@ -67,12 +67,18 @@ mod tests {
 
 /// Make a substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], key: &[T], strict: bool) -> impl Cipher<T, T> {
-    reciprocal_table::make(
-        pt_alphabet,
-        pt_alphabet,
-        pt_alphabet,
-        key,
-        |xs, i| transform::della_porta(xs, i),
-        strict,
-    )
+    let ct_alphabets: Vec<_> = pt_alphabet
+        .iter()
+        .enumerate()
+        .map(|(i, _)| transform::della_porta(pt_alphabet, i))
+        .collect();
+
+    SubstitutionCipherBuilder::default()
+        .key(key.to_vec())
+        .pt_alphabet(pt_alphabet.to_vec())
+        .ct_alphabets(ct_alphabets.to_vec())
+        .key_alphabet(pt_alphabet.to_vec())
+        .strict(strict)
+        .build()
+        .unwrap()
 }
