@@ -97,12 +97,14 @@ impl<T: Atom> SubstitutionCipher<T> {
 
     /// Encipher an element.
     pub fn encipher_one(&self, x: &T) -> Option<T> {
-        self.pt2ct.translate_one(x, |_| None)
+        self.pt2ct
+            .translate_one(x, |x| if self.strict { None } else { Some(x) })
     }
 
     /// Decipher an element.
     pub fn decipher_one(&self, x: &T) -> Option<T> {
-        self.ct2pt.translate_one(x, |_| None)
+        self.ct2pt
+            .translate_one(x, |x| if self.strict { None } else { Some(x) })
     }
 }
 
@@ -112,14 +114,12 @@ where
 {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        self.pt2ct
-            .translate(xs, |x| if self.strict { None } else { Some(x) })
+        xs.iter().filter_map(|x| self.encipher_one(x)).collect()
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        self.ct2pt
-            .translate(xs, |x| if self.strict { None } else { Some(x) })
+        xs.iter().filter_map(|x| self.decipher_one(x)).collect()
     }
 }
 

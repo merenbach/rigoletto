@@ -175,10 +175,4 @@ where
         let map = self.ensure();
         *map.borrow().get(x).unwrap_or(&fallback(*x))
     }
-
-    /// Translate a sequence of elements.
-    pub fn translate(&self, xs: &[T], fallback: impl Fn(T) -> Option<T>) -> Vec<T> {
-        let map = self.ensure();
-        translate(xs, &(*map.borrow()), fallback)
-    }
 }
