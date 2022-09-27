@@ -224,27 +224,27 @@ impl TabulaRecta {
 /// A Cipher implements a polyalphabetic substitution cipher.
 #[derive(Default, Builder)]
 #[builder(default)]
-pub struct SubstitutionCipher<T: Atom, K: Atom> {
-    key: Vec<K>,
+pub struct SubstitutionCipher<T: Atom> {
+    key: Vec<T>,
 
     #[builder(setter(into))]
     pt_alphabet: Vec<T>,
     #[builder(setter(into))]
     ct_alphabets: Vec<Vec<T>>,
     #[builder(setter(into))]
-    key_alphabet: Vec<K>,
+    key_alphabet: Vec<T>,
 
     autoclave: AutoclaveKind,
     strict: bool,
 
     #[builder(setter(skip))]
-    tableau: RefCell<HashMap<K, masc::SubstitutionCipher<T>>>,
+    tableau: RefCell<HashMap<T, masc::SubstitutionCipher<T>>>,
     // pt2ct: HashMap<char, translation::Table>,
     // ct2pt: HashMap<char, translation::Table>,
 }
 
 // 379 | impl<T: Atom, K: Atom> SubstitutionCipher<T, K> where Vec<T>: FromIterator<K> {
-impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
+impl<T: Atom> SubstitutionCipher<T> {
     // /// Encipher a single message atom.
     // fn encipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T>) -> Option<T> {
     //     t.encode(&c, &k)
@@ -292,7 +292,7 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     }
 
     // TODO: msglen is currently ignored for non-Gromark. This is a kludge.
-    fn make_key(&self, charset: &[K], msglen: usize) -> Vec<K> {
+    fn make_key(&self, charset: &[T], msglen: usize) -> Vec<T> {
         self.key
             .iter()
             .filter(|c| charset.contains(&c))
@@ -305,91 +305,9 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     }
 }
 
-impl<T, K> Cipher<T, T> for SubstitutionCipher<T, K>
-where
-    T: Atom,
-    K: Atom,
-{
+impl<T: Atom> Cipher<T, T> for SubstitutionCipher<T> {
     /// Encipher a string.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        self.initialize();
-        let key = self.make_key(&self.key_alphabet, xs.len());
-        let mut kq = KeyQueue::from(key);
-
-        let tr = self.tableau.borrow();
-
-        xs.iter()
-            // can use .scan(0, |cursor, &c| if we're not going to return None
-            .filter_map(|&c| {
-                let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
-                                  // let raw_out = self.encipher_one(&c, &k, &tr);
-                let raw_out = { tr.get(k)?.encipher_one(&c) };
-                match raw_out {
-                    Some(o) => {
-                        let elem = kq.pop();
-                        match self.autoclave {
-                            AutoclaveKind::None => kq.push(elem),
-                            AutoclaveKind::Key => kq.push(elem),
-                            AutoclaveKind::Text => kq.push(elem),
-                            // AutoclaveKind::Key => kq.push(o), // type T to K queue?
-                            // AutoclaveKind::Text => kq.push(c), // type T to K queue?
-                        };
-                        Some(o)
-                    }
-                    None => {
-                        if !self.strict {
-                            Some(c)
-                        } else {
-                            None
-                        }
-                    }
-                }
-            }) // .filter_map for caseless
-            .collect()
-    }
-
-    /// Decipher a string.
-    fn decipher(&self, xs: &[T]) -> Vec<T> {
-        self.initialize();
-        let key = self.make_key(&self.key_alphabet, xs.len());
-        let mut kq = KeyQueue::from(key);
-
-        let tr = self.tableau.borrow();
-
-        xs.iter()
-            // can use .scan(0, |cursor, &c| if we're not going to return None
-            .filter_map(|&c| {
-                let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
-                                  // let raw_out = self.decipher_one(&c, &k, &tr);
-                let raw_out = { tr.get(k)?.decipher_one(&c) };
-                match raw_out {
-                    Some(o) => {
-                        let elem = kq.pop();
-                        match self.autoclave {
-                            AutoclaveKind::None => kq.push(elem),
-                            AutoclaveKind::Key => kq.push(elem),
-                            AutoclaveKind::Text => kq.push(elem),
-                            // AutoclaveKind::Key => kq.push(c),
-                            // AutoclaveKind::Text => kq.push(o),
-                        };
-                        Some(o)
-                    }
-                    None => {
-                        if !self.strict {
-                            Some(c)
-                        } else {
-                            None
-                        }
-                    }
-                }
-            })
-            .collect()
-    }
-}
-
-impl<T: Atom> SubstitutionCipher<T, T> {
-    /// Encipher a string.
-    pub fn encipher_autokey(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         let key = self.make_key(&self.key_alphabet, xs.len());
         let mut kq = KeyQueue::from(key);
@@ -425,7 +343,7 @@ impl<T: Atom> SubstitutionCipher<T, T> {
     }
 
     /// Decipher a string.
-    pub fn decipher_autokey(&self, xs: &[T]) -> Vec<T> {
+    fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
         let key = self.make_key(&self.key_alphabet, xs.len());
         let mut kq = KeyQueue::from(key);

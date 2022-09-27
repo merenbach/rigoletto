@@ -1,7 +1,8 @@
-use crate::reciprocal_table;
 use cipher::Cipher;
 use masc::Atom;
 use pasc::transform;
+use pasc::AutoclaveKind;
+use pasc::SubstitutionCipherBuilder;
 
 #[cfg(test)]
 mod tests {
@@ -67,14 +68,19 @@ mod tests {
 
 /// Make a substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], key: &[T], strict: bool) -> impl Cipher<T, T> {
-    reciprocal_table::make_homogeneous(
-        pt_alphabet,
-        pt_alphabet,
-        pt_alphabet,
-        key,
-        |xs, i| transform::vigenere(xs, i),
-        strict,
-        true,
-        false,
-    )
+    let ct_alphabets: Vec<_> = pt_alphabet
+        .iter()
+        .enumerate()
+        .map(|(i, _)| transform::vigenere(pt_alphabet, i))
+        .collect();
+
+    SubstitutionCipherBuilder::default()
+        .key(key.to_vec())
+        .pt_alphabet(pt_alphabet.to_vec())
+        .ct_alphabets(ct_alphabets.to_vec())
+        .key_alphabet(pt_alphabet.to_vec())
+        .strict(strict)
+        .autoclave(AutoclaveKind::Text)
+        .build()
+        .unwrap()
 }

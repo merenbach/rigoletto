@@ -1,9 +1,9 @@
-use crate::reciprocal_table;
 use cipher::Cipher;
 use lfg::LFGBuilder;
 use masc::Atom;
 use num::{Integer, Unsigned};
 use pasc::transform;
+use pasc::SubstitutionCipherBuilder;
 use std::iter;
 use transposition::ColumnarTranspositionCipherBuilder;
 
@@ -111,12 +111,12 @@ pub fn makegromarkkey(primer: &[u32], msglen: usize) -> Vec<char> {
 }
 
 /// Make a substitution cipher.
-pub fn make<T: Atom + Ord>(
-    pt_alphabet: &[T],
-    keyword: &[T],
+pub fn make(
+    pt_alphabet: &[char],
+    keyword: &[char],
     primer: &[u32],
     strict: bool,
-) -> impl Cipher<T, T> {
+) -> impl Cipher<char, char> {
     let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
     let ys = masc::transform::keyword(&pt_alphabet, &keyword);
     let ct_alphabet_base = ColumnarTranspositionCipherBuilder::with_generic_key(&keyword)
@@ -126,12 +126,18 @@ pub fn make<T: Atom + Ord>(
     let xs_len = 1000; // TODO: this is a kludge till we move to iterator for this
     let key = makegromarkkey(&primer, xs_len);
 
-    reciprocal_table::make(
-        pt_alphabet,
-        &ct_alphabet_base,
-        &key_alphabet,
-        &key,
-        |xs, i| transform::vigenere(xs, i),
-        strict,
-    )
+    let ct_alphabets: Vec<_> = pt_alphabet
+        .iter()
+        .enumerate()
+        .map(|(i, _)| transform::vigenere(&ct_alphabet_base, i))
+        .collect();
+
+    SubstitutionCipherBuilder::default()
+        .key(key.to_vec())
+        .pt_alphabet(pt_alphabet.to_vec())
+        .ct_alphabets(ct_alphabets.to_vec())
+        .key_alphabet(key_alphabet.to_vec())
+        .strict(strict)
+        .build()
+        .unwrap()
 }
