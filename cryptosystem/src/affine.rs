@@ -1,7 +1,6 @@
 use cipher::Cipher;
-use masc::Atom;
 use masc::transform;
-use masc::SubstitutionCipher;
+use masc::{Atom, SubstitutionCipherBuilder};
 
 #[cfg(test)]
 mod tests {
@@ -82,5 +81,10 @@ pub fn make<T: Atom>(
     strict: bool,
 ) -> impl Cipher<T, T> {
     let ct_alphabet = transform::affine(pt_alphabet, slope, intercept);
-    SubstitutionCipher::new(&pt_alphabet, &ct_alphabet, strict)
+    SubstitutionCipherBuilder::default()
+        .pt_alphabet(pt_alphabet.to_vec())
+        .ct_alphabet(ct_alphabet.to_vec())
+        .strict(strict)
+        .build()
+        .unwrap()
 }

@@ -285,7 +285,12 @@ impl<T: Atom> SubstitutionCipher<T> {
             .map(|(i, z)| {
                 (
                     z,
-                    masc::SubstitutionCipher::new(&self.pt_alphabet, &self.ct_alphabets[i], true),
+                    masc::SubstitutionCipherBuilder::default()
+                        .pt_alphabet(self.pt_alphabet.to_owned())
+                        .ct_alphabet(self.ct_alphabets[i].to_owned())
+                        .strict(true)
+                        .build()
+                        .unwrap(),
                 )
             })
             .collect();
