@@ -238,9 +238,6 @@ pub struct SubstitutionCipher<T: Atom, K: Atom> {
     strict: bool,
 
     #[builder(setter(skip))]
-    ready: RefCell<bool>,
-
-    #[builder(setter(skip))]
     tableau: RefCell<HashMap<K, masc::SubstitutionCipher<T>>>,
     // pt2ct: HashMap<char, translation::Table>,
     // ct2pt: HashMap<char, translation::Table>,
@@ -248,10 +245,6 @@ pub struct SubstitutionCipher<T: Atom, K: Atom> {
 
 // 379 | impl<T: Atom, K: Atom> SubstitutionCipher<T, K> where Vec<T>: FromIterator<K> {
 impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
-    pub fn is_ready(&self) -> bool {
-        *self.ready.borrow()
-    }
-
     // /// Encipher a single message atom.
     // fn encipher_one(&self, c: &T, k: &K, t: &ReciprocalTable<K, T>) -> Option<T> {
     //     t.encode(&c, &k)
@@ -275,12 +268,15 @@ impl<T: Atom, K: Atom> SubstitutionCipher<T, K> {
     //     format!("PT: {}\nCT: {}", self.config.alphabet, self.config.alphabet)
     // }
 
+    pub fn is_ready(&self) -> bool {
+        !self.tableau.borrow().is_empty()
+    }
+
     // TODO: msglen is currently ignored for non-Gromark. This is a kludge.
     fn initialize(&self) {
-        if *self.ready.borrow() {
+        if !self.tableau.borrow().is_empty() {
             return;
         }
-        *self.ready.borrow_mut() = true;
         *self.tableau.borrow_mut() = self
             .key_alphabet
             .iter()
