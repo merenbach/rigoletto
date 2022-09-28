@@ -49,7 +49,7 @@ mod tests {
 
 /// Wrap a slice the specified number of indices.
 fn wrap<T: Copy>(s: &[T], i: usize) -> Vec<T> {
-    let mut rr: Vec<_> = s.to_vec();
+    let mut rr: Vec<_> = s.into();
     let len = rr.len();
     rr.rotate_left(i % len);
     rr
@@ -60,7 +60,7 @@ fn wrap<T: Copy>(s: &[T], i: usize) -> Vec<T> {
 fn owrap<T: Copy>(xs: &[T], i: usize) -> Vec<T> {
     let m = xs.len();
     match m {
-        0..=2 => xs.to_vec(),
+        0..=2 => xs.into(),
         _ => {
             let half_len = m / 2;
             let rem = m % 2;
@@ -116,6 +116,6 @@ pub fn variant_beaufort<T: Copy>(xs: &[T], i: usize) -> Vec<T> {
 pub fn della_porta<T: Copy>(xs: &[T], i: usize) -> Vec<T> {
     // TODO: should we enforce an even-length requirement here?
     // TODO: this is an inefficient repeated call to to_vec() under the hood
-    let ys = wrap(&xs.to_vec(), xs.len() / 2);
+    let ys = wrap(xs, xs.len() / 2);
     owrap(&ys, i / 2)
 }

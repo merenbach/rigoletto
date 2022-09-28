@@ -74,7 +74,7 @@ fn my_shift<T>(
 where
     T: Copy,
 {
-    let mut ys = xs.to_vec();
+    let mut ys = xs.into();
 
     ys.rotate_left(element_idx_to_move + offset - 1); // TODO: what if zenith is later in the alphabet?
     let z = ys.remove(zenith + offset);
@@ -101,7 +101,7 @@ fn permute<T>(xs: &[T], offset: usize, zenith: usize, nadir: usize) -> Vec<T>
 where
     T: Copy,
 {
-    let mut ys = xs.to_vec();
+    let mut ys = xs.into();
     let z = ys.remove(zenith + offset);
     ys.insert(nadir, z);
     ys
@@ -123,8 +123,8 @@ struct Chaocipher<T: Atom, U: Atom> {
 
 impl<T: Atom> Cipher<T, T> for Chaocipher<T, T> {
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let mut left = self.left.to_vec();
-        let mut right = self.right.to_vec();
+        let mut left = self.left.into();
+        let mut right = self.right.into();
         let mut output = vec![];
 
         for x in xs {
@@ -149,8 +149,8 @@ impl<T: Atom> Cipher<T, T> for Chaocipher<T, T> {
     }
 
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let mut left = self.left.to_vec();
-        let mut right = self.right.to_vec();
+        let mut left = self.left.into();
+        let mut right = self.right.into();
         let mut output = vec![];
 
         for x in xs {

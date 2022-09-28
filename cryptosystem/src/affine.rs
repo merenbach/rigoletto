@@ -82,8 +82,8 @@ pub fn make<T: Atom>(
 ) -> impl Cipher<T, T> {
     let ct_alphabet = transform::affine(pt_alphabet, slope, intercept);
     SubstitutionCipherBuilder::default()
-        .pt_alphabet(pt_alphabet.to_vec())
-        .ct_alphabet(ct_alphabet.to_vec())
+        .pt_alphabet(pt_alphabet)
+        .ct_alphabet(ct_alphabet)
         .strict(strict)
         .build()
         .unwrap()

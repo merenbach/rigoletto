@@ -41,11 +41,11 @@ pub struct Dummy {}
 impl<T: Copy> Cipher<T, T> for Dummy {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        xs.to_vec()
+        xs.into()
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        xs.to_vec()
+        xs.into()
     }
 }

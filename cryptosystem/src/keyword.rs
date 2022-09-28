@@ -73,8 +73,8 @@ pub fn make<T: Atom>(pt_alphabet: &[T], keyword: &[T], strict: bool) -> impl Cip
     let kw = keyword.to_owned(); // lifetime specifier concerns
     let ct_alphabet = transform::keyword(pt_alphabet, &kw);
     SubstitutionCipherBuilder::default()
-        .pt_alphabet(pt_alphabet.to_vec())
-        .ct_alphabet(ct_alphabet.to_vec())
+        .pt_alphabet(pt_alphabet)
+        .ct_alphabet(ct_alphabet)
         .strict(strict)
         .build()
         .unwrap()

@@ -72,8 +72,8 @@ mod tests {
 pub fn make<T: Atom>(pt_alphabet: &[T], multiplier: usize, strict: bool) -> impl Cipher<T, T> {
     let ct_alphabet = transform::decimation(pt_alphabet, multiplier);
     SubstitutionCipherBuilder::default()
-        .pt_alphabet(pt_alphabet.to_vec())
-        .ct_alphabet(ct_alphabet.to_vec())
+        .pt_alphabet(pt_alphabet)
+        .ct_alphabet(ct_alphabet)
         .strict(strict)
         .build()
         .unwrap()

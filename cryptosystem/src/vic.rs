@@ -19,18 +19,18 @@ mod tests {
         let xs = &[
             TestCase {
                 turns: 1,
-                input: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
-                output: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
+                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+                output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
             },
             TestCase {
                 turns: 2,
-                input: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
-                output: [0, 2, 4, 5, 3, 1, 1, 3, 5, 4, 2, 0].to_vec(),
+                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+                output: vec![0, 2, 4, 5, 3, 1, 1, 3, 5, 4, 2, 0],
             },
             TestCase {
                 turns: 3,
-                input: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
-                output: [0, 3, 5, 2, 1, 4, 4, 1, 2, 5, 3, 0].to_vec(),
+                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+                output: vec![0, 3, 5, 2, 1, 4, 4, 1, 2, 5, 3, 0],
             },
         ];
         for x in xs {
@@ -44,18 +44,18 @@ mod tests {
         let xs = &[
             TestCase {
                 turns: 1,
-                input: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
-                output: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
+                input: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
+                output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
             },
             TestCase {
                 turns: 2,
-                input: [0, 2, 4, 5, 3, 1, 1, 3, 5, 4, 2, 0].to_vec(),
-                output: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
+                input: vec![0, 2, 4, 5, 3, 1, 1, 3, 5, 4, 2, 0],
+                output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
             },
             TestCase {
                 turns: 3,
-                input: [0, 3, 5, 2, 1, 4, 4, 1, 2, 5, 3, 0].to_vec(),
-                output: [0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0].to_vec(),
+                input: vec![0, 3, 5, 2, 1, 4, 4, 1, 2, 5, 3, 0],
+                output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
             },
         ];
         for x in xs {
@@ -89,8 +89,6 @@ impl<T: Atom> Cipher<T, T> for Scytale {
         c.decipher(xs)
     }
 }
-
-
 
 struct VIC {
     phrase: String,
@@ -147,13 +145,12 @@ impl VIC {
                 .map(|i| ((i + 1) % 10) as u32)
                 .collect();
         let lineF1: Vec<_> = lineC
-            .to_vec()
             .into_iter()
             .chain(
                 LFGBuilder::default()
                     .additive()
                     .modulus(10)
-                    .seed(lineC.to_vec())
+                    .seed(lineC)
                     .taps(vec![1, 2])
                     .build()
                     .unwrap()

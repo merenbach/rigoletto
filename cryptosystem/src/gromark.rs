@@ -95,8 +95,8 @@ where
     let g = LFGBuilder::default()
         .additive()
         .modulus(m)
-        .seed(primer.to_vec())
-        .taps(vec![1, 2])
+        .seed(primer)
+        .taps([1, 2])
         .build()
         .unwrap();
     primer.iter().copied().chain(g).take(count).collect()
@@ -133,10 +133,10 @@ pub fn make<T: Atom + Ord>(
         .collect();
 
     SubstitutionCipherBuilder::default()
-        .key(key.to_vec())
-        .pt_alphabet(pt_alphabet.to_vec())
-        .ct_alphabets(ct_alphabets.to_vec())
-        .key_alphabet(key_alphabet.to_vec())
+        .key(key)
+        .pt_alphabet(pt_alphabet)
+        .ct_alphabets(ct_alphabets)
+        .key_alphabet(key_alphabet)
         .strict(strict)
         .build()
         .unwrap()

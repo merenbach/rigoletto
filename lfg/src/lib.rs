@@ -173,7 +173,11 @@ where
     T: Unsigned + Integer + Copy + Product + Sum,
 {
     modulus: T,
+
+    #[builder(setter(into))]
     taps: Vec<usize>,
+
+    #[builder(setter(into))]
     seed: Vec<T>,
 
     #[builder(private)]

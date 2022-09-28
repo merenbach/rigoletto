@@ -145,7 +145,7 @@ mod tests {
 
 /// Perform a dummy (no-op) transformation.
 pub fn dummy<T: Copy>(xs: &[T]) -> Vec<T> {
-    xs.to_vec()
+    xs.into()
 }
 
 /// Perform an affine transform on an array slice and return as a vector.
@@ -153,7 +153,7 @@ pub fn affine<T: Copy>(xs: &[T], slope: usize, intercept: usize) -> Vec<T> {
     let m = xs.len();
     // TODO: check for coprimality of m and slope
     match m {
-        0..=1 => xs.to_vec(),
+        0..=1 => xs.into(),
         _ => {
             let lcg: Vec<_> = LCGBuilder::default() // TODO: just use successors here?
                 .modulus(m)

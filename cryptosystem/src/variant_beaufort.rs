@@ -74,10 +74,10 @@ pub fn make<T: Atom>(pt_alphabet: &[T], key: &[T], strict: bool) -> impl Cipher<
         .collect();
 
     SubstitutionCipherBuilder::default()
-        .key(key.to_vec())
-        .pt_alphabet(pt_alphabet.to_vec())
-        .ct_alphabets(ct_alphabets.to_vec())
-        .key_alphabet(pt_alphabet.to_vec())
+        .key(key)
+        .pt_alphabet(pt_alphabet)
+        .ct_alphabets(ct_alphabets)
+        .key_alphabet(pt_alphabet)
         .strict(strict)
         .build()
         .unwrap()
