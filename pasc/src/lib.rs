@@ -20,9 +20,14 @@ use transposition::ColumnarTranspositionCipherBuilder;
 
 struct KeyQueue<T: Atom>(VecDeque<T>);
 
-impl<T: Atom> From<Vec<T>> for KeyQueue<T> {
-    fn from(xs: Vec<T>) -> Self {
-        Self(VecDeque::from(xs))
+impl<T: Atom> KeyQueue<T> {
+    fn new(xs: &[T], charset: &[T]) -> Self {
+        let ys: Vec<_> = xs
+            .iter()
+            .filter(|c| charset.contains(&c))
+            .copied()
+            .collect();
+        Self(VecDeque::from(ys))
     }
 }
 
@@ -304,19 +309,6 @@ where
             })
             .collect();
     }
-
-    // TODO: msglen is currently ignored for non-Gromark. This is a kludge.
-    fn make_key(&self, charset: &[K], msglen: usize) -> Vec<K> {
-        self.key
-            .iter()
-            .filter(|c| charset.contains(&c))
-            // .filter(|c| match self.key_lookup {
-            //     Some(f) => (f)(&c, &keychars),
-            //     None => keychars.contains(&c),
-            // })
-            .copied()
-            .collect()
-    }
 }
 
 impl<T, K> Cipher<T, T> for SubstitutionCipher<T, K>
@@ -327,8 +319,7 @@ where
     /// Encipher a string.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let key = self.make_key(&self.key_alphabet, xs.len());
-        let mut kq = KeyQueue::from(key);
+        let mut kq = KeyQueue::new(&self.key, &self.key_alphabet);
 
         let tr = self.tableau.borrow();
 
@@ -359,8 +350,7 @@ where
     /// Decipher a string.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let key = self.make_key(&self.key_alphabet, xs.len());
-        let mut kq = KeyQueue::from(key);
+        let mut kq = KeyQueue::new(&self.key, &self.key_alphabet);
 
         let tr = self.tableau.borrow();
 
@@ -471,19 +461,6 @@ where
             })
             .collect();
     }
-
-    // TODO: msglen is currently ignored for non-Gromark. This is a kludge.
-    fn make_key(&self, charset: &[T], msglen: usize) -> Vec<T> {
-        self.key
-            .iter()
-            .filter(|c| charset.contains(&c))
-            // .filter(|c| match self.key_lookup {
-            //     Some(f) => (f)(&c, &keychars),
-            //     None => keychars.contains(&c),
-            // })
-            .copied()
-            .collect()
-    }
 }
 
 impl<T> Cipher<T, T> for AutoclaveSubstitutionCipher<T>
@@ -493,8 +470,7 @@ where
     /// Encipher a string.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let key = self.make_key(&self.key_alphabet, xs.len());
-        let mut kq = KeyQueue::from(key);
+        let mut kq = KeyQueue::new(&self.key, &self.key_alphabet);
 
         let tr = self.tableau.borrow();
 
@@ -529,8 +505,7 @@ where
     /// Decipher a string.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let key = self.make_key(&self.key_alphabet, xs.len());
-        let mut kq = KeyQueue::from(key);
+        let mut kq = KeyQueue::new(&self.key, &self.key_alphabet);
 
         let tr = self.tableau.borrow();
 
