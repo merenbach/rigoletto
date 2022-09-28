@@ -226,6 +226,33 @@ impl TabulaRecta {
 }
 */
 
+fn make_reciprocal_table<T, K>(
+    pt_alphabet: &[T],
+    ct_alphabets: &[Vec<T>],
+    key_alphabet: &[K],
+) -> HashMap<K, masc::SubstitutionCipher<T>>
+where
+    T: Atom,
+    K: Atom,
+{
+    key_alphabet
+        .iter()
+        .copied()
+        .enumerate()
+        .map(|(i, z)| {
+            (
+                z,
+                masc::SubstitutionCipherBuilder::default()
+                    .pt_alphabet(pt_alphabet)
+                    .ct_alphabet(ct_alphabets[i].to_owned())
+                    .strict(true)
+                    .build()
+                    .unwrap(),
+            )
+        })
+        .collect()
+}
+
 /// A Cipher implements a polyalphabetic substitution cipher.
 #[derive(Default, Builder)]
 #[builder(default)]
@@ -291,23 +318,8 @@ where
             return;
         }
 
-        *self.tableau.borrow_mut() = self
-            .key_alphabet
-            .iter()
-            .copied()
-            .enumerate()
-            .map(|(i, z)| {
-                (
-                    z,
-                    masc::SubstitutionCipherBuilder::default()
-                        .pt_alphabet(self.pt_alphabet.to_owned())
-                        .ct_alphabet(self.ct_alphabets[i].to_owned())
-                        .strict(true)
-                        .build()
-                        .unwrap(),
-                )
-            })
-            .collect();
+        *self.tableau.borrow_mut() =
+            make_reciprocal_table(&self.pt_alphabet, &self.ct_alphabets, &self.key_alphabet);
     }
 }
 
@@ -443,23 +455,8 @@ where
             return;
         }
 
-        *self.tableau.borrow_mut() = self
-            .key_alphabet
-            .iter()
-            .copied()
-            .enumerate()
-            .map(|(i, z)| {
-                (
-                    z,
-                    masc::SubstitutionCipherBuilder::default()
-                        .pt_alphabet(self.pt_alphabet.to_owned())
-                        .ct_alphabet(self.ct_alphabets[i].to_owned())
-                        .strict(true)
-                        .build()
-                        .unwrap(),
-                )
-            })
-            .collect();
+        *self.tableau.borrow_mut() =
+            make_reciprocal_table(&self.pt_alphabet, &self.ct_alphabets, &self.key_alphabet);
     }
 }
 
