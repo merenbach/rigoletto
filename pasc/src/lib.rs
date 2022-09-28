@@ -328,7 +328,7 @@ where
             .filter_map(|&c| {
                 let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
                                   // let raw_out = self.encipher_one(&c, &k, &tr);
-                let raw_out = { tr.get(k)?.encipher_one(&c) };
+                let raw_out = tr.get(k)?.encipher_one(&c);
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
@@ -359,7 +359,7 @@ where
             .filter_map(|&c| {
                 let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
                                   // let raw_out = self.decipher_one(&c, &k, &tr);
-                let raw_out = { tr.get(k)?.decipher_one(&c) };
+                let raw_out = tr.get(k)?.decipher_one(&c);
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
@@ -479,7 +479,7 @@ where
             .filter_map(|&c| {
                 let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
                                   // let raw_out = self.encipher_one(&c, &k, &tr);
-                let raw_out = { tr.get(k)?.encipher_one(&c) };
+                let raw_out = tr.get(k)?.encipher_one(&c);
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
@@ -514,7 +514,7 @@ where
             .filter_map(|&c| {
                 let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
                                   // let raw_out = self.decipher_one(&c, &k, &tr);
-                let raw_out = { tr.get(k)?.decipher_one(&c) };
+                let raw_out = tr.get(k)?.decipher_one(&c);
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
