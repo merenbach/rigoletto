@@ -239,7 +239,6 @@ where
     #[builder(setter(into))]
     key_alphabet: Vec<K>,
 
-    autoclave: AutoclaveKind,
     strict: bool,
 
     #[builder(setter(skip))]
@@ -342,12 +341,7 @@ where
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
-                        match self.autoclave {
-                            AutoclaveKind::None => kq.push(elem),
-                            _ => (),
-                            // AutoclaveKind::Key => kq.push(o), // type T to K queue?
-                            // AutoclaveKind::Text => kq.push(c), // type T to K queue?
-                        };
+                        kq.push(elem);
                         Some(o)
                     }
                     None => {
@@ -379,12 +373,7 @@ where
                 match raw_out {
                     Some(o) => {
                         let elem = kq.pop();
-                        match self.autoclave {
-                            AutoclaveKind::None => kq.push(elem),
-                            _ => (),
-                            // AutoclaveKind::Key => kq.push(c),
-                            // AutoclaveKind::Text => kq.push(o),
-                        };
+                        kq.push(elem);
                         Some(o)
                     }
                     None => {
