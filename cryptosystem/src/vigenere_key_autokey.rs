@@ -1,8 +1,7 @@
 use cipher::Cipher;
 use masc::Atom;
 use pasc::transform;
-use pasc::AutoclaveKind;
-use pasc::SubstitutionCipherBuilder;
+use pasc::{AutoclaveKind, AutoclaveSubstitutionCipherBuilder};
 
 #[cfg(test)]
 mod tests {
@@ -74,7 +73,7 @@ pub fn make<T: Atom>(pt_alphabet: &[T], key: &[T], strict: bool) -> impl Cipher<
         .map(|(i, _)| transform::vigenere(pt_alphabet, i))
         .collect();
 
-    SubstitutionCipherBuilder::default()
+    AutoclaveSubstitutionCipherBuilder::default()
         .key(key.to_vec())
         .pt_alphabet(pt_alphabet.to_vec())
         .ct_alphabets(ct_alphabets.to_vec())
