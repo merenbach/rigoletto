@@ -253,6 +253,79 @@ where
         .collect()
 }
 
+fn encipher<T, K>(
+    xs: &[T],
+    key: &[K],
+    key_alphabet: &[K],
+    strict: bool,
+    lookup: impl Fn(&K, &T) -> Option<T>,
+    callback: impl Fn(&mut KeyQueue<K>, K, T, T),
+) -> Vec<T>
+where
+    T: Atom,
+    K: Atom,
+{
+    let mut kq = KeyQueue::new(key, key_alphabet);
+    xs.iter()
+        // can use .scan(0, |cursor, &c| if we're not going to return None
+        .filter_map(|&c| {
+            let k = kq.get();
+            let raw_out = lookup(k, &c);
+            match raw_out {
+                Some(o) => {
+                    let elem = kq.pop();
+                    callback(&mut kq, elem, o, c);
+                    Some(o)
+                }
+                None => {
+                    if !strict {
+                        Some(c)
+                    } else {
+                        None
+                    }
+                }
+            }
+        }) // .filter_map for caseless
+        .collect()
+}
+
+/// Decipher a string.
+fn decipher<T, K>(
+    xs: &[T],
+    key: &[K],
+    key_alphabet: &[K],
+    strict: bool,
+    lookup: impl Fn(&K, &T) -> Option<T>,
+    callback: impl Fn(&mut KeyQueue<K>, K, T, T),
+) -> Vec<T>
+where
+    T: Atom,
+    K: Atom,
+{
+    let mut kq = KeyQueue::new(key, key_alphabet);
+    xs.iter()
+        // can use .scan(0, |cursor, &c| if we're not going to return None
+        .filter_map(|&c| {
+            let k = kq.get();
+            let raw_out = lookup(k, &c);
+            match raw_out {
+                Some(o) => {
+                    let elem = kq.pop();
+                    callback(&mut kq, elem, o, c);
+                    Some(o)
+                }
+                None => {
+                    if !strict {
+                        Some(c)
+                    } else {
+                        None
+                    }
+                }
+            }
+        })
+        .collect()
+}
+
 /// A Cipher implements a polyalphabetic substitution cipher.
 #[derive(Default, Builder)]
 #[builder(default)]
@@ -331,63 +404,33 @@ where
     /// Encipher a string.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let mut kq = KeyQueue::new(&self.key, &self.key_alphabet);
-
-        let tr = self.tableau.borrow();
-
-        xs.iter()
-            // can use .scan(0, |cursor, &c| if we're not going to return None
-            .filter_map(|&c| {
-                let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
-                                  // let raw_out = self.encipher_one(&c, &k, &tr);
-                let raw_out = tr.get(k)?.encipher_one(&c);
-                match raw_out {
-                    Some(o) => {
-                        let elem = kq.pop();
-                        kq.push(elem);
-                        Some(o)
-                    }
-                    None => {
-                        if !self.strict {
-                            Some(c)
-                        } else {
-                            None
-                        }
-                    }
-                }
-            }) // .filter_map for caseless
-            .collect()
+        let tableau = self.tableau.borrow();
+        encipher(
+            xs,
+            &self.key,
+            &self.key_alphabet,
+            self.strict,
+            |k, c| tableau.get(k)?.encipher_one(&c),
+            |kq, k, _, _| {
+                kq.push(k);
+            },
+        )
     }
 
     /// Decipher a string.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let mut kq = KeyQueue::new(&self.key, &self.key_alphabet);
-
-        let tr = self.tableau.borrow();
-
-        xs.iter()
-            // can use .scan(0, |cursor, &c| if we're not going to return None
-            .filter_map(|&c| {
-                let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
-                                  // let raw_out = self.decipher_one(&c, &k, &tr);
-                let raw_out = tr.get(k)?.decipher_one(&c);
-                match raw_out {
-                    Some(o) => {
-                        let elem = kq.pop();
-                        kq.push(elem);
-                        Some(o)
-                    }
-                    None => {
-                        if !self.strict {
-                            Some(c)
-                        } else {
-                            None
-                        }
-                    }
-                }
-            })
-            .collect()
+        let tableau = self.tableau.borrow();
+        decipher(
+            xs,
+            &self.key,
+            &self.key_alphabet,
+            self.strict,
+            |k, c| tableau.get(k)?.decipher_one(&c),
+            |kq, k, _, _| {
+                kq.push(k);
+            },
+        )
     }
 }
 
@@ -467,70 +510,38 @@ where
     /// Encipher a string.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let mut kq = KeyQueue::new(&self.key, &self.key_alphabet);
-
-        let tr = self.tableau.borrow();
-
-        xs.iter()
-            // can use .scan(0, |cursor, &c| if we're not going to return None
-            .filter_map(|&c| {
-                let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
-                                  // let raw_out = self.encipher_one(&c, &k, &tr);
-                let raw_out = tr.get(k)?.encipher_one(&c);
-                match raw_out {
-                    Some(o) => {
-                        let elem = kq.pop();
-                        match self.autoclave {
-                            AutoclaveKind::None => kq.push(elem),
-                            AutoclaveKind::Key => kq.push(o), // type T to K queue?
-                            AutoclaveKind::Text => kq.push(c), // type T to K queue?
-                        };
-                        Some(o)
-                    }
-                    None => {
-                        if !self.strict {
-                            Some(c)
-                        } else {
-                            None
-                        }
-                    }
+        let tableau = self.tableau.borrow();
+        encipher(
+            xs,
+            &self.key,
+            &self.key_alphabet,
+            self.strict,
+            |k, c| tableau.get(k)?.encipher_one(&c),
+            |kq, k, o, c| {
+                match self.autoclave {
+                    AutoclaveKind::None => kq.push(k),
+                    AutoclaveKind::Key => kq.push(o), // type T to K queue?
+                    AutoclaveKind::Text => kq.push(c), // type T to K queue?
                 }
-            }) // .filter_map for caseless
-            .collect()
+            },
+        )
     }
 
     /// Decipher a string.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         self.initialize();
-        let mut kq = KeyQueue::new(&self.key, &self.key_alphabet);
-
-        let tr = self.tableau.borrow();
-
-        xs.iter()
-            // can use .scan(0, |cursor, &c| if we're not going to return None
-            .filter_map(|&c| {
-                let k = kq.get(); // TODO: add back caseless checks if we keep caseless option
-                                  // let raw_out = self.decipher_one(&c, &k, &tr);
-                let raw_out = tr.get(k)?.decipher_one(&c);
-                match raw_out {
-                    Some(o) => {
-                        let elem = kq.pop();
-                        match self.autoclave {
-                            AutoclaveKind::None => kq.push(elem),
-                            AutoclaveKind::Key => kq.push(c),
-                            AutoclaveKind::Text => kq.push(o),
-                        };
-                        Some(o)
-                    }
-                    None => {
-                        if !self.strict {
-                            Some(c)
-                        } else {
-                            None
-                        }
-                    }
-                }
-            })
-            .collect()
+        let tableau = self.tableau.borrow();
+        decipher(
+            xs,
+            &self.key,
+            &self.key_alphabet,
+            self.strict,
+            |k, c| tableau.get(k)?.decipher_one(&c),
+            |kq, k, o, c| match self.autoclave {
+                AutoclaveKind::None => kq.push(k),
+                AutoclaveKind::Key => kq.push(c),
+                AutoclaveKind::Text => kq.push(o),
+            },
+        )
     }
 }
