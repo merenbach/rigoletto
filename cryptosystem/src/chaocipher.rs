@@ -117,8 +117,10 @@ struct Chaocipher<T: Atom, U: Atom> {
 
     strict: bool,
 
+    #[builder(setter(into))]
     right: Vec<T>, // for finding plaintext letters on encipherment
-    left: Vec<U>,  // for finding ciphertext letters on decipherment
+    #[builder(setter(into))]
+    left: Vec<U>, // for finding ciphertext letters on decipherment
 }
 
 impl<T: Atom> Cipher<T, T> for Chaocipher<T, T> {
