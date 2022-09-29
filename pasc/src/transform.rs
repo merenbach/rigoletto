@@ -24,25 +24,48 @@ mod tests {
     // }
 
     #[test]
-    fn owrap_works() {
+    fn della_porta_works() {
         let rows = &[
             (vec![], vec![], 0),
             (vec![], vec![], 1),
             (vec![1], vec![1], 0),
             (vec![1], vec![1], 1),
-            (vec![1], vec![1], 2),
-            (vec![1, 2], vec![1, 2], 3),
-            (vec![1, 2, 3], vec![1, 2, 3], 0),
-            (vec![1, 2, 3], vec![1, 2, 3], 1),
-            (vec![1, 2, 3], vec![1, 2, 3], 2),
-            (vec![1, 2, 3, 4], vec![1, 2, 3, 4], 0),
-            (vec![2, 1, 4, 3], vec![1, 2, 3, 4], 1),
-            (vec![1, 2, 3, 4], vec![1, 2, 3, 4], 2),
-            (vec![2, 1, 4, 3], vec![1, 2, 3, 4], 3),
+            (vec![2, 1], vec![1, 2], 0),
+            (vec![2, 1], vec![1, 2], 1),
+            (vec![2, 1], vec![1, 2], 2),
+            (
+                vec![4, 5, 6, 7, 0, 1, 2, 3],
+                vec![0, 1, 2, 3, 4, 5, 6, 7],
+                0,
+            ),
+            (
+                vec![5, 6, 7, 4, 3, 0, 1, 2],
+                vec![0, 1, 2, 3, 4, 5, 6, 7],
+                1,
+            ),
+            (
+                vec![6, 7, 4, 5, 2, 3, 0, 1],
+                vec![0, 1, 2, 3, 4, 5, 6, 7],
+                2,
+            ),
+            // TODO: this is still broken for odd-length inputs
+            (vec![4, 5, 6, 55, 1, 2, 3], vec![1, 2, 3, 4, 5, 6, 7], 0),
+            // (vec![4, 5, 6, 55, 1, 2, 3], vec![55, 1, 2, 3, 4, 5, 6], 1),
+            // (vec![5, 6, 4, 55, 3, 1, 2], vec![3, 1, 2, 55, 4, 5, 6], 2),
+            // (vec![5, 6, 4, 55, 3, 1, 2], vec![3, 1, 2, 55, 4, 5, 6], 3),
+            // (vec![6, 4, 5, 55, 2, 3, 1], vec![2, 3, 1, 55, 4, 5, 6], 4),
+            // (vec![6, 4, 5, 55, 2, 3, 1], vec![2, 3, 1, 55, 4, 5, 6], 5),
+            // (vec![1, 2, 3], vec![1, 2, 3], 0),
+            // (vec![1, 2, 3], vec![1, 2, 3], 1),
+            // (vec![1, 2, 3], vec![1, 2, 3], 2),
+            // (vec![1, 2, 3, 4], vec![1, 2, 3, 4], 0),
+            // (vec![2, 1, 4, 3], vec![1, 2, 3, 4], 1),
+            // (vec![1, 2, 3, 4], vec![1, 2, 3, 4], 2),
+            // (vec![2, 1, 4, 3], vec![1, 2, 3, 4], 3),
         ];
         for row in rows {
             println!("{:?}", row);
-            assert_eq!(row.0, owrap(&row.1, row.2));
+            assert_eq!(row.0, della_porta(&row.1, row.2));
         }
     }
 }
@@ -53,33 +76,6 @@ fn wrap<T: Copy>(s: &[T], i: usize) -> Vec<T> {
     let len = rr.len();
     rr.rotate_left(i % len);
     rr
-}
-
-/// Wrap a string outward a specified number of indices.
-/// TODO: simplify and move into std_ext
-fn owrap<T: Copy>(xs: &[T], i: usize) -> Vec<T> {
-    let m = xs.len();
-    match m {
-        0..=2 => xs.into(),
-        _ => {
-            let half_len = m / 2;
-            let rem = m % 2;
-            let (first_half, middle, second_half) = (
-                &xs[..half_len],
-                &xs[half_len..half_len + rem], // will exist only when xs.len() is odd (in which case length will be 1)
-                &xs[half_len + rem..], // account for unrotated middle element with odd xs.len()
-            );
-
-            let new_first_half = masc_transform::caesar(first_half, i % m);
-            let new_second_half = masc_transform::caesar(second_half, m - i % m);
-
-            let mut out: Vec<_> = Vec::new();
-            out.extend(&new_first_half);
-            out.extend(middle);
-            out.extend(&new_second_half);
-            out
-        }
-    }
 }
 
 // // Perform a pivoted Caesar transform on an array slice and return as a vector.
@@ -116,6 +112,26 @@ pub fn variant_beaufort<T: Copy>(xs: &[T], i: usize) -> Vec<T> {
 pub fn della_porta<T: Copy>(xs: &[T], i: usize) -> Vec<T> {
     // TODO: should we enforce an even-length requirement here?
     // TODO: this is an inefficient repeated call to to_vec() under the hood
-    let ys = wrap(xs, xs.len() / 2);
-    owrap(&ys, i / 2)
+
+    if xs.is_empty() {
+        return xs.into();
+    }
+
+    let listlen = xs.len();
+    let midpoint: usize = listlen / 2;
+
+    let mut new_positions: Vec<usize> = vec![];
+    for (idx, _) in xs.iter().enumerate() {
+        if idx < midpoint {
+            new_positions.push((idx + i) % midpoint);
+        } else if idx == midpoint && listlen % 2 != 0 {
+            new_positions.push(midpoint);
+        } else if idx >= midpoint + listlen % 2 {
+            new_positions
+                .push((listlen + idx - i - listlen % 2) % midpoint + midpoint + listlen % 2);
+        }
+    }
+
+    let ys = wrap(xs, midpoint);
+    std_ext::backpermute(&ys, &new_positions)
 }

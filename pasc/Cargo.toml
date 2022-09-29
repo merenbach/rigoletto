@@ -12,4 +12,5 @@ cipher = {path = "../cipher"}
 derive_builder = "0.11"
 masc = {path = "../masc"}
 num = "0.3"
+std_ext = {path = "../std_ext"}
 transposition = {path = "../transposition"}

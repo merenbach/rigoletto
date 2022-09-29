@@ -70,7 +70,7 @@ pub fn make<T: Atom>(pt_alphabet: &[T], key: &[T], strict: bool) -> impl Cipher<
     let ct_alphabets: Vec<_> = pt_alphabet
         .iter()
         .enumerate()
-        .map(|(i, _)| transform::della_porta(pt_alphabet, i))
+        .map(|(i, _)| transform::della_porta(pt_alphabet, i / 2))
         .collect();
 
     SubstitutionCipherBuilder::default()
