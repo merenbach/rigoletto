@@ -97,6 +97,7 @@ pub struct ColumnarTranspositionCipher<T: Atom> {
     #[builder(private)]
     key: Vec<usize>,
 
+    #[builder(setter(into))]
     nulls: Vec<T>,
 
     #[doc = r"`myszkowski` determines whether to perform Myszkowski transposition."]
