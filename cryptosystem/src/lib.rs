@@ -32,19 +32,6 @@ pub mod vigenere_text_autokey;
 //     }
 // }
 
-/// A Cipher implements a generic cipher.
-pub trait Cipher<T, U>
-where
-    T: Copy,
-    U: Copy,
-{
-    /// Encipher a sequence.
-    fn encipher(&self, xs: &[T]) -> Vec<U>;
-
-    /// Decipher a sequence.
-    fn decipher(&self, xs: &[U]) -> Vec<T>;
-}
-
 // pub trait Atom: Hash + Eq + Copy + Default {}
 // impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 
