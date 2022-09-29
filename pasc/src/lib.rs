@@ -259,7 +259,7 @@ fn encipher<T, K>(
     key_alphabet: &[K],
     strict: bool,
     lookup: impl Fn(&K, &T) -> Option<T>,
-    callback: impl Fn(&mut KeyQueue<K>, K, T, T),
+    callback: impl Fn(K, T, T) -> K,
 ) -> Vec<T>
 where
     T: Atom,
@@ -274,7 +274,8 @@ where
             match raw_out {
                 Some(o) => {
                     let elem = kq.pop();
-                    callback(&mut kq, elem, o, c);
+                    let new_elem = callback(elem, o, c);
+                    kq.push(new_elem);
                     Some(o)
                 }
                 None => {
@@ -296,7 +297,7 @@ fn decipher<T, K>(
     key_alphabet: &[K],
     strict: bool,
     lookup: impl Fn(&K, &T) -> Option<T>,
-    callback: impl Fn(&mut KeyQueue<K>, K, T, T),
+    callback: impl Fn(K, T, T) -> K,
 ) -> Vec<T>
 where
     T: Atom,
@@ -311,7 +312,8 @@ where
             match raw_out {
                 Some(o) => {
                     let elem = kq.pop();
-                    callback(&mut kq, elem, o, c);
+                    let new_elem = callback(elem, o, c);
+                    kq.push(new_elem);
                     Some(o)
                 }
                 None => {
@@ -410,10 +412,8 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.encipher_one(&c),
-            |kq, k, _, _| {
-                kq.push(k);
-            },
+            |k, c| tableau.get(k)?.encipher_one(c),
+            |k, _, _| k,
         )
     }
 
@@ -426,10 +426,8 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.decipher_one(&c),
-            |kq, k, _, _| {
-                kq.push(k);
-            },
+            |k, c| tableau.get(k)?.decipher_one(c),
+            |k, _, _| k,
         )
     }
 }
@@ -516,13 +514,11 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.encipher_one(&c),
-            |kq, k, o, c| {
-                match self.autoclave {
-                    AutoclaveKind::None => kq.push(k),
-                    AutoclaveKind::Key => kq.push(o), // type T to K queue?
-                    AutoclaveKind::Text => kq.push(c), // type T to K queue?
-                }
+            |k, c| tableau.get(k)?.encipher_one(c),
+            |k, o, c| match self.autoclave {
+                AutoclaveKind::None => k,
+                AutoclaveKind::Key => o,
+                AutoclaveKind::Text => c,
             },
         )
     }
@@ -536,11 +532,11 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.decipher_one(&c),
-            |kq, k, o, c| match self.autoclave {
-                AutoclaveKind::None => kq.push(k),
-                AutoclaveKind::Key => kq.push(c),
-                AutoclaveKind::Text => kq.push(o),
+            |k, c| tableau.get(k)?.decipher_one(c),
+            |k, o, c| match self.autoclave {
+                AutoclaveKind::None => k,
+                AutoclaveKind::Key => c,
+                AutoclaveKind::Text => o,
             },
         )
     }
