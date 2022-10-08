@@ -172,8 +172,12 @@ pub fn affine<T: Copy>(xs: &[T], slope: usize, intercept: usize) -> Vec<T> {
 
 /// Perform an Atbash transform on an array slice and return as a vector.
 pub fn atbash<T: Copy>(xs: &[T]) -> Vec<T> {
-    let m = xs.len().saturating_sub(1);
-    affine(xs, m, m)
+    if xs.is_empty() {
+        xs.into()
+    } else {
+        let m = xs.len() - 1;
+        affine(xs, m, m)
+    }
 }
 
 /// Perform a Caesar transform on an array slice and return as a vector.
