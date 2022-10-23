@@ -12,6 +12,6 @@ cipher = {path = "../cipher"}
 derive_builder = "0.11"
 itertools = "0.10"
 lcg = {path = "../lcg"}
-num = "0.3"
+num = "0.4"
 std_ext = {path = "../std_ext"}
 translation = {path = "../translation"}
