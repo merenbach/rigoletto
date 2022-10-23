@@ -1,40 +1,8 @@
-pub mod transform;
+mod transform;
 
 use derive_builder::Builder;
-use std::cmp;
 use std::hash::Hash;
 use std_ext::argsort;
-
-#[cfg(test)]
-mod tests {
-    use super::zigzag;
-
-    #[test]
-    fn zigzag_works() {
-        let xs = &[
-            (0, vec![]),
-            (2, vec![0, 1]),
-            (4, vec![0, 1, 2, 1]),
-            (6, vec![0, 1, 2, 3, 2, 1]),
-            (8, vec![0, 1, 2, 3, 4, 3, 2, 1]),
-            (10, vec![0, 1, 2, 3, 4, 5, 4, 3, 2, 1]),
-            (12, vec![0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]),
-            (14, vec![0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1]),
-            (16, vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1]),
-            (
-                18,
-                vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1],
-            ),
-            (
-                20,
-                vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
-            ),
-        ];
-        for x in xs {
-            assert_eq!(&x.1, &zigzag(x.0));
-        }
-    }
-}
 
 // pub fn dsu<T, F, K>(xs: &[T], f: F) -> Vec<usize>
 // where
@@ -58,11 +26,6 @@ mod tests {
 //     ys.sort_by_key(|k| f(k.0));
 //     ys.iter().map(|t| t.1).copied().collect()
 // }
-
-/// Zigzag sequence, of primary use in the rail fence cipher.
-fn zigzag(period: usize) -> Vec<usize> {
-    (0..period).map(|n| cmp::min(n, period - n)).collect()
-}
 
 pub trait Atom: Copy + Default {}
 impl<T> Atom for T where T: Copy + Default {}
@@ -95,7 +58,7 @@ impl<T: Atom> ColumnarTranspositionCipherBuilder<T> {
             1 => vec![0],
             _ => {
                 let period = 2 * (rows - 1);
-                zigzag(period)
+                transform::zigzag(period)
             }
         };
         Self::with_generic_key(&xs)
