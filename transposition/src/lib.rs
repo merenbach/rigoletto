@@ -5,13 +5,37 @@ use std::cmp;
 use std::hash::Hash;
 use std_ext::argsort;
 
-// #[cfg(test)]
-// mod tests {
-//     #[test]
-//     fn it_works() {
-//         assert_eq!(2 + 2, 4);
-//     }
-// }
+#[cfg(test)]
+mod tests {
+    use super::zigzag;
+
+    #[test]
+    fn zigzag_works() {
+        let xs = &[
+            (0, vec![0]),
+            // (1, vec![1]),
+            (2, vec![0, 1]),
+            (4, vec![0, 1, 2, 1]),
+            (6, vec![0, 1, 2, 3, 2, 1]),
+            (8, vec![0, 1, 2, 3, 4, 3, 2, 1]),
+            (10, vec![0, 1, 2, 3, 4, 5, 4, 3, 2, 1]),
+            (12, vec![0, 1, 2, 3, 4, 5, 6, 5, 4, 3, 2, 1]),
+            (14, vec![0, 1, 2, 3, 4, 5, 6, 7, 6, 5, 4, 3, 2, 1]),
+            (16, vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 7, 6, 5, 4, 3, 2, 1]),
+            (
+                18,
+                vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ),
+            (
+                20,
+                vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+            ),
+        ];
+        for x in xs {
+            assert_eq!(&x.1, &zigzag(x.0));
+        }
+    }
+}
 
 // pub fn dsu<T, F, K>(xs: &[T], f: F) -> Vec<usize>
 // where
