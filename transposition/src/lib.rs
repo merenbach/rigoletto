@@ -1,4 +1,4 @@
-mod transform;
+pub mod transform;
 
 use derive_builder::Builder;
 use std::hash::Hash;
@@ -46,21 +46,6 @@ impl<T: Atom> ColumnarTranspositionCipherBuilder<T> {
     /// Add a string-based key.
     pub fn with_str_key(v: &str) -> Self {
         let xs: Vec<_> = v.chars().collect();
-        Self::with_generic_key(&xs)
-    }
-
-    /// Prepare a rail fence cipher.
-    /// N.b.: The rail fence cipher is a special case of a columnar transposition cipher
-    ///       with Myszkowski transposition and a key equal to a zigzag sequence
-    ///       that converts the row count into the appropriate period.
-    pub fn with_rail_fence(rows: usize) -> Self {
-        let xs = match rows {
-            1 => vec![0],
-            _ => {
-                let period = 2 * (rows - 1);
-                transform::zigzag(period)
-            }
-        };
         Self::with_generic_key(&xs)
     }
 
