@@ -34,6 +34,8 @@ mod tests {
 }
 
 /// Zigzag sequence, of primary use in the rail fence cipher.
+/// The period is the length of the sequence before any repetition would occur.
+/// A single period will be returned.
 pub fn zigzag(period: usize) -> Vec<usize> {
     (0..period).map(|n| cmp::min(n, period - n)).collect()
 }
