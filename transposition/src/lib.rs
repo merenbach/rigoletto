@@ -12,8 +12,7 @@ mod tests {
     #[test]
     fn zigzag_works() {
         let xs = &[
-            (0, vec![0]),
-            // (1, vec![1]),
+            (0, vec![]),
             (2, vec![0, 1]),
             (4, vec![0, 1, 2, 1]),
             (6, vec![0, 1, 2, 3, 2, 1]),
@@ -60,12 +59,9 @@ mod tests {
 //     ys.iter().map(|t| t.1).copied().collect()
 // }
 
-// Zigzag sequence for use in the rail fence cipher.
+/// Zigzag sequence, of primary use in the rail fence cipher.
 fn zigzag(period: usize) -> Vec<usize> {
-    match period {
-        0 => vec![0],
-        _ => (0..period).map(|n| cmp::min(n, period - n)).collect(),
-    }
+    (0..period).map(|n| cmp::min(n, period - n)).collect()
 }
 
 pub trait Atom: Copy + Default {}
@@ -95,8 +91,14 @@ impl<T: Atom> ColumnarTranspositionCipherBuilder<T> {
     ///       with Myszkowski transposition and a key equal to a zigzag sequence
     ///       that converts the row count into the appropriate period.
     pub fn with_rail_fence(rows: usize) -> Self {
-        let period = 2 * (rows - 1);
-        Self::with_generic_key(&zigzag(period))
+        let xs = match rows {
+            1 => vec![0],
+            _ => {
+                let period = 2 * (rows - 1);
+                zigzag(period)
+            }
+        };
+        Self::with_generic_key(&xs)
     }
 
     /// Prepare a scytale cipher.
