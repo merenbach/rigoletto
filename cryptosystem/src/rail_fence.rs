@@ -1,5 +1,4 @@
 use cipher::Cipher;
-use derive_builder::Builder;
 use transposition::transform;
 use transposition::{Atom, ColumnarTranspositionCipherBuilder};
 
@@ -34,7 +33,7 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = RailFenceBuilder::default().rails(x.rails).build().unwrap();
+            let c = make(x.rails);
             assert_eq!(x.output, c.encipher(&x.input));
         }
     }
@@ -59,57 +58,28 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = RailFenceBuilder::default().rails(x.rails).build().unwrap();
+            let c = make(x.rails);
             assert_eq!(x.output, c.decipher(&x.input));
         }
     }
 }
 
-#[derive(Default, Builder)]
-pub struct RailFence {
-    rails: usize,
-}
+/// Make a substitution cipher.
+pub fn make<T: Atom>(rails: usize) -> impl Cipher<T, T> {
+    let ys = match rails {
+        1 => vec![0],
+        _ => {
+            let period = 2 * (rails - 1);
+            transform::zigzag(period)
+        }
+    };
 
-impl<T: Atom> Cipher<T, T> for RailFence {
-    /// Encipher a sequence.
-    fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let ys = match self.rails {
-            1 => vec![0],
-            _ => {
-                let period = 2 * (self.rails - 1);
-                transform::zigzag(period)
-            }
-        };
-
-        // Prepare a rail fence cipher.
-        // N.b.: The rail fence cipher is a special case of a columnar transposition cipher
-        //       with Myszkowski transposition and a key equal to a zigzag sequence
-        //       that converts the row count into the appropriate period.
-        let c = ColumnarTranspositionCipherBuilder::with_generic_key(&ys)
-            .myszkowski(true)
-            .build()
-            .unwrap();
-        c.encipher(xs)
-    }
-
-    /// Decipher a sequence.
-    fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let ys = match self.rails {
-            1 => vec![0],
-            _ => {
-                let period = 2 * (self.rails - 1);
-                transform::zigzag(period)
-            }
-        };
-
-        // Prepare a rail fence cipher.
-        // N.b.: The rail fence cipher is a special case of a columnar transposition cipher
-        //       with Myszkowski transposition and a key equal to a zigzag sequence
-        //       that converts the row count into the appropriate period.
-        let c = ColumnarTranspositionCipherBuilder::with_generic_key(&ys)
-            .myszkowski(true)
-            .build()
-            .unwrap();
-        c.decipher(xs)
-    }
+    // Prepare a rail fence cipher.
+    // N.b.: The rail fence cipher is a special case of a columnar transposition cipher
+    //       with Myszkowski transposition and a key equal to a zigzag sequence
+    //       that converts the row count into the appropriate period.
+    ColumnarTranspositionCipherBuilder::with_generic_key(&ys)
+        .myszkowski(true)
+        .build()
+        .unwrap()
 }
