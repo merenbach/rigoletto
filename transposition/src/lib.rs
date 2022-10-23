@@ -40,10 +40,7 @@ use std_ext::argsort;
 fn zigzag(period: usize) -> Vec<usize> {
     match period {
         0 => vec![0],
-        _ => (0..period)
-            .map(|i| i % period)
-            .map(|n| cmp::min(n, period - n))
-            .collect(),
+        _ => (0..period).map(|n| cmp::min(n, period - n)).collect(),
     }
 }
 
