@@ -64,7 +64,7 @@ mod tests {
     }
 }
 
-/// Make a substitution cipher.
+/// Make a transposition cipher.
 pub fn make<T: Atom>(rails: usize) -> impl Cipher<T, T> {
     let ys = match rails {
         1 => vec![0],

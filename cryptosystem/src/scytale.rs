@@ -1,7 +1,6 @@
 use cipher::Cipher;
 use derive_builder::Builder;
-use transposition::Atom;
-use transposition::ColumnarTranspositionCipherBuilder;
+use transposition::{Atom, ColumnarTranspositionCipherBuilder};
 
 #[cfg(test)]
 mod tests {
@@ -34,7 +33,7 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = ScytaleBuilder::default().turns(x.turns).build().unwrap();
+            let c = make(x.turns);
             assert_eq!(x.output, c.encipher(&x.input));
         }
     }
@@ -59,33 +58,26 @@ mod tests {
             },
         ];
         for x in xs {
-            let c = ScytaleBuilder::default().turns(x.turns).build().unwrap();
+            let c = make(x.turns);
             assert_eq!(x.output, c.decipher(&x.input));
         }
     }
 }
 
-#[derive(Default, Builder)]
-pub struct Scytale {
-    turns: usize,
-}
+/// Make a substitution cipher.
+pub fn make<T: Atom>(turns: usize) -> impl Cipher<T, T> {
+    let ys = match turns {
+        1 => vec![0],
+        _ => (0..turns).collect(),
+    };
 
-impl<T: Atom> Cipher<T, T> for Scytale {
-    /// Encipher a sequence.
-    fn encipher(&self, xs: &[T]) -> Vec<T> {
-        let c = ColumnarTranspositionCipherBuilder::with_scytale(self.turns)
-            .myszkowski(true)
-            .build()
-            .unwrap();
-        c.encipher(xs)
-    }
-
-    /// Decipher a sequence.
-    fn decipher(&self, xs: &[T]) -> Vec<T> {
-        let c = ColumnarTranspositionCipherBuilder::with_scytale(self.turns)
-            .myszkowski(true)
-            .build()
-            .unwrap();
-        c.decipher(xs)
-    }
+    // Prepare a scytale cipher.
+    // N.b.: The scytale cipher is a special case of a columnar transposition cipher
+    //       with a key equal to an ascending consecutive integer sequence
+    //       as long as the number of turns.
+    //       A sequence with all the same digit may also work, but may depend on a stable sort.
+    ColumnarTranspositionCipherBuilder::with_generic_key(&ys)
+        .myszkowski(true)
+        .build()
+        .unwrap()
 }

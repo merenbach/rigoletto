@@ -49,16 +49,6 @@ impl<T: Atom> ColumnarTranspositionCipherBuilder<T> {
         let xs: Vec<_> = v.chars().collect();
         Self::with_generic_key(&xs)
     }
-
-    /// Prepare a scytale cipher.
-    /// N.b.: The scytale cipher is a special case of a columnar transposition cipher
-    ///       with a key equal to an ascending consecutive integer sequence
-    ///       as long as the number of turns.
-    ///       A sequence with all the same digit may also work, but may depend on a stable sort.
-    pub fn with_scytale(turns: usize) -> Self {
-        let seq: Vec<_> = (0..turns).collect();
-        Self::with_generic_key(&seq)
-    }
 }
 
 /// A Columnar transposition cipher.
