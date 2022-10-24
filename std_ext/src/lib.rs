@@ -102,25 +102,18 @@ pub fn backpermute<T: Copy>(xs: &[T], indices: &[usize]) -> Vec<T> {
 ///
 /// <https://numpy.org/doc/stable/reference/generated/numpy.argsort.html>
 ///
-/// Analogous concepts may include the Schwartzian transform or
-/// the Python idiom of decorate-sort-undecorate.
+/// This is effectively a Schwartzian transform or decorate-sort-undecorate.
 ///
 ///   1. Attach numbers to each item in the collection.
-///   2. Rearrange the collection such that it is now sorted. This will scramble the numbers.
+///   2. Rearrange the collection such that it is now sorted lexically. This will scramble the numbers.
 ///   3. Return only the numbers now.
 pub fn argsort<T: Ord>(xs: &[T]) -> Vec<usize> {
     xs.iter()
         .enumerate()
-        .sorted_by_key(|k| k.1)
+        .sorted_by_key(|v| v.1)
         .map(|t| t.0)
         .collect()
 }
-
-// pub fn argsort2<T: Ord>(xs: &[T]) -> Vec<usize> {
-//     let mut ys: Vec<_> = xs.iter().zip(0..).collect();
-//     ys.sort();
-//     ys.iter().map(|t| t.1).collect()
-// }
 
 // pub fn invert_pairs<T: Ord>(xs: &[T]) -> Vec<(usize, usize)> {
 //     let x = invert_internal(xs);
