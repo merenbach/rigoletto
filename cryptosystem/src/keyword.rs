@@ -70,8 +70,7 @@ mod tests {
 
 /// Make a monoalphabetic substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], keyword: &[T], strict: bool) -> impl Cipher<T, T> {
-    let kw = keyword.to_owned(); // lifetime specifier concerns
-    let ct_alphabet = transform::keyword(pt_alphabet, &kw);
+    let ct_alphabet = transform::keyword(pt_alphabet, &keyword);
     SubstitutionCipherBuilder::default()
         .pt_alphabet(pt_alphabet)
         .ct_alphabet(ct_alphabet)
