@@ -63,17 +63,12 @@ where
         // as argsort will convert duplicate values into consecutive values.
         let key = transform::lexorder(&self.key);
 
-        let v: Vec<_> = if self.myszkowski {
-            key.into_iter().cycle().take(count).collect()
-        } else {
-            key
-        };
-
-        let u = argsort(&argsort(&v));
         if self.myszkowski {
-            u
+            let xs: Vec<_> = key.into_iter().cycle().take(count).collect();
+            argsort(&argsort(&xs))
         } else {
-            u.into_iter().cycle().take(count).collect()
+            let xs = argsort(&argsort(&key));
+            xs.into_iter().cycle().take(count).collect()
         }
     }
 }
