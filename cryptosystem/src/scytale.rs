@@ -1,5 +1,4 @@
 use cipher::Cipher;
-use derive_builder::Builder;
 use transposition::{Atom, ColumnarTranspositionCipherBuilder};
 
 #[cfg(test)]

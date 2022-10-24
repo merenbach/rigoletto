@@ -1,14 +1,11 @@
 pub mod transform;
 
-use alphabet::Alphabet;
 use cipher::Cipher;
 use derive_builder::Builder;
 use masc;
 use masc::Atom;
-use num::{Integer, Unsigned};
 use std::cell::RefCell;
 use std::collections::{HashMap, VecDeque};
-use transposition::ColumnarTranspositionCipherBuilder;
 
 // #[cfg(test)]
 // mod tests {
