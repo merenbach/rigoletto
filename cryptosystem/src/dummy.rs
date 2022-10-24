@@ -35,8 +35,8 @@ mod tests {
     }
 }
 
-#[derive(Default, Builder)]
-pub struct Dummy {}
+#[derive(Builder)]
+struct Dummy {}
 
 impl<T: Copy> Cipher<T, T> for Dummy {
     /// Encipher a sequence.
@@ -48,4 +48,9 @@ impl<T: Copy> Cipher<T, T> for Dummy {
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         xs.into()
     }
+}
+
+/// Make a dummy (no-op) cipher.
+pub fn make<T: Copy>() -> impl Cipher<T, T> {
+    DummyBuilder::default().build().unwrap()
 }
