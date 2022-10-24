@@ -78,7 +78,8 @@ pub fn make<T: Atom>(rails: usize) -> impl Cipher<T, T> {
     // N.b.: The rail fence cipher is a special case of a columnar transposition cipher
     //       with Myszkowski transposition and a key equal to a zigzag sequence
     //       that converts the row count into the appropriate period.
-    ColumnarTranspositionCipherBuilder::with_generic_key(&ys)
+    ColumnarTranspositionCipherBuilder::default()
+        .key(ys)
         .myszkowski(true)
         .build()
         .unwrap()

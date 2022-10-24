@@ -119,7 +119,8 @@ pub fn make<T: Atom + Ord>(
 ) -> impl Cipher<T, T> {
     let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();
     let ys = masc::transform::keyword(&pt_alphabet, &keyword);
-    let ct_alphabet_base = ColumnarTranspositionCipherBuilder::with_generic_key(&keyword)
+    let ct_alphabet_base = ColumnarTranspositionCipherBuilder::default()
+        .key(keyword)
         .build()
         .unwrap()
         .encipher(&ys);

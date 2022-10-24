@@ -31,33 +31,17 @@ use std_ext::argsort;
 pub trait Atom: Copy + Default {}
 impl<T> Atom for T where T: Copy + Default {}
 
-impl<T: Atom> ColumnarTranspositionCipherBuilder<T> {
-    /// Add a key.
-    pub fn with_generic_key(v: &[impl Ord + Hash]) -> Self {
-        // This lexical ordering transformation is technically needed only to support Myszkowski transposition.
-        // We don't know the message length at this point, so we want to avoid doing any argsorts until later,
-        // since argsort will convert duplicate values into consecutive values.
-        let data = transform::lexorder(&v);
-        Self {
-            key: Some(data),
-            ..Default::default()
-        }
-    }
-
-    /// Add a string-based key.
-    pub fn with_str_key(v: &str) -> Self {
-        let xs: Vec<_> = v.chars().collect();
-        Self::with_generic_key(&xs)
-    }
-}
-
 /// A Columnar transposition cipher.
 /// TODO: should keys be split out into use of multiple ciphers?
 #[derive(Default, Builder, Clone)]
 #[builder(default)]
-pub struct ColumnarTranspositionCipher<T: Atom> {
-    #[builder(private)]
-    key: Vec<usize>,
+pub struct ColumnarTranspositionCipher<T, U>
+where
+    T: Atom,
+    U: Ord + Hash + Default,
+{
+    #[builder(setter(into))]
+    key: Vec<U>,
 
     #[builder(setter(into))]
     nulls: Vec<T>,
@@ -66,14 +50,23 @@ pub struct ColumnarTranspositionCipher<T: Atom> {
     myszkowski: bool,
 }
 
-impl<T: Atom> ColumnarTranspositionCipher<T> {
+impl<T, U> ColumnarTranspositionCipher<T, U>
+where
+    T: Atom,
+    U: Ord + Hash + Default,
+{
     // TODO: add more tests to ensure that Myszkowski argument maybe always has an effect
     /// Generate transposition cipher indices based on a columnar key.
     fn process(&self, count: usize) -> Vec<usize> {
+        // This lexical ordering transformation is technically needed only to support Myszkowski transposition.
+        // We don't know the message length before here, so we want to avoid doing any argsorts until now,
+        // as argsort will convert duplicate values into consecutive values.
+        let key = transform::lexorder(&self.key);
+
         let v: Vec<_> = if self.myszkowski {
-            self.key.iter().cycle().take(count).copied().collect()
+            key.iter().cycle().take(count).copied().collect()
         } else {
-            self.key.to_vec()
+            key.to_vec()
         };
 
         let u = argsort(&argsort(&v));
@@ -85,7 +78,11 @@ impl<T: Atom> ColumnarTranspositionCipher<T> {
     }
 }
 
-impl<T: Atom> Cipher<T, T> for ColumnarTranspositionCipher<T> {
+impl<T, U> Cipher<T, T> for ColumnarTranspositionCipher<T, U>
+where
+    T: Atom,
+    U: Ord + Hash + Default,
+{
     /// Encipher a message.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         let ys: Vec<_> = xs.iter().chain(self.nulls.iter()).copied().collect();

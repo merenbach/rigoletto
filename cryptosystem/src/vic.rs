@@ -205,7 +205,8 @@ impl VIC {
         // let revisedLineJ: Vec<u32> = lineJ.iter().copied().map(|i| i as u32).collect();
         let revisedLineJ: Vec<_> = std_ext::argsort(&std_ext::argsort(&lineH));
         println!("revised line j = {:?}", revisedLineJ);
-        let tc = transposition::ColumnarTranspositionCipherBuilder::with_generic_key(&revisedLineJ)
+        let tc = transposition::ColumnarTranspositionCipherBuilder::default()
+            .key(revisedLineJ)
             // .myszkowski(true)
             .build()
             .unwrap();

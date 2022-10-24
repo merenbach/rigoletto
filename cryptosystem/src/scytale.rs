@@ -76,7 +76,8 @@ pub fn make<T: Atom>(turns: usize) -> impl Cipher<T, T> {
     //       with a key equal to an ascending consecutive integer sequence
     //       as long as the number of turns.
     //       A sequence with all the same digit may also work, but may depend on a stable sort.
-    ColumnarTranspositionCipherBuilder::with_generic_key(&ys)
+    ColumnarTranspositionCipherBuilder::default()
+        .key(ys)
         .myszkowski(true)
         .build()
         .unwrap()
