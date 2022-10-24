@@ -65,7 +65,7 @@ mod tests {
     }
 }
 
-/// Make a substitution cipher.
+/// Make a polyalphabetic substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], key: &[T], strict: bool) -> impl Cipher<T, T> {
     let ct_alphabets: Vec<_> = pt_alphabet
         .iter()

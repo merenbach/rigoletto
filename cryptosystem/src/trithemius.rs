@@ -58,7 +58,7 @@ mod tests {
     }
 }
 
-/// Make a substitution cipher.
+/// Make a polyalphabetic substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], strict: bool) -> impl Cipher<T, T> {
     vigenere::make(pt_alphabet, pt_alphabet, strict)
 }

@@ -67,7 +67,7 @@ mod tests {
 
 const KEY_ALPHABET: &str = "0123456789";
 
-/// Make a substitution cipher.
+/// Make a polyalphabetic substitution cipher.
 // TODO: allow integers for the key?
 pub fn make<T: Atom>(pt_alphabet: &[T], key: &[char], strict: bool) -> impl Cipher<T, T> {
     let key_alphabet: Vec<_> = KEY_ALPHABET.chars().collect();

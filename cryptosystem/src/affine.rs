@@ -73,7 +73,7 @@ mod tests {
     }
 }
 
-/// Make a substitution cipher.
+/// Make a monoalphabetic substitution cipher.
 pub fn make<T: Atom>(
     pt_alphabet: &[T],
     slope: usize,

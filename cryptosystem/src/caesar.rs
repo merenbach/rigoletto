@@ -68,7 +68,7 @@ mod tests {
     }
 }
 
-/// Make a substitution cipher.
+/// Make a monoalphabetic substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], offset: usize, strict: bool) -> impl Cipher<T, T> {
     let ct_alphabet = transform::caesar(pt_alphabet, offset);
     SubstitutionCipherBuilder::default()

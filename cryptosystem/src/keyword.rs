@@ -68,7 +68,7 @@ mod tests {
     }
 }
 
-/// Make a substitution cipher.
+/// Make a monoalphabetic substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], keyword: &[T], strict: bool) -> impl Cipher<T, T> {
     let kw = keyword.to_owned(); // lifetime specifier concerns
     let ct_alphabet = transform::keyword(pt_alphabet, &kw);

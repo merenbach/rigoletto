@@ -67,7 +67,7 @@ mod tests {
     }
 }
 
-/// Make a substitution cipher.
+/// Make a monoalphabetic substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], ct_alphabet: &[T], strict: bool) -> impl Cipher<T, T> {
     SubstitutionCipherBuilder::default()
         .pt_alphabet(pt_alphabet)

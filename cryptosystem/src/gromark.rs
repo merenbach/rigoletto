@@ -110,7 +110,7 @@ pub fn makegromarkkey(primer: &[u32], msglen: usize) -> Vec<char> {
         .collect()
 }
 
-/// Make a substitution cipher.
+/// Make a composite cipher with substitution and transposition.
 pub fn make<T: Atom + Ord>(
     pt_alphabet: &[T],
     keyword: &[T],

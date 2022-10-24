@@ -68,7 +68,7 @@ mod tests {
     }
 }
 
-/// Make a substitution cipher.
+/// Make a monoalphabetic substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], multiplier: usize, strict: bool) -> impl Cipher<T, T> {
     let ct_alphabet = transform::decimation(pt_alphabet, multiplier);
     SubstitutionCipherBuilder::default()
