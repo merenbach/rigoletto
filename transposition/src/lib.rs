@@ -37,7 +37,7 @@ impl<T: Atom> ColumnarTranspositionCipherBuilder<T> {
         // This lexical ordering transformation is technically needed only to support Myszkowski transposition.
         // We don't know the message length at this point, so we want to avoid doing any argsorts until later,
         // since argsort will convert duplicate values into consecutive values.
-        let data = transform::lexical_order(&v);
+        let data = transform::lexorder(&v);
         Self {
             key: Some(data),
             ..Default::default()

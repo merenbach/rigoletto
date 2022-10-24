@@ -4,7 +4,7 @@ use std::hash::Hash;
 
 #[cfg(test)]
 mod tests {
-    use super::zigzag;
+    use super::{lexorder, zigzag};
 
     #[test]
     fn zigzag_works() {
@@ -31,6 +31,17 @@ mod tests {
             assert_eq!(&x.1, &zigzag(x.0));
         }
     }
+
+    #[test]
+    fn lexorder_works() {
+        let xs = &[
+            ("TOMATO".chars().collect::<Vec<_>>(), vec![3, 2, 1, 0, 3, 2]),
+            ("ZEBRAS".chars().collect::<Vec<_>>(), vec![5, 2, 1, 3, 0, 4]),
+        ];
+        for x in xs {
+            assert_eq!(&x.1, &lexorder(&x.0));
+        }
+    }
 }
 
 /// Zigzag sequence, of primary use in the rail fence cipher.
@@ -46,8 +57,9 @@ pub fn transpose<T: Copy>(xs: &[T], ys: &[usize]) -> Vec<T> {
     std_ext::backpermute(&xs, &std_ext::argsort(&ys))
 }
 
-// Find the relative lexical ordering of passed parameters.
-pub fn lexical_order<T>(xs: &[T]) -> Vec<usize>
+// Lexorder returns the relative lexical ordering of a sequence.
+// This is spiritually similar to a Schwartzian transform or decorate-sort-undecorate.
+pub fn lexorder<T>(xs: &[T]) -> Vec<usize>
 where
     T: Hash + Ord,
 {

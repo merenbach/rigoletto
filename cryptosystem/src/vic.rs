@@ -135,12 +135,12 @@ impl VIC {
         let lineD2 = &lineD[0..10];
         let lineD3 = &lineD[10..20];
         let lineE1: Vec<_> =
-            transposition::transform::lexical_order(&std_ext::argsort(&std_ext::argsort(lineD2)))
+            transposition::transform::lexorder(&std_ext::argsort(&std_ext::argsort(lineD2)))
                 .iter()
                 .map(|i| ((i + 1) % 10) as u32)
                 .collect();
         let lineE2: Vec<u32> =
-            transposition::transform::lexical_order(&std_ext::argsort(&std_ext::argsort(lineD3)))
+            transposition::transform::lexorder(&std_ext::argsort(&std_ext::argsort(lineD3)))
                 .iter()
                 .map(|i| ((i + 1) % 10) as u32)
                 .collect();
