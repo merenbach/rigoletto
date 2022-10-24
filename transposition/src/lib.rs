@@ -64,16 +64,16 @@ where
         let key = transform::lexorder(&self.key);
 
         let v: Vec<_> = if self.myszkowski {
-            key.iter().cycle().take(count).copied().collect()
+            key.into_iter().cycle().take(count).collect()
         } else {
-            key.to_vec()
+            key
         };
 
         let u = argsort(&argsort(&v));
         if self.myszkowski {
             u
         } else {
-            u.iter().cycle().take(count).copied().collect()
+            u.into_iter().cycle().take(count).collect()
         }
     }
 }
