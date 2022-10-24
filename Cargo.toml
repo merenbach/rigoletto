@@ -10,6 +10,7 @@ version = "0.1.0"
 members = [
   "alphabet",
   "cipher",
+  "dummy",
   "lcg",
   "lfg",
   "masc",
@@ -26,6 +27,7 @@ cipher = {path = "cipher"}
 clap = {version = "3.1", features = ["derive"]}
 cryptosystem = {path = "cryptosystem"}
 derive_builder = "0.11"
+dummy = {path = "dummy"}
 itertools = "0.10"
 lcg = {path = "lcg"}
 lfg = {path = "lfg"}
