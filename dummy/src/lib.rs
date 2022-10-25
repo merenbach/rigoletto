@@ -16,7 +16,7 @@ mod tests {
             output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
         }];
         for x in xs {
-            let c = Dummy {};
+            let c = Dummy::default();
             assert_eq!(x.output, c.encipher(&x.input));
         }
     }
@@ -28,12 +28,13 @@ mod tests {
             output: vec![0, 1, 2, 3, 4, 5, 5, 4, 3, 2, 1, 0],
         }];
         for x in xs {
-            let c = Dummy {};
+            let c = Dummy::default();
             assert_eq!(x.output, c.decipher(&x.input));
         }
     }
 }
 
+#[derive(Default)]
 pub struct Dummy {}
 
 impl<T: Copy> Cipher<T, T> for Dummy {
