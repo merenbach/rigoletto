@@ -107,12 +107,14 @@ pub fn backpermute<T: Copy>(xs: &[T], indices: &[usize]) -> Vec<T> {
 ///   1. Attach numbers to each item in the collection.
 ///   2. Rearrange the collection such that it is now sorted lexically. This will scramble the numbers.
 ///   3. Return only the numbers now.
-pub fn argsort<T: Ord>(xs: &[T]) -> Vec<usize> {
-    xs.iter()
-        .enumerate()
-        .sorted_by_key(|v| v.1)
-        .map(|t| t.0)
-        .collect()
+pub fn argsort<T: Ord+Copy>(xs: &[T]) -> Vec<usize> {
+    (0..xs.len()).sorted_by_cached_key(|&v| &xs[v]).collect()
+    // (0..xs.len()).sorted_by(|&a,&b| Ord::cmp(&xs[a], &xs[b])).collect()
+    // xs.iter()
+    //     .enumerate()
+    //     .sorted_by_key(|v| v.1)
+    //     .map(|t| t.0)
+    //     .collect()
 }
 
 // pub fn invert_pairs<T: Ord>(xs: &[T]) -> Vec<(usize, usize)> {
