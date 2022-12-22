@@ -1,6 +1,6 @@
+use crate::affine;
 use cipher::Cipher;
-use masc::transform;
-use masc::{Atom, SubstitutionCipherBuilder};
+use masc::Atom;
 
 #[cfg(test)]
 mod tests {
@@ -70,11 +70,6 @@ mod tests {
 
 /// Make a monoalphabetic substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], offset: usize, strict: bool) -> impl Cipher<T, T> {
-    let ct_alphabet = transform::caesar(pt_alphabet, offset);
-    SubstitutionCipherBuilder::default()
-        .pt_alphabet(pt_alphabet)
-        .ct_alphabet(ct_alphabet)
-        .strict(strict)
-        .build()
-        .unwrap()
+    const SLOPE: usize = 1;
+    affine::make(pt_alphabet, SLOPE, offset, strict)
 }

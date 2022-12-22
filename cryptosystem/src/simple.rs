@@ -1,6 +1,28 @@
 use cipher::Cipher;
 use masc::{Atom, SubstitutionCipherBuilder};
 
+/*pub struct Config<T: Atom> {
+    alphabet: Vec<T>,
+    caseless:bool,
+    strict: bool,
+}
+
+// type ConfigOption<T:Atom> = fn(&mut Config<T>);
+
+type ConfigOption<T:Atom> = impl FnOnce(&mut Config<T>);
+
+fn with_strict<T:Atom>() -> ConfigOption<T> {
+    |c| c.strict = true
+}
+
+fn with_caseless<T:Atom>() -> ConfigOption<T> {
+    |c| c.caseless = true
+}
+
+fn with_alphabet<T:Atom>(alphabet: Vec<T>) -> ConfigOption<T> {
+    |c| c.alphabet = alphabet
+}*/
+
 #[cfg(test)]
 mod tests {
     use super::make;
