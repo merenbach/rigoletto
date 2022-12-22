@@ -1,6 +1,7 @@
+use crate::simple;
 use cipher::Cipher;
 use masc::transform;
-use masc::{Atom, SubstitutionCipherBuilder};
+use masc::Atom;
 
 #[cfg(test)]
 mod tests {
@@ -71,10 +72,5 @@ mod tests {
 /// Make a monoalphabetic substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], multiplier: usize, strict: bool) -> impl Cipher<T, T> {
     let ct_alphabet = transform::decimation(pt_alphabet, multiplier);
-    SubstitutionCipherBuilder::default()
-        .pt_alphabet(pt_alphabet)
-        .ct_alphabet(ct_alphabet)
-        .strict(strict)
-        .build()
-        .unwrap()
+    simple::make(pt_alphabet, &ct_alphabet, strict)
 }
