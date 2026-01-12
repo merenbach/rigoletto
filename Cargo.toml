@@ -24,17 +24,17 @@ members = [
 [dependencies]
 alphabet = {path = "alphabet"}
 cipher = {path = "cipher"}
-clap = {version = "3.1", features = ["derive"]}
+clap = {version = "4.5", features = ["derive"]}
 cryptosystem = {path = "cryptosystem"}
 derive_builder = "0.20"
 dummy = {path = "dummy"}
-itertools = "0.10"
+itertools = "0.14"
 lcg = {path = "lcg"}
 lfg = {path = "lfg"}
 masc = {path = "masc"}
 message = {path = "message"}
-nalgebra = "0.30.1"
-ndarray = "0.15"
+nalgebra = "0.34"
+ndarray = "0.17"
 pasc = {path = "pasc"}
 serde = "1.0"
 std_ext = {path = "std_ext"}

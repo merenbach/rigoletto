@@ -10,7 +10,7 @@ version = "0.1.0"
 alphabet = {path = "../alphabet"}
 cipher = {path = "../cipher"}
 derive_builder = "0.20"
-itertools = "0.10"
+itertools = "0.14"
 lcg = {path = "../lcg"}
 num = "0.4"
 std_ext = {path = "../std_ext"}
