@@ -26,7 +26,7 @@ alphabet = {path = "alphabet"}
 cipher = {path = "cipher"}
 clap = {version = "3.1", features = ["derive"]}
 cryptosystem = {path = "cryptosystem"}
-derive_builder = "0.11"
+derive_builder = "0.20"
 dummy = {path = "dummy"}
 itertools = "0.10"
 lcg = {path = "lcg"}

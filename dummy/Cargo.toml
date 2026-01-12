@@ -8,4 +8,4 @@ version = "0.1.0"
 
 [dependencies]
 cipher = {path = "../cipher"}
-derive_builder = "0.11"
+derive_builder = "0.20"
