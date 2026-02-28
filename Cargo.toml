@@ -14,6 +14,7 @@ members = [
   "lcg",
   "lfg",
   "masc",
+  "mascnew",
   "message",
   "pasc",
   "std_ext",
@@ -32,6 +33,7 @@ itertools = "0.14"
 lcg = {path = "lcg"}
 lfg = {path = "lfg"}
 masc = {path = "masc"}
+mascnew = {path = "mascnew"}
 message = {path = "message"}
 nalgebra = "0.34"
 ndarray = "0.17"

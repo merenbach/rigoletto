@@ -1,0 +1,18 @@
+[package]
+authors = ["Andrew Merenbach <andrew@merenbach.com>"]
+edition = "2024"
+name = "mascnew"
+version = "0.1.0"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+alphabet = {path = "../alphabet"}
+cipher = {path = "../cipher"}
+derive_builder = "0.20"
+itertools = "0.14"
+lcg = {path = "../lcg"}
+# memoize = "0.6"
+num = "0.4"
+std_ext = {path = "../std_ext"}
+translation = {path = "../translation"}
