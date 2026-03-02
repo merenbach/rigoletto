@@ -66,45 +66,47 @@ pub struct SubstitutionCipher<T: Atom> {
     pub ct_alphabet: Vec<T>,
     pub strict: bool,
 
-    pt2ct: HashMap<T, T>,
-    ct2pt: HashMap<T, T>,
+    pt2ct: HashMap<T, usize>,
+    ct2pt: HashMap<T, usize>,
 }
 
 impl<T: Atom> SubstitutionCipher<T> {
     pub fn new(xs: &[T], ys: &[T], strict: bool) -> Self {
+        // let z = xs.get(3);
+        // let pt_alphabet = xs.to_owned();
         SubstitutionCipher {
-            pt_alphabet: xs.to_owned(),
-            ct_alphabet: ys.to_owned(),
+            pt_alphabet: xs.to_vec(),
+            ct_alphabet: ys.to_vec(),
             strict: strict,
 
-            pt2ct: xs.to_owned().into_iter().zip(ys.to_owned()).collect(),
-            ct2pt: ys.to_owned().into_iter().zip(xs.to_owned()).collect(),
+            pt2ct: xs.to_vec().into_iter().zip(0..).collect(),
+            ct2pt: ys.to_vec().into_iter().zip(0..).collect(),
         }
     }
 
     /// Encipher an element.
     pub fn encipher_one(&self, x: &T) -> Option<T> {
         if let Some(y) = self.pt2ct.get(x) {
-            return Some(*y);
-        } else {
-            if self.strict {
-                return None;
+            if let Some(z) = self.ct_alphabet.get(*y) {
+                Some(*z)
             } else {
-                return Some(*x);
+                None
             }
+        } else {
+            if self.strict { None } else { Some(*x) }
         }
     }
 
     /// Decipher an element.
     pub fn decipher_one(&self, x: &T) -> Option<T> {
         if let Some(y) = self.ct2pt.get(x) {
-            return Some(*y);
-        } else {
-            if self.strict {
-                return None;
+            if let Some(z) = self.pt_alphabet.get(*y) {
+                Some(*z)
             } else {
-                return Some(*x);
+                None
             }
+        } else {
+            if self.strict { None } else { Some(*x) }
         }
     }
 }
