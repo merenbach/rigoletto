@@ -1,12 +1,9 @@
 pub mod transform;
 
 use cipher::Cipher;
-use derive_builder::Builder;
-use std::cell::RefCell;
 use std::collections::HashMap;
 use std::fmt;
 use std::hash::Hash;
-use translation::{Table, TableBuilder};
 
 // #[cfg(test)]
 // mod tests {
@@ -63,47 +60,41 @@ use translation::{Table, TableBuilder};
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 
-#[derive(Default, Builder)]
-#[builder(default)]
+#[derive(Default)]
 pub struct SubstitutionCipher<T: Atom> {
-    #[builder(setter(into))]
-    pt_alphabet: Vec<T>,
-    #[builder(setter(into))]
-    ct_alphabet: Vec<T>,
+    pub pt_alphabet: Vec<T>,
+    pub ct_alphabet: Vec<T>,
 
-    #[builder(setter(skip))]
-    pt2ct: RefCell<HashMap<T, T>>,
-    #[builder(setter(skip))]
-    ct2pt: RefCell<HashMap<T, T>>,
+    pt2ct: HashMap<T, T>,
+    ct2pt: HashMap<T, T>,
 
-    strict: bool,
+    pub strict: bool,
 }
 
 impl<T: Atom> SubstitutionCipher<T> {
-    fn initialize(&self) {
-        if self.pt2ct.borrow().is_empty() {
-            *self.pt2ct.borrow_mut() = self
-                .pt_alphabet
-                .to_owned()
-                .into_iter()
-                .zip(self.ct_alphabet.to_owned())
-                .collect();
-        }
+    pub fn new(pt_alphabet: &[T], ct_alphabet: &[T], strict: bool) -> Self {
+        SubstitutionCipher {
+            pt_alphabet: pt_alphabet.to_owned(),
+            ct_alphabet: ct_alphabet.to_owned(),
+            strict: strict,
 
-        if self.ct2pt.borrow().is_empty() {
-            *self.ct2pt.borrow_mut() = self
-                .ct_alphabet
+            pt2ct: pt_alphabet
                 .to_owned()
                 .into_iter()
-                .zip(self.pt_alphabet.to_owned())
-                .collect();
+                .zip(ct_alphabet.to_owned())
+                .collect(),
+
+            ct2pt: ct_alphabet
+                .to_owned()
+                .into_iter()
+                .zip(pt_alphabet.to_owned())
+                .collect(),
         }
     }
 
     /// Encipher an element.
     pub fn encipher_one(&self, x: &T) -> Option<T> {
-        self.initialize();
-        if let Some(y) = self.pt2ct.borrow().get(x) {
+        if let Some(y) = self.pt2ct.get(x) {
             return Some(*y);
         } else {
             if self.strict {
@@ -116,8 +107,7 @@ impl<T: Atom> SubstitutionCipher<T> {
 
     /// Decipher an element.
     pub fn decipher_one(&self, x: &T) -> Option<T> {
-        self.initialize();
-        if let Some(y) = self.ct2pt.borrow().get(x) {
+        if let Some(y) = self.ct2pt.get(x) {
             return Some(*y);
         } else {
             if self.strict {

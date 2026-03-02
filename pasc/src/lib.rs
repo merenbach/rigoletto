@@ -239,12 +239,7 @@ where
         .map(|(i, z)| {
             (
                 z,
-                masc::SubstitutionCipherBuilder::default()
-                    .pt_alphabet(pt_alphabet)
-                    .ct_alphabet(ct_alphabets[i].to_owned())
-                    .strict(true)
-                    .build()
-                    .unwrap(),
+                masc::SubstitutionCipher::new(pt_alphabet, &ct_alphabets[i], true),
             )
         })
         .collect()

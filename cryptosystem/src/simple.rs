@@ -1,5 +1,5 @@
 use cipher::Cipher;
-use masc::{Atom, SubstitutionCipherBuilder};
+use masc::{Atom, SubstitutionCipher};
 
 #[cfg(test)]
 mod tests {
@@ -69,10 +69,5 @@ mod tests {
 
 /// Make a monoalphabetic substitution cipher.
 pub fn make<T: Atom>(pt_alphabet: &[T], ct_alphabet: &[T], strict: bool) -> impl Cipher<T, T> {
-    SubstitutionCipherBuilder::default()
-        .pt_alphabet(pt_alphabet)
-        .ct_alphabet(ct_alphabet)
-        .strict(strict)
-        .build()
-        .unwrap()
+    SubstitutionCipher::new(pt_alphabet, ct_alphabet, strict)
 }
