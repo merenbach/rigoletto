@@ -64,31 +64,21 @@ impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 pub struct SubstitutionCipher<T: Atom> {
     pub pt_alphabet: Vec<T>,
     pub ct_alphabet: Vec<T>,
+    pub strict: bool,
 
     pt2ct: HashMap<T, T>,
     ct2pt: HashMap<T, T>,
-
-    pub strict: bool,
 }
 
 impl<T: Atom> SubstitutionCipher<T> {
-    pub fn new(pt_alphabet: &[T], ct_alphabet: &[T], strict: bool) -> Self {
+    pub fn new(xs: &[T], ys: &[T], strict: bool) -> Self {
         SubstitutionCipher {
-            pt_alphabet: pt_alphabet.to_owned(),
-            ct_alphabet: ct_alphabet.to_owned(),
+            pt_alphabet: xs.to_owned(),
+            ct_alphabet: ys.to_owned(),
             strict: strict,
 
-            pt2ct: pt_alphabet
-                .to_owned()
-                .into_iter()
-                .zip(ct_alphabet.to_owned())
-                .collect(),
-
-            ct2pt: ct_alphabet
-                .to_owned()
-                .into_iter()
-                .zip(pt_alphabet.to_owned())
-                .collect(),
+            pt2ct: xs.to_owned().into_iter().zip(ys.to_owned()).collect(),
+            ct2pt: ys.to_owned().into_iter().zip(xs.to_owned()).collect(),
         }
     }
 
