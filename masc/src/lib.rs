@@ -3,6 +3,7 @@ pub mod transform;
 use cipher::Cipher;
 use derive_builder::Builder;
 use std::cell::RefCell;
+use std::collections::HashMap;
 use std::fmt;
 use std::hash::Hash;
 use translation::{Table, TableBuilder};
@@ -71,9 +72,9 @@ pub struct SubstitutionCipher<T: Atom> {
     ct_alphabet: Vec<T>,
 
     #[builder(setter(skip))]
-    pt2ct: RefCell<Table<T>>,
+    pt2ct: RefCell<HashMap<T, T>>,
     #[builder(setter(skip))]
-    ct2pt: RefCell<Table<T>>,
+    ct2pt: RefCell<HashMap<T, T>>,
 
     strict: bool,
 }
@@ -81,36 +82,50 @@ pub struct SubstitutionCipher<T: Atom> {
 impl<T: Atom> SubstitutionCipher<T> {
     fn initialize(&self) {
         if self.pt2ct.borrow().is_empty() {
-            *self.pt2ct.borrow_mut() = TableBuilder::default()
-                .src(self.pt_alphabet.to_owned())
-                .dst(self.ct_alphabet.to_owned())
-                .build()
-                .unwrap();
+            *self.pt2ct.borrow_mut() = self
+                .pt_alphabet
+                .to_owned()
+                .into_iter()
+                .zip(self.ct_alphabet.to_owned())
+                .collect();
         }
 
         if self.ct2pt.borrow().is_empty() {
-            *self.ct2pt.borrow_mut() = TableBuilder::default()
-                .src(self.ct_alphabet.to_owned())
-                .dst(self.pt_alphabet.to_owned())
-                .build()
-                .unwrap();
+            *self.ct2pt.borrow_mut() = self
+                .ct_alphabet
+                .to_owned()
+                .into_iter()
+                .zip(self.pt_alphabet.to_owned())
+                .collect();
         }
     }
 
     /// Encipher an element.
     pub fn encipher_one(&self, x: &T) -> Option<T> {
         self.initialize();
-        self.pt2ct
-            .borrow()
-            .translate_one(x, |x| if self.strict { None } else { Some(x) })
+        if let Some(y) = self.pt2ct.borrow().get(x) {
+            return Some(*y);
+        } else {
+            if self.strict {
+                return None;
+            } else {
+                return Some(*x);
+            }
+        }
     }
 
     /// Decipher an element.
     pub fn decipher_one(&self, x: &T) -> Option<T> {
         self.initialize();
-        self.ct2pt
-            .borrow()
-            .translate_one(x, |x| if self.strict { None } else { Some(x) })
+        if let Some(y) = self.ct2pt.borrow().get(x) {
+            return Some(*y);
+        } else {
+            if self.strict {
+                return None;
+            } else {
+                return Some(*x);
+            }
+        }
     }
 }
 
