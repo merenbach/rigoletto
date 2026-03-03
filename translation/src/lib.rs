@@ -4,7 +4,7 @@ use std::hash::Hash;
 
 #[cfg(test)]
 mod tests {
-    use super::make_translation_table;
+    use super::{make_translation_table, translate};
     use std::collections::HashMap;
 
     #[test]
@@ -41,6 +41,55 @@ mod tests {
             assert_eq!(expect, make_translation_table(&row.1, &row.2, &row.3));
         }
     }
+
+    #[test]
+    fn translate_works() {
+        let rows = &[
+            // (vec![], vec![], vec![], vec![], vec![]),
+            (
+                vec!['Y', 'X', 'Z', 'Z', 'X', 'Z', 'X', 'Y'],
+                vec!['B', 'A', 'C', 'C', 'A', 'C', 'A', 'B'],
+                vec!['A', 'B', 'C'],
+                vec!['X', 'Y', 'Z'],
+                vec![],
+            ),
+            (
+                vec!['Y', 'X', 'Z', 'Z', 'X', 'Z', 'X', 'Y'],
+                vec![
+                    'B', 'A', 'J', 'C', 'C', 'Q', 'A', 'C', 'Q', 'A', 'J', 'J', 'B',
+                ],
+                vec!['A', 'B', 'C'],
+                vec!['X', 'Y', 'Z'],
+                vec!['J', 'Q'],
+            ),
+            (
+                vec!['Y', 'X', 'Z', 'Z', 'X', 'Z', 'X', 'Y'],
+                vec!['B', 'A', 'C', 'C', 'D', 'A', 'C', 'A', 'B', 'D'],
+                vec!['A', 'B', 'C', 'D'],
+                vec!['X', 'Y', 'Z', 'Q'],
+                vec!['D'],
+            ),
+            (
+                vec!['Y', 'X', 'Z', 'Z', 'Q', 'X', 'Z', 'X', 'Y', 'Q'],
+                vec!['B', 'A', 'C', 'C', 'D', 'A', 'C', 'A', 'B', 'D'],
+                vec!['A', 'B', 'C', 'D'],
+                vec!['X', 'Y', 'Z', 'Q'],
+                vec![],
+            ),
+            (
+                vec!['Y', 'X', 'Z', 'Z', 'D', 'X', 'Z', 'X', 'Y', 'D'],
+                vec!['B', 'A', 'C', 'C', 'D', 'A', 'C', 'A', 'B', 'D'],
+                vec!['A', 'B', 'C'],
+                vec!['X', 'Y', 'Z'],
+                vec![],
+            ),
+        ];
+        for row in rows {
+            println!("{:?}", row);
+            let table = make_translation_table(&row.2, &row.3, &row.4);
+            assert_eq!(row.0, translate(&row.1, &table, |x| { Some(x) }));
+        }
+    }
 }
 
 /// Make a translation table that supports deletion.
@@ -55,19 +104,26 @@ where
     src.iter()
         .zip(dst.iter())
         .map(|(&x, &y)| (x, Some(y)))
-        .chain(del.iter().map(|&z| (z, None))) // TODO: shouldn't del be handled earlier?
+        .chain(del.iter().map(|&z| (z, None))) // Handling `del` last allows overriding of mapping
         .collect()
 }
 
-/// Translate a sequence using a hashmap, leaving non-translateable elements unchanged .
+/// Translate a sequence using a hashmap, leaving non-translateable elements unchanged.
 /// This is inspired by Python's `str.translate()`.
-/// TODO: use unwrap_or_else instead
+/// TODO: use unwrap_or_else instead?
 fn translate<T>(xs: &[T], m: &HashMap<T, Option<T>>, fallback: impl Fn(T) -> Option<T>) -> Vec<T>
 where
     T: Copy + Eq + Hash,
 {
     xs.iter()
         .filter_map(|&x| *m.get(&x).unwrap_or(&fallback(x)))
+        // .map(|&x| m.get_key_value(&x))
+        // .filter(|&x| x.is_some())
+        // .map(|x| x.unwrap())
+        // .map(|x| x.1.unwrap_or(*x.0))
+        // .map(|((&x, &y))| y.unwrap_or(x))
+        // .flatten()
+        // .cloned()
         .collect()
 }
 
