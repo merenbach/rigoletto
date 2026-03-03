@@ -1,4 +1,3 @@
-use derive_builder::Builder;
 use std::cell::RefCell;
 use std::collections::HashMap;
 use std::hash::Hash;
@@ -56,7 +55,7 @@ where
     src.iter()
         .zip(dst.iter())
         .map(|(&x, &y)| (x, Some(y)))
-        .chain(del.iter().map(|&z| (z, None)))
+        .chain(del.iter().map(|&z| (z, None))) // TODO: shouldn't del be handled earlier?
         .collect()
 }
 
@@ -102,60 +101,46 @@ where
 pub trait Atom: Hash + Eq + Copy + Default {}
 impl<T> Atom for T where T: Hash + Eq + Copy + Default {}
 
-impl<T> TableBuilder<T>
-where
-    T: Atom,
-{
-    fn validate(&self) -> Result<(), String> {
-        if self.src.as_ref().unwrap().len() != self.dst.as_ref().unwrap().len() {
-            Err("source and destination mappings must be the same length".to_string())
-        } else {
-            Ok(())
-        }
-    }
-
-    // fn source_str(s:&str) {
-    //     self.source = s.chars().co
-    // }
-}
-
-#[derive(Builder, Default)]
-#[builder(build_fn(validate = "Self::validate"))]
+#[derive(Default)]
 pub struct Table<T>
 where
     T: Atom,
 {
-    #[builder(setter(into))]
     src: Vec<T>,
-    #[builder(setter(into))]
     dst: Vec<T>,
-    #[builder(setter(into), default)]
     del: Vec<T>,
 
-    #[builder(setter(skip))]
-    map: RefCell<HashMap<T, Option<T>>>,
+    map: HashMap<T, Option<T>>,
 }
 
 impl<T> Table<T>
 where
     T: Atom,
 {
-    pub fn is_empty(&self) -> bool {
-        self.map.borrow().is_empty()
+    pub fn new(xs: &[T], ys: &[T], zs: &[T]) -> Result<Self, String> {
+        if xs.len() != ys.len() {
+            Err("source and destination mappings must be the same length".to_string())
+        } else {
+            Ok(Self {
+                src: xs.to_vec(),
+                dst: xs.to_vec(),
+                del: xs.to_vec(),
+
+                map: make_translation_table(xs, ys, zs),
+            })
+        }
     }
 
-    // TODO: consider not using builder so we don't have to have mishigas caching
+    pub fn is_empty(&self) -> bool {
+        self.map.is_empty()
+    }
+
+    pub fn len(&self) -> usize {
+        self.map.len()
+    }
 
     // translation::Table::new("ABCDE", "defgh", "")
     // translation::Table::default().src("ABCDE").dst("defgh").del("!*").build().unwrap()
-
-    /// Ensure that the mapping is initialized, then return it.
-    fn ensure(&self) -> &RefCell<HashMap<T, Option<T>>> {
-        if self.map.borrow().is_empty() {
-            *self.map.borrow_mut() = make_translation_table(&self.src, &self.dst, &self.del);
-        }
-        &self.map
-    }
 
     /// Translate one element.
     // fn translate_one_default(&self, x: &T, default: Option<T>) -> Option<T> {
@@ -171,7 +156,6 @@ where
     /// Translate one element.
     /// TODO: use unwrap_or_else instead
     pub fn translate_one(&self, x: &T, fallback: impl Fn(T) -> Option<T>) -> Option<T> {
-        let map = self.ensure();
-        *map.borrow().get(x).unwrap_or(&fallback(*x))
+        *self.map.get(x).unwrap_or(&fallback(*x))
     }
 }
