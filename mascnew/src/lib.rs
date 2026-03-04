@@ -70,6 +70,8 @@ pub struct SubstitutionCipher<T: Atom> {
     #[builder(setter(into))]
     ct_alphabet: Vec<T>,
 
+
+
     strict: bool,
 }
 
@@ -100,18 +102,6 @@ impl<T: Atom> SubstitutionCipher<T> {
             .borrow()
             .translate_one(x, |x| if self.strict { None } else { Some(x) })
     }
-    // Encipherment and decipherment could perhaps be invoking functions, rather than looking to maps.
-    // These functions could refer to maps (for a direct, simple cipher) or to mathematics (for affine, etc.).
-    // By using functions, we could even do homophonic ciphers where P enciphers to one of Q, R, or S,
-    // but Q, R, and S all decipher to P. That's not as easily achievable with a one-to-one mapping.
-    // And we have to worry about duplicates with a one-to-one mapping, where we could use math functions
-    // for many of these.
-    // BUT it brings up: what is the "true" reference version, the heart and soul of the MASC?
-    // Is it two alphabets with the same characters, but (typically) different orderings?
-    // Or is it that any character maps to a fixed destination character space, and vice-versa?
-    // Or are homophonic ciphers technically not MASCs, even? Does a map truly describe a MASC?
-    // Of course, using functions also gives us some ability to override certain characters in certain places...
-    // which might be useful for some historical ciphers. Curious.
 
     /// Decipher an element.
     // #[memoize]

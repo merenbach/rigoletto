@@ -8,3 +8,4 @@ version = "0.1.0"
 
 [dependencies]
 derive_builder = "0.20"
+maplit = "1.0"

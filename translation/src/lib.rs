@@ -8,6 +8,33 @@ mod tests {
     use std::collections::HashMap;
 
     #[test]
+    fn sometest() {
+        let m: HashMap<char, Option<char>> = maplit::hashmap! {
+            'a' => Some('x'),
+            'b' => Some('y'),
+            'c' => None,
+            // 'd' => None,
+        };
+
+        let inp: Vec<char> = vec!['a', 'b', 'c', 'd'];
+
+        // let fallback = |x| Some(x);
+
+        let y: Vec<char> = inp
+            .iter()
+            // ohhhhhh it's an option of an option...
+            // so if the map returns actual None as the value,
+            // it's Some(None)
+            // and if it's not there, it's simply None
+            .filter_map(|&x| *m.get(&x).unwrap_or(&Some(x)))
+            .collect();
+
+        println!("{:?}", y);
+ 
+        assert_eq!(vec!['x', 'y', 'd'], y);
+    }
+
+    #[test]
     fn make_translation_table_works() {
         let rows = &[
             // (vec![], vec![], vec![], vec![]),
@@ -46,6 +73,20 @@ mod tests {
     fn translate_works() {
         let rows = &[
             // (vec![], vec![], vec![], vec![], vec![]),
+            (
+                vec!['X'],
+                vec!['A'],
+                vec!['A', 'B', 'C'],
+                vec!['X', 'Y', 'Z'],
+                vec![],
+            ),
+            (
+                vec![],
+                vec!['A'],
+                vec!['A', 'B', 'C'],
+                vec!['X', 'Y', 'Z'],
+                vec!['A'],
+            ),
             (
                 vec!['Y', 'X', 'Z', 'Z', 'X', 'Z', 'X', 'Y'],
                 vec!['B', 'A', 'C', 'C', 'A', 'C', 'A', 'B'],
@@ -87,9 +128,15 @@ mod tests {
         for row in rows {
             println!("{:?}", row);
             let table = make_translation_table(&row.2, &row.3, &row.4);
+            println!("[[table {:?}]]", table);
             assert_eq!(row.0, translate(&row.1, &table, |x| { Some(x) }));
         }
     }
+}
+
+enum Status<T: Atom> {
+    Found(Option<T>),
+    Fallback(Option<T>),
 }
 
 /// Make a translation table that supports deletion.
@@ -107,6 +154,21 @@ where
         .chain(del.iter().map(|&z| (z, None))) // Handling `del` last allows overriding of mapping
         .collect()
 }
+
+// /// Translate a sequence using a hashmap, leaving non-translateable elements unchanged.
+// /// This is inspired by Python's `str.translate()`.
+// /// TODO: use unwrap_or_else instead?
+// fn translate_one<T>(x: T, m: &HashMap<T, Option<T>>) -> Status<T>
+// where
+//     T: Copy + Eq + Hash,
+// {
+//     if let Some(y) = *m.get(&x) {
+//         Found(y)
+//     } else {
+//         Fallback(x)
+//     }
+// }
+
 
 /// Translate a sequence using a hashmap, leaving non-translateable elements unchanged.
 /// This is inspired by Python's `str.translate()`.
