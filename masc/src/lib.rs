@@ -70,15 +70,19 @@ pub struct SubstitutionCipher<T: Atom> {
     ct2pt: HashMap<T, T>,
 }
 
+fn make_translation_map<T: Atom>(xs: &[T], ys: &[T]) -> HashMap<T, T> {
+    xs.to_vec().into_iter().zip(ys.to_vec()).collect()
+}
+
 impl<T: Atom> SubstitutionCipher<T> {
     pub fn new(xs: &[T], ys: &[T], strict: bool) -> Self {
         SubstitutionCipher {
-            pt_alphabet: xs.to_owned(),
-            ct_alphabet: ys.to_owned(),
+            pt_alphabet: xs.to_vec(),
+            ct_alphabet: ys.to_vec(),
             strict: strict,
 
-            pt2ct: xs.to_owned().into_iter().zip(ys.to_owned()).collect(),
-            ct2pt: ys.to_owned().into_iter().zip(xs.to_owned()).collect(),
+            pt2ct: make_translation_map(xs, ys),
+            ct2pt: make_translation_map(ys, xs),
         }
     }
 
