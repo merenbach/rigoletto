@@ -155,6 +155,8 @@ pub fn affine<T: Copy>(xs: &[T], slope: usize, intercept: usize) -> Vec<T> {
     match m {
         0..=1 => xs.into(),
         _ => {
+            // TODO: this is complex and undercommented
+            // For instance, do we skip m-1 because we're dealing with usize, not size?
             let lcg: Vec<_> = LCGBuilder::default() // TODO: just use successors here?
                 .modulus(m)
                 .multiplier(1)
