@@ -404,7 +404,7 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.encipher_one(c),
+            |k, c| tableau.get(k)?.encipher_one2(c),
             |k, _, _| k,
         )
     }
@@ -418,7 +418,7 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.decipher_one(c),
+            |k, c| tableau.get(k)?.decipher_one2(c),
             |k, _, _| k,
         )
     }
@@ -506,7 +506,7 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.encipher_one(c),
+            |k, c| tableau.get(k)?.encipher_one2(c),
             |k, o, c| match self.autoclave {
                 AutoclaveKind::None => k,
                 AutoclaveKind::Key => o,
@@ -524,7 +524,7 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.decipher_one(c),
+            |k, c| tableau.get(k)?.decipher_one2(c),
             |k, o, c| match self.autoclave {
                 AutoclaveKind::None => k,
                 AutoclaveKind::Key => c,

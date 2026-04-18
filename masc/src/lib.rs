@@ -87,7 +87,22 @@ impl<T: Atom> SubstitutionCipher<T> {
     }
 
     /// Encipher an element.
-    pub fn encipher_one(&self, x: &T) -> Option<T> {
+    pub fn encipher_one(&self, x: &T) -> Result<T, T> {
+        match self.pt2ct.get(x) {
+            Some(y) => Ok(*y),
+            None => Err(*x),
+        }
+    }
+
+    /// Decipher an element.
+    pub fn decipher_one(&self, x: &T) -> Result<T, T> {
+        match self.ct2pt.get(x) {
+            Some(y) => Ok(*y),
+            None => Err(*x),
+        }
+    }
+
+    pub fn encipher_one2(&self, x: &T) -> Option<T> {
         if let Some(y) = self.pt2ct.get(x) {
             return Some(*y);
         } else {
@@ -100,7 +115,7 @@ impl<T: Atom> SubstitutionCipher<T> {
     }
 
     /// Decipher an element.
-    pub fn decipher_one(&self, x: &T) -> Option<T> {
+    pub fn decipher_one2(&self, x: &T) -> Option<T> {
         if let Some(y) = self.ct2pt.get(x) {
             return Some(*y);
         } else {
@@ -119,12 +134,22 @@ where
 {
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
-        xs.iter().filter_map(|x| self.encipher_one(x)).collect()
+        xs.iter()
+            .flat_map(|x| {
+                self.encipher_one(x)
+                    .map_err(|e| if self.strict { None } else { Some(e) })
+            })
+            .collect()
     }
 
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
-        xs.iter().filter_map(|x| self.decipher_one(x)).collect()
+        xs.iter()
+            .flat_map(|x| {
+                self.decipher_one(x)
+                    .map_err(|e| if self.strict { None } else { Some(e) })
+            })
+            .collect()
     }
 }
 
