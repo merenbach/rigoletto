@@ -135,9 +135,13 @@ where
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         xs.iter()
-            .flat_map(|x| {
-                self.encipher_one(x)
-                    .map_err(|e| if self.strict { None } else { Some(e) })
+            .filter_map(|x| {
+                self.encipher_one(x).map_or_else(
+                    |e| {
+                        if self.strict { None } else { Some(e) }
+                    },
+                    |o| Some(o),
+                )
             })
             .collect()
     }
@@ -145,9 +149,13 @@ where
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         xs.iter()
-            .flat_map(|x| {
-                self.decipher_one(x)
-                    .map_err(|e| if self.strict { None } else { Some(e) })
+            .filter_map(|x| {
+                self.decipher_one(x).map_or_else(
+                    |e| {
+                        if self.strict { None } else { Some(e) }
+                    },
+                    |o| Some(o),
+                )
             })
             .collect()
     }
