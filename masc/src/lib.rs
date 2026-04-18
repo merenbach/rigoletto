@@ -88,18 +88,12 @@ impl<T: Atom> SubstitutionCipher<T> {
 
     /// Encipher an element.
     pub fn encipher_one(&self, x: &T) -> Result<T, T> {
-        match self.pt2ct.get(x) {
-            Some(y) => Ok(*y),
-            None => Err(*x),
-        }
+        self.pt2ct.get(x).ok_or(*x).cloned()
     }
 
     /// Decipher an element.
     pub fn decipher_one(&self, x: &T) -> Result<T, T> {
-        match self.ct2pt.get(x) {
-            Some(y) => Ok(*y),
-            None => Err(*x),
-        }
+        self.ct2pt.get(x).ok_or(*x).cloned()
     }
 }
 
