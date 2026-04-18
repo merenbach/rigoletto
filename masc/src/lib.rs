@@ -110,13 +110,15 @@ where
     /// Encipher a sequence.
     fn encipher(&self, xs: &[T]) -> Vec<T> {
         xs.iter()
-            .filter_map(|x| {
-                self.encipher_one(x).map_or_else(
-                    |e| {
-                        if self.strict { None } else { Some(e) }
-                    },
-                    |o| Some(o),
-                )
+            .filter_map(|x| match self.encipher_one(x) {
+                Ok(o) => Some(o),
+                Err(e) => {
+                    if self.strict {
+                        None
+                    } else {
+                        Some(e)
+                    }
+                }
             })
             .collect()
     }
@@ -124,13 +126,15 @@ where
     /// Decipher a sequence.
     fn decipher(&self, xs: &[T]) -> Vec<T> {
         xs.iter()
-            .filter_map(|x| {
-                self.decipher_one(x).map_or_else(
-                    |e| {
-                        if self.strict { None } else { Some(e) }
-                    },
-                    |o| Some(o),
-                )
+            .filter_map(|x| match self.decipher_one(x) {
+                Ok(o) => Some(o),
+                Err(e) => {
+                    if self.strict {
+                        None
+                    } else {
+                        Some(e)
+                    }
+                }
             })
             .collect()
     }
