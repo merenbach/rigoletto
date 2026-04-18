@@ -250,7 +250,7 @@ fn encipher<T, K>(
     key: &[K],
     key_alphabet: &[K],
     strict: bool,
-    lookup: impl Fn(&K, &T) -> Option<T>,
+    lookup: impl Fn(&K, &T) -> Result<T, T>,
     callback: impl Fn(K, T, T) -> K,
 ) -> Vec<T>
 where
@@ -262,19 +262,18 @@ where
         // can use .scan(0, |cursor, &c| if we're not going to return None
         .filter_map(|&c| {
             let k = kq.get();
-            let raw_out = lookup(k, &c);
-            match raw_out {
-                Some(o) => {
+            match lookup(k, &c) {
+                Ok(o) => {
                     let elem = kq.pop();
                     let new_elem = callback(elem, o, c);
                     kq.push(new_elem);
                     Some(o)
                 }
-                None => {
-                    if !strict {
-                        Some(c)
-                    } else {
+                Err(c) => {
+                    if strict {
                         None
+                    } else {
+                        Some(c)
                     }
                 }
             }
@@ -288,7 +287,7 @@ fn decipher<T, K>(
     key: &[K],
     key_alphabet: &[K],
     strict: bool,
-    lookup: impl Fn(&K, &T) -> Option<T>,
+    lookup: impl Fn(&K, &T) -> Result<T, T>,
     callback: impl Fn(K, T, T) -> K,
 ) -> Vec<T>
 where
@@ -300,19 +299,18 @@ where
         // can use .scan(0, |cursor, &c| if we're not going to return None
         .filter_map(|&c| {
             let k = kq.get();
-            let raw_out = lookup(k, &c);
-            match raw_out {
-                Some(o) => {
+            match lookup(k, &c) {
+                Ok(o) => {
                     let elem = kq.pop();
                     let new_elem = callback(elem, o, c);
                     kq.push(new_elem);
                     Some(o)
                 }
-                None => {
-                    if !strict {
-                        Some(c)
-                    } else {
+                Err(c) => {
+                    if strict {
                         None
+                    } else {
+                        Some(c)
                     }
                 }
             }
@@ -404,7 +402,10 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.encipher_one2(c),
+            |k, c| match tableau.get(k) {
+                Some(t) => t.encipher_one(c),
+                None => Err(*c),
+            },
             |k, _, _| k,
         )
     }
@@ -418,7 +419,10 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.decipher_one2(c),
+            |k, c| match tableau.get(k) {
+                Some(t) => t.decipher_one(c),
+                None => Err(*c),
+            },
             |k, _, _| k,
         )
     }
@@ -506,7 +510,10 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.encipher_one2(c),
+            |k, c| match tableau.get(k) {
+                Some(t) => t.encipher_one(c),
+                None => Err(*c),
+            },
             |k, o, c| match self.autoclave {
                 AutoclaveKind::None => k,
                 AutoclaveKind::Key => o,
@@ -524,7 +531,10 @@ where
             &self.key,
             &self.key_alphabet,
             self.strict,
-            |k, c| tableau.get(k)?.decipher_one2(c),
+            |k, c| match tableau.get(k) {
+                Some(t) => t.decipher_one(c),
+                None => Err(*c),
+            },
             |k, o, c| match self.autoclave {
                 AutoclaveKind::None => k,
                 AutoclaveKind::Key => c,

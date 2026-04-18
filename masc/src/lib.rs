@@ -101,31 +101,6 @@ impl<T: Atom> SubstitutionCipher<T> {
             None => Err(*x),
         }
     }
-
-    pub fn encipher_one2(&self, x: &T) -> Option<T> {
-        if let Some(y) = self.pt2ct.get(x) {
-            return Some(*y);
-        } else {
-            if self.strict {
-                return None;
-            } else {
-                return Some(*x);
-            }
-        }
-    }
-
-    /// Decipher an element.
-    pub fn decipher_one2(&self, x: &T) -> Option<T> {
-        if let Some(y) = self.ct2pt.get(x) {
-            return Some(*y);
-        } else {
-            if self.strict {
-                return None;
-            } else {
-                return Some(*x);
-            }
-        }
-    }
 }
 
 impl<T> Cipher<T, T> for SubstitutionCipher<T>
